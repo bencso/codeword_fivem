@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="hu">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="codename_window">
+      <!-- ========== LOBBY még nincs belépve ========== -->
+      <section id="codename_view-lobby" class="codename_view">
+        <div class="codename_panel">
+          <div class="codename_btn-stack">
+            <button
+              id="codename_joinBtn"
+              class="codename_btn codename_btn-ghost"
+            >
+              Csatlakozás
+            </button>
+            <button
+              id="codename_exitBtn"
+              class="codename_btn codename_btn-ghost"
+            >
+              Kilépés
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== WAITING ROOM belépes után, várakozásra ========== -->
+      <section id="codename_view-waiting" class="codename_view">
+        <div class="codename_panel">
+          <div class="codename_countdown" id="codename_countdown" hidden>
+            <span id="codename_countdownNum">30</span>
+            <small>másodperc</small>
+          </div>
+
+          <ul class="codename_lobby-players" id="codename_lobbyPlayers"></ul>
+
+          <button
+            id="codename_leaveBtn"
+            class="codename_btn codename_btn-danger"
+          >
+            Kilépés a szobából
+          </button>
+        </div>
+      </section>
+
+      <!-- ========== JÁTÉK ========== -->
+      <section id="codename_view-game" class="codename_view">
+        <div class="codename_stage">
+          <aside class="codename_side codename_side-blue">
+            <h2>Kék csapat</h2>
+            <ul class="codename_side-players" id="codename_bluePlayers"></ul>
+          </aside>
+
+          <main class="codename_board">
+            <div class="codename_turn" id="codename_turnText">
+              A kék csapat következik
+            </div>
+            <div class="codename_grid" id="codename_grid"></div>
+          </main>
+
+          <aside class="codename_side codename_side-red">
+            <h2>Piros csapat</h2>
+            <ul class="codename_side-players" id="codename_redPlayers"></ul>
+          </aside>
+        </div>
+      </section>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
