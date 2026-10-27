@@ -1,4 +1,6 @@
 const rooms = new Map();
+//TODO: Mikor elindul a játék shuffle-li a játékosokat a csapatokba, és választhanak 20 másodpercig ki megy be spymasternek, ha nem válaszottak akkor random tesz be
+// TODO: A spymasterek kapnak egy emitNet-et, hogy ők a spymasterek és rákerül a html-ükre egy css tag és akkor ők látják kártyák színét
 
 //#region SZOBA LÉTREHOZÁSA / PROP LETEVÉSE
 onNet(EVENTS.CREATE_ROOM, (pos) => {
@@ -12,6 +14,7 @@ onNet(EVENTS.CREATE_ROOM, (pos) => {
     players: [],
     blueTeam: [],
     redTeam: [],
+    words: [],
     countDownTimer: null,
     state: "joinable",
   };
@@ -107,5 +110,40 @@ onNet(EVENTS.LEAVE_ROOM, (roomId) => {
       clearTimeout(room.countDownTimer);
       room.countDownTimer = null;
     }
+  }
+});
+
+//#region SZÖVEGEK KIOSZTÁSA
+onNet(EVENTS.WORDS_PICK, (roomId) => {
+  if (rooms.size > 0 && rooms.has(roomId)) {
+    const currentRoom = rooms.get(roomId);
+
+    //TODO: Ez a magyar szavak txt-ből random 25-öt kiveszünk és besorolunk random 4-4-et a csapatoknak, illetve egy random dead kártya
+    const selectedWords = ["egy", "kettő", "három", "négy", "kis", "nagy"];
+    let redTeamWords = ["kis"];
+    let blueTeamWords = ["nagy"];
+
+    const words = [];
+
+    selectedWords.forEach((word) => {
+      const isRed = redTeamWords.includes(word);
+      const isBLue = blueTeamWords.includes(word);
+
+      words.push({
+        team: isBLue || isRed ? (isRed ? "red" : "blue") : "",
+        word,
+      });
+    });
+
+    const room = {
+      ...currentRoom,
+      words,
+    };
+
+    rooms.set(roomId, room);
+
+    room.players.forEach((playerId) =>
+      emitNet(EVENTS.WORDS_PICKED, playerId, roomId),
+    );
   }
 });
