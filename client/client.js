@@ -2,18 +2,7 @@ const propModel = GetHashKey(PROP);
 const codeNameProps = {};
 let currentRoomId = null;
 
-RegisterCommand(
-  "codename",
-  () => {
-    const ped = PlayerPedId();
-    const [x, y, z] = GetOffsetFromEntityInWorldCoords(ped, 0.0, 1.0, 0.0);
-    const heading = GetEntityHeading(ped) + 180.0;
-    const pos = { x, y, z, heading };
-
-    emitNet(EVENTS.CREATE_ROOM, pos);
-  },
-  false,
-);
+createCommands();
 
 // #region Prop létrehozása
 onNet(EVENTS.SPAWN_PROP, async (roomId, pos) => {
@@ -138,46 +127,4 @@ onNet(EVENTS.LEAVED_ROOM, (roomId, leaverId, lobbyPlayers, activePlayers) => {
 //#endregion
 
 makeInteractible();
-
-//#region NUI callback regisztrálások
-RegisterNuiCallbackType("joinRoom");
-RegisterNuiCallbackType("leaveRoom");
-RegisterNuiCallbackType("pickSpymaster");
-RegisterNuiCallbackType("close");
-
-on("__cfx_nui:joinRoom", (data, cb) => {
-  emitNet(EVENTS.JOIN_ROOM, data.roomId);
-  cb({});
-});
-
-on("__cfx_nui:leaveRoom", (data, cb) => {
-  emitNet(EVENTS.LEAVE_ROOM, data.roomId);
-  cb({});
-});
-
-on("__cfx_nui:pickSpymaster", (data, cb) => {
-  emitNet(EVENTS.PICK_SPYMASTER, data.roomId);
-  cb({});
-});
-
-on("__cfx_nui:close", (_data, cb) => {
-  uiOpen = false;
-  SetNuiFocus(false, false);
-
-  SendNuiMessage(JSON.stringify({ action: "close" }));
-
-  cb({});
-});
-
-on("onResourceStop", (resourceName) => {
-  if (resourceName !== GetCurrentResourceName()) return;
-
-  clearHeadshots();
-
-  for (const obj of Object.values(codeNameProps)) {
-    if (DoesEntityExist(obj)) DeleteEntity(obj);
-  }
-
-  SetNuiFocus(false, false);
-});
-//#endregion
+registNui();
