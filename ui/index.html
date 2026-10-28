@@ -29,9 +29,11 @@
       <!-- ========== WAITING ROOM belépes után, várakozásra ========== -->
       <section id="codename_view-waiting" class="codename_view">
         <div class="codename_panel">
-          <div class="codename_countdown" id="codename_countdown" hidden>
+          <div
+            class="codename_countdown hidden"
+            id="codename_countdown-waiting"
+          >
             <span id="codename_countdownNum">30</span>
-            <small>másodperc</small>
           </div>
 
           <ul class="codename_lobby-players" id="codename_lobbyPlayers"></ul>
@@ -45,29 +47,52 @@
         </div>
       </section>
 
+      <!-- ========== SPYMASTER SELECTION ROOM  ========== -->
+      <section id="codename_view-team" class="codename_view">
+        <div class="codename_panel">
+          <div class="codename_countdown hidden" id="codename_countdown-team">
+            <span id="codename_countdownNum">30</span>
+          </div>
+
+          <ul class="codename_lobby-players" id="codename_lobbyPlayers"></ul>
+
+          <button
+            id="codename_pickSpymasterBtn"
+            class="codename_btn codename_btn-danger"
+          >
+            Leszek Spymaster
+          </button>
+        </div>
+      </section>
+
       <!-- ========== JÁTÉK ========== -->
       <section id="codename_view-game" class="codename_view">
         <div class="codename_stage">
-          <aside class="codename_side codename_side-blue">
-            <h2>Kék csapat</h2>
-            <ul class="codename_side-players" id="codename_bluePlayers"></ul>
+          <aside class="codename_side codename_side-teamOne">
+            <h2>Csapat 1</h2>
+            <ul class="codename_side-players" id="codename_teamOnePlayers"></ul>
           </aside>
 
           <main class="codename_board">
             <div class="codename_turn" id="codename_turnText">
-              A kék csapat következik
+              Csapat 1 következik
             </div>
             <div class="codename_grid" id="codename_grid"></div>
           </main>
 
-          <aside class="codename_side codename_side-red">
-            <h2>Piros csapat</h2>
-            <ul class="codename_side-players" id="codename_redPlayers"></ul>
+          <aside class="codename_side codename_side-teamTwo">
+            <h2>Csapat 2</h2>
+            <ul class="codename_side-players" id="codename_teamTwoPlayers"></ul>
           </aside>
         </div>
       </section>
     </div>
 
+    <script src="../consts.js"></script>
+    <script src="./helper/countdown.js"></script>
+    <script src="./helper/post.js"></script>
+    <script src="./helper/playerlist.js"></script>
+    <script src="./helper/uiHelper.js"></script>
     <script src="script.js"></script>
   </body>
 </html>

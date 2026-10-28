@@ -1,95 +1,115 @@
 const isFiveM = typeof GetParentResourceName === "function";
 const app = document.getElementById("codename_window");
+const joinBtn = document.getElementById("codename_joinBtn");
+const spymasterBtn = document.getElementById("codename_pickSpymasterBtn");
 
 let roomId = null;
-const joinBtn = document.getElementById("codename_joinBtn");
-
-function post(name, data = {}) {
-  if (!isFiveM) return Promise.resolve();
-
-  return fetch(`https://${GetParentResourceName()}/${name}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json; charset=UTF-8" },
-    body: JSON.stringify(data),
-  }).catch((e) => console.error(e));
-}
-
-function showView(name) {
-  document.querySelectorAll(".codename_view").forEach((view) => {
-    view.classList.toggle("active", view.id === `codename_view-${name}`);
-  });
-}
-
-function openUi(view = "lobby") {
-  app.classList.add("show");
-  showView(view);
-}
-
-function hideUi() {
-  app.classList.remove("show");
-}
-
-function closeUi() {
-  hideUi();
-  post("close");
-}
-
-function playerAddList(data) {
-  if (data.lobbyPlayers) {
-    const playerListUl = document.getElementById("codename_lobbyPlayers");
-    data.lobbyPlayers.forEach((player) => {
-      const playerListItem = document.createElement("li");
-      playerListItem.textContent = player;
-      if (!playerListUl.hasChildNodes(playerListItem))
-        playerListUl.appendChild(playerListItem);
-    });
-  }
-}
-
-let countdownTimer = null;
+let countdownInterval = null;
 
 joinBtn.addEventListener("click", () => {
   joinBtn.disabled = true;
   post("joinRoom", { roomId });
 });
 
-document.getElementById("codename_exitBtn").addEventListener("click", closeUi);
+document.getElementById("codename_exitBtn").addEventListener("click", () => {
+  if (e.key === "Escape") {
+    if (roomId) post("leaveRoom", { roomId });
+
+    joinBtn.disabled = false;
+    closeUi();
+  }
+});
+
 document.getElementById("codename_leaveBtn").addEventListener("click", () => {
   post("leaveRoom", { roomId });
+  joinBtn.disabled = false;
 });
 
 window.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") closeUi();
+  if (e.key === "Escape") {
+    if (roomId) post("leaveRoom", { roomId });
+
+    joinBtn.disabled = false;
+    closeUi();
+  }
+});
+
+spymasterBtn.addEventListener("click", () => {
+  spymasterBtn.disabled = true;
+  post("pickSpymaster", { roomId });
 });
 
 window.addEventListener("message", (event) => {
   const data = event.data;
+  console.log(JSON.stringify(data));
 
   switch (data.action) {
-    case "open":
+    case "open": {
       if (data.roomId !== undefined) roomId = data.roomId;
+
       joinBtn.disabled = false;
+      spymasterBtn.disabled = true;
       openUi("lobby");
       break;
+    }
 
-    case "close":
+    case "close": {
       joinBtn.disabled = false;
+      spymasterBtn.disabled = true;
       hideUi();
       break;
+    }
 
-    case "joined":
-      if (data.joinedPlayerId === data.playerId) showView("waiting");
+    case "joined": {
+      if (data.joinedPlayerData.id === data.playerId) showView("waiting");
 
-      playerAddList(data);
+      const waitingTimer = document.getElementById(
+        "codename_countdown-waiting",
+      );
+
+      if (data.activePlayers === true && data.startsIn) {
+        waitingTimer.classList.remove("hidden");
+        startCountdown(data.startsIn, waitingTimer);
+      } else {
+        clearInterval(countdownInterval);
+        waitingTimer.classList.add("hidden");
+      }
+
+      refreshPlayerList(data.lobbyPlayers, "waiting");
+      break;
+    }
+
+    case "spymaster_selection": {
+      showView("team");
+
+      console.log(JSON.stringify(data.players));
+
+      refreshPlayerList(data.players, "team");
+      spymasterBtn.disabled = false;
+
+      const teamTimer = document.getElementById("codename_countdown-team");
+      startCountdown(data.startsIn, teamTimer);
 
       break;
+    }
 
-    case "leaved":
-      console.log(data.leaverId);
+    case "leaved": {
       if (data.leaverId === data.playerId) showView("lobby");
-      playerAddList(data);
+
+      const waitingTimer = document.getElementById(
+        "codename_countdown-waiting",
+      );
+
+      if (data.activePlayers !== true) {
+        clearInterval(countdownInterval);
+        waitingTimer.classList.add("hidden");
+      }
+
+      refreshPlayerList(data.lobbyPlayers, "waiting");
       joinBtn.disabled = false;
+      spymasterBtn.disabled = true;
 
       break;
+    }
   }
 });

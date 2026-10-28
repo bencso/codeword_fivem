@@ -1,6 +1,4 @@
 const rooms = new Map();
-//TODO: Mikor elindul a játék shuffle-li a játékosokat a csapatokba, és választhanak 20 másodpercig ki megy be spymasternek, ha nem válaszottak akkor random tesz be
-// TODO: A spymasterek kapnak egy emitNet-et, hogy ők a spymasterek és rákerül a html-ükre egy css tag és akkor ők látják kártyák színét
 
 //#region SZOBA LÉTREHOZÁSA / PROP LETEVÉSE
 onNet(EVENTS.CREATE_ROOM, (pos) => {
@@ -12,10 +10,9 @@ onNet(EVENTS.CREATE_ROOM, (pos) => {
     createdBy: src,
     pos,
     players: [],
-    blueTeam: [],
-    redTeam: [],
     words: [],
     countDownTimer: null,
+    startsAt: null,
     state: "joinable",
   };
 
@@ -25,12 +22,6 @@ onNet(EVENTS.CREATE_ROOM, (pos) => {
 });
 
 //#region SZOBA TÖRLÉSE / PROP TÖRLÉSE
-onNet(EVENTS.REMOVE_ROOM, (roomId) => {
-  if (!rooms.has(roomId)) return;
-
-  rooms.delete(roomId);
-  emitNet(EVENTS.REMOVE_PROP, -1, roomId);
-});
 
 //#region SZOBÁBA BELÉPÉS
 onNet(EVENTS.JOIN_ROOM, (roomId) => {
@@ -39,38 +30,174 @@ onNet(EVENTS.JOIN_ROOM, (roomId) => {
   if (rooms.size > 0 && rooms.has(roomId)) {
     const prevRoom = rooms.get(roomId);
 
-    if (prevRoom.players.includes(joinedPlayerId)) return;
+    if (
+      prevRoom.players.length > 0 &&
+      prevRoom.players.find((p) => p.id === joinedPlayerId)
+    )
+      return;
     if (prevRoom.state !== "joinable") return;
+
+    const joinedPlayerData = {
+      id: joinedPlayerId,
+      name: GetPlayerName(joinedPlayerId),
+      team: "",
+    };
+onNet(EVENTS.REMOVE_ROOM, (roomId) => {
+  const playerId = source;
+
+  if (!rooms.has(roomId)) return;
+
+  const room = rooms.get(roomId);
+  const isStarted = room.state === "started";
+
+  if ((isStarted && playerId === room.createdBy) || !isStarted) {
+    rooms.delete(roomId);
+    emitNet(EVENTS.REMOVE_PROP, -1, roomId);
+  }
+});
 
     const room = {
       ...prevRoom,
-      players: [...prevRoom.players, joinedPlayerId],
+      players: [...prevRoom.players, joinedPlayerData],
     };
 
     rooms.set(roomId, room);
-    room.players.forEach((playerId) =>
-      emitNet(
-        EVENTS.JOINED_ROOM,
-        playerId,
-        roomId,
-        joinedPlayerId,
-        room.players.map((id) => GetPlayerName(id)),
-      ),
-    );
 
     if (room.players.length >= MIN_PLAYERS && !room.countDownTimer) {
+      room.startsAt = Date.now() + AFTERMIN_COUNTDOWN_MS;
+
       room.countDownTimer = setTimeout(() => {
         const currentRoom = rooms.get(roomId);
-
         if (!currentRoom) return;
-        if (currentRoom.players.length < MIN_PLAYERS) {
-          currentRoom.countDownTimer = null;
-          return;
-        }
 
         currentRoom.countDownTimer = null;
+        currentRoom.startsAt = null;
+
+        if (currentRoom.players.length < MIN_PLAYERS) return;
+
+        startGame(roomId);
       }, AFTERMIN_COUNTDOWN_MS);
     }
+
+    const startsIn = room.startsAt ? room.startsAt - Date.now() : null;
+
+    room.players.forEach((player) =>
+      emitNet(
+        EVENTS.JOINED_ROOM,
+        player.id,
+        roomId,
+        joinedPlayerId,
+        joinedPlayerData,
+        room.players,
+        room.players.length >= MIN_PLAYERS,
+        startsIn,
+      ),
+    );
+  }
+});
+
+//#region JÁTÉK INDITÁSA | SPYMASTER VÁLASZTÓ
+function startGame(roomId) {
+  if (rooms.size > 0 && rooms.has(roomId)) {
+    const currentRoom = rooms.get(roomId);
+
+    if (currentRoom.countDownTimer) clearTimeout(currentRoom.countDownTimer);
+
+    // CSAPATOK KIOSZTÁSA
+    let half = Math.floor(currentRoom.players.length / 2);
+
+    const players = shuffle(currentRoom.players).map((p, i) => ({
+      ...p,
+      team: i < half ? TEAM_ONE : TEAM_TWO,
+    }));
+
+    const startsIn = Date.now() + AFTERMIN_COUNTDOWN_MS;
+
+    const room = {
+      ...currentRoom,
+      players,
+      startsAt: startsIn,
+      state: "selecting",
+    };
+
+    rooms.set(roomId, room);
+
+    room.players.forEach((player) =>
+      emitNet(
+        EVENTS.SPYMASTER_SELECTION,
+        player.id,
+        roomId,
+        room.players,
+        room.startsAt - Date.now(),
+      ),
+    );
+  }
+}
+
+onNet(EVENTS.PICK_SPYMASTER, (roomId) => {
+  if (rooms.size > 0 && rooms.has(roomId)) {
+    const currentRoom = rooms.get(roomId);
+
+    const selectorId = source;
+    const selector = currentRoom.players.find((p) => p.id === selectorId);
+    if (!selector || currentRoom.state !== "selecting") return;
+
+    const teamHasSpymaster = currentRoom.players.some(
+      (p) => p.team === selector.team && p.spymaster,
+    );
+
+    if (teamHasSpymaster) return;
+
+    currentRoom.players = currentRoom.players.map((p) =>
+      p.id === selectorId ? { ...p, spymaster: true } : p,
+    );
+
+    currentRoom.players.forEach((p) =>
+      emitNet(EVENTS.SPYMASTER_SELECTED, p.id, roomId, currentRoom.players),
+    );
+
+    const bothReady =
+      currentRoom.players.some((p) => p.team === TEAM_ONE && p.spymaster) &&
+      currentRoom.players.some((p) => p.team === TEAM_TWO && p.spymaster);
+
+    if (!bothReady) return;
+
+    // SZÖVEGEK KIOSZTÁSA
+    const defaultWords = LoadResourceFile(GetCurrentResourceName(), WORDS_FILE)
+      .split("\n")
+      .map((w) => w.trim())
+      .filter(Boolean);
+
+    const selectedWords = shuffle(defaultWords).slice(0, RANDOM_WORDS);
+
+    const startingTeam = Math.random() < 0.5 ? TEAM_ONE : TEAM_TWO;
+    const otherTeam = startingTeam === TEAM_ONE ? TEAM_TWO : TEAM_ONE;
+
+    const colors = shuffle([
+      ...Array(9).fill(startingTeam),
+      ...Array(8).fill(otherTeam),
+      ...Array(7).fill(""),
+      "black",
+    ]);
+
+    const words = selectedWords.map((word, i) => ({
+      word,
+      team: colors[i],
+      revealed: false,
+    }));
+
+    const room = {
+      ...currentRoom,
+      words,
+      startsAt: null,
+      state: "started",
+    };
+
+    rooms.set(roomId, room);
+
+    room.players.forEach((player) =>
+      emitNet(EVENTS.STARTED_GAME, player.id, roomId, room.players, words),
+    );
   }
 });
 
@@ -83,7 +210,7 @@ onNet(EVENTS.LEAVE_ROOM, (roomId) => {
 
     const room = {
       ...currentRoom,
-      players: currentRoom.players.filter((p) => p !== leaverId),
+      players: currentRoom.players.filter((p) => p.id !== leaverId),
     };
 
     rooms.set(roomId, room);
@@ -93,57 +220,36 @@ onNet(EVENTS.LEAVE_ROOM, (roomId) => {
       leaverId,
       roomId,
       leaverId,
-      room.players.map((id) => GetPlayerName(id)),
+      room.players,
+      room.players.length >= MIN_PLAYERS,
     );
 
-    room.players.forEach((playerId) =>
+    room.players.forEach((player) =>
       emitNet(
         EVENTS.LEAVED_ROOM,
-        playerId,
+        player.id,
         roomId,
         leaverId,
-        room.players.map((id) => GetPlayerName(id)),
+        room.players,
+        room.players.length >= MIN_PLAYERS,
       ),
     );
 
     if (room.players.length < MIN_PLAYERS && room.countDownTimer) {
       clearTimeout(room.countDownTimer);
       room.countDownTimer = null;
+      room.startsAt = null;
+
+      room.state = "joinable";
     }
-  }
-});
 
-//#region SZÖVEGEK KIOSZTÁSA
-onNet(EVENTS.WORDS_PICK, (roomId) => {
-  if (rooms.size > 0 && rooms.has(roomId)) {
-    const currentRoom = rooms.get(roomId);
+    if (room.players.length === 0) {
+      if (room.countDownTimer) clearTimeout(room.countDownTimer);
 
-    //TODO: Ez a magyar szavak txt-ből random 25-öt kiveszünk és besorolunk random 4-4-et a csapatoknak, illetve egy random dead kártya
-    const selectedWords = ["egy", "kettő", "három", "négy", "kis", "nagy"];
-    let redTeamWords = ["kis"];
-    let blueTeamWords = ["nagy"];
+      if (!rooms.has(roomId)) return;
 
-    const words = [];
-
-    selectedWords.forEach((word) => {
-      const isRed = redTeamWords.includes(word);
-      const isBLue = blueTeamWords.includes(word);
-
-      words.push({
-        team: isBLue || isRed ? (isRed ? "red" : "blue") : "",
-        word,
-      });
-    });
-
-    const room = {
-      ...currentRoom,
-      words,
-    };
-
-    rooms.set(roomId, room);
-
-    room.players.forEach((playerId) =>
-      emitNet(EVENTS.WORDS_PICKED, playerId, roomId),
-    );
+      rooms.delete(roomId);
+      emitNet(EVENTS.REMOVE_PROP, -1, roomId);
+    }
   }
 });

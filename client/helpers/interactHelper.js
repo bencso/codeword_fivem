@@ -1,4 +1,5 @@
 const interactDistance = 2.0;
+let uiOpen = false;
 
 function distanceMe(a, b) {
   const dx = a[0] - b[0],
@@ -6,6 +7,12 @@ function distanceMe(a, b) {
     dz = a[2] - b[2];
 
   return Math.sqrt(dx * dx + dy * dy + dz * dz);
+}
+
+function openUI(roomId) {
+  uiOpen = true;
+  SetNuiFocus(true, true);
+  SendNuiMessage(JSON.stringify({ action: "open", roomId }));
 }
 
 async function makeInteractible() {
