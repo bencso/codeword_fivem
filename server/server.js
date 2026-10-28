@@ -42,19 +42,19 @@ onNet(EVENTS.JOIN_ROOM, (roomId) => {
       name: GetPlayerName(joinedPlayerId),
       team: "",
     };
-onNet(EVENTS.REMOVE_ROOM, (roomId) => {
-  const playerId = source;
+    onNet(EVENTS.REMOVE_ROOM, (roomId) => {
+      const playerId = source;
 
-  if (!rooms.has(roomId)) return;
+      if (!rooms.has(roomId)) return;
 
-  const room = rooms.get(roomId);
-  const isStarted = room.state === "started";
+      const room = rooms.get(roomId);
+      const canRemove =
+        room.state === "joinable" || playerId === room.createdBy;
+      if (!canRemove) return;
 
-  if ((isStarted && playerId === room.createdBy) || !isStarted) {
-    rooms.delete(roomId);
-    emitNet(EVENTS.REMOVE_PROP, -1, roomId);
-  }
-});
+      rooms.delete(roomId);
+      emitNet(EVENTS.REMOVE_PROP, -1, roomId);
+    });
 
     const room = {
       ...prevRoom,
@@ -205,6 +205,8 @@ onNet(EVENTS.PICK_SPYMASTER, (roomId) => {
 onNet(EVENTS.LEAVE_ROOM, (roomId) => {
   const leaverId = source;
 
+  if (!currentRoom.players.some((p) => p.id === leaverId)) return;
+
   if (rooms.size > 0 && rooms.has(roomId)) {
     const currentRoom = rooms.get(roomId);
 
@@ -249,7 +251,6 @@ onNet(EVENTS.LEAVE_ROOM, (roomId) => {
       if (!rooms.has(roomId)) return;
 
       rooms.delete(roomId);
-      emitNet(EVENTS.REMOVE_PROP, -1, roomId);
     }
   }
 });
