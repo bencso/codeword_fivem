@@ -244,13 +244,5 @@ onNet(EVENTS.LEAVE_ROOM, (roomId) => {
 
       room.state = "joinable";
     }
-
-    if (room.players.length === 0) {
-      if (room.countDownTimer) clearTimeout(room.countDownTimer);
-
-      if (!rooms.has(roomId)) return;
-
-      rooms.delete(roomId);
-    }
   }
 });

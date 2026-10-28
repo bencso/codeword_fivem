@@ -12,12 +12,10 @@ joinBtn.addEventListener("click", () => {
 });
 
 document.getElementById("codename_exitBtn").addEventListener("click", () => {
-  if (e.key === "Escape") {
-    if (roomId) post("leaveRoom", { roomId });
+  if (roomId) post("leaveRoom", { roomId });
 
-    joinBtn.disabled = false;
-    closeUi();
-  }
+  joinBtn.disabled = false;
+  closeUi();
 });
 
 document.getElementById("codename_leaveBtn").addEventListener("click", () => {
