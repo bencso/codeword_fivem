@@ -11,7 +11,10 @@ client_scripts {
     'client/helpers/registCommand.js',
     'client/helpers/headshotHelper.js',
     'client/helpers/interactHelper.js',
-    'client/client.js'
+    'client/functions/props.js',
+    'client/functions/rooms.js',
+    'client/functions/teams.js',
+    'client/client.js',
 }
 
 server_scripts {

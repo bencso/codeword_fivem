@@ -1,14 +1,12 @@
-function createCommands() {
-  RegisterCommand(
-    "codename",
-    () => {
-      const ped = PlayerPedId();
-      const [x, y, z] = GetOffsetFromEntityInWorldCoords(ped, 0.0, 1.0, 0.0);
-      const heading = GetEntityHeading(ped) + 180.0;
-      const pos = { x, y, z, heading };
+RegisterCommand(
+  "codename",
+  () => {
+    const ped = PlayerPedId();
+    const [x, y, z] = GetOffsetFromEntityInWorldCoords(ped, 0.0, 1.0, 0.0);
+    const heading = GetEntityHeading(ped) + 180.0;
+    const pos = { x, y, z, heading };
 
-      emitNet(EVENTS.CREATE_ROOM, pos);
-    },
-    false,
-  );
-}
+    emitNet(EVENTS.CREATE_ROOM, pos);
+  },
+  false,
+);
