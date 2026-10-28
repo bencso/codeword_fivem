@@ -14,6 +14,7 @@ client_scripts {
     'client/functions/props.js',
     'client/functions/rooms.js',
     'client/functions/teams.js',
+    'client/functions/game.js',
     'client/client.js',
 }
 
@@ -30,6 +31,7 @@ files {
     'ui/helper/refreshPlayerList.js',
     'ui/helper/post.js',
     'ui/helper/uiHelper.js',
+    'ui/helper/createWordCards.js',
     'ui/index.html',
     'ui/style.css',
     'ui/script.js'

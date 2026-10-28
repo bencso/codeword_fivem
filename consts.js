@@ -17,6 +17,7 @@ const EVENTS = {
   STARTED_GAME: "codenames:startedGame",
 
   PICK_SPYMASTER: "codenames:pickSpymaster",
+  DROPED_USER: "codenames:dropedUser",
 };
 
 const PROP = "vw_prop_casino_cards_02";
@@ -31,5 +32,7 @@ const TEAM_ONE = "blue";
 const TEAM_TWO = "red";
 const TEAM_ONE_COLOR = "rgba(255, 0, 0, 0.6)";
 const TEAM_TWO_COLOR = "rgba(0, 132, 255, 0.6)";
+
+const ONE_TEAM_WORDS = 6;
 
 const Delay = (ms) => new Promise((res) => setTimeout(res, ms));

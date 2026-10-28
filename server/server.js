@@ -22,6 +22,18 @@ onNet(EVENTS.CREATE_ROOM, (pos) => {
 });
 
 //#region SZOBA TÖRLÉSE / PROP TÖRLÉSE
+onNet(EVENTS.REMOVE_ROOM, (roomId) => {
+  const playerId = source;
+
+  if (!rooms.has(roomId)) return;
+
+  const room = rooms.get(roomId);
+  const canRemove = room.state === "joinable" || playerId === room.createdBy;
+  if (!canRemove) return;
+
+  rooms.delete(roomId);
+  emitNet(EVENTS.REMOVE_PROP, -1, roomId);
+});
 
 //#region SZOBÁBA BELÉPÉS
 onNet(EVENTS.JOIN_ROOM, (roomId) => {
@@ -42,19 +54,6 @@ onNet(EVENTS.JOIN_ROOM, (roomId) => {
       name: GetPlayerName(joinedPlayerId),
       team: "",
     };
-    onNet(EVENTS.REMOVE_ROOM, (roomId) => {
-      const playerId = source;
-
-      if (!rooms.has(roomId)) return;
-
-      const room = rooms.get(roomId);
-      const canRemove =
-        room.state === "joinable" || playerId === room.createdBy;
-      if (!canRemove) return;
-
-      rooms.delete(roomId);
-      emitNet(EVENTS.REMOVE_PROP, -1, roomId);
-    });
 
     const room = {
       ...prevRoom,
@@ -73,9 +72,15 @@ onNet(EVENTS.JOIN_ROOM, (roomId) => {
         currentRoom.countDownTimer = null;
         currentRoom.startsAt = null;
 
-        if (currentRoom.players.length < MIN_PLAYERS) return;
+        if (currentRoom.players.length < MIN_PLAYERS) {
+          currentRoom.countDownTimer = null;
+          currentRoom.startsAt = null;
 
-        startGame(roomId);
+          currentRoom.state = "joinable";
+          return;
+        }
+
+        switchSpymasterSelector(roomId);
       }, AFTERMIN_COUNTDOWN_MS);
     }
 
@@ -96,8 +101,8 @@ onNet(EVENTS.JOIN_ROOM, (roomId) => {
   }
 });
 
-//#region JÁTÉK INDITÁSA | SPYMASTER VÁLASZTÓ
-function startGame(roomId) {
+//#region SPYMASTER VÁLASZTÓ
+function switchSpymasterSelector(roomId) {
   if (rooms.size > 0 && rooms.has(roomId)) {
     const currentRoom = rooms.get(roomId);
 
@@ -111,14 +116,44 @@ function startGame(roomId) {
       team: i < half ? TEAM_ONE : TEAM_TWO,
     }));
 
-    const startsIn = Date.now() + AFTERMIN_COUNTDOWN_MS;
-
     const room = {
       ...currentRoom,
       players,
-      startsAt: startsIn,
       state: "selecting",
     };
+
+    room.startsAt = Date.now() + AFTERMIN_COUNTDOWN_MS;
+
+    room.countDownTimer = setTimeout(() => {
+      const currentRoom = rooms.get(roomId);
+      if (!currentRoom || currentRoom.state !== "selecting") return;
+
+      currentRoom.countDownTimer = null;
+      currentRoom.startsAt = null;
+
+      if (currentRoom.players.length < MIN_PLAYERS) {
+        currentRoom.countDownTimer = null;
+        currentRoom.startsAt = null;
+
+        currentRoom.state = "joinable";
+
+        currentRoom.players.forEach((player) =>
+          emitNet(EVENTS.DROPED_USER, player.id, roomId, currentRoom.players),
+        );
+
+        return;
+      }
+
+      [TEAM_ONE, TEAM_TWO].forEach((team) => {
+        const teamPlayers = currentRoom.players.filter((p) => p.team === team);
+        if (teamPlayers.length === 0) return;
+        if (teamPlayers.some((p) => p.spymaster)) return;
+
+        shuffle(teamPlayers)[0].spymaster = true;
+      });
+
+      startGame(roomId);
+    }, AFTERMIN_COUNTDOWN_MS);
 
     rooms.set(roomId, room);
 
@@ -140,6 +175,7 @@ onNet(EVENTS.PICK_SPYMASTER, (roomId) => {
 
     const selectorId = source;
     const selector = currentRoom.players.find((p) => p.id === selectorId);
+    console.log(JSON.stringify(currentRoom));
     if (!selector || currentRoom.state !== "selecting") return;
 
     const teamHasSpymaster = currentRoom.players.some(
@@ -162,6 +198,16 @@ onNet(EVENTS.PICK_SPYMASTER, (roomId) => {
 
     if (!bothReady) return;
 
+    startGame(roomId);
+  }
+});
+
+function startGame(roomId) {
+  if (rooms.size > 0 && rooms.has(roomId)) {
+    const currentRoom = rooms.get(roomId);
+
+    if (currentRoom.state !== "selecting") return;
+
     // SZÖVEGEK KIOSZTÁSA
     const defaultWords = LoadResourceFile(GetCurrentResourceName(), WORDS_FILE)
       .split("\n")
@@ -173,10 +219,15 @@ onNet(EVENTS.PICK_SPYMASTER, (roomId) => {
     const startingTeam = Math.random() < 0.5 ? TEAM_ONE : TEAM_TWO;
     const otherTeam = startingTeam === TEAM_ONE ? TEAM_TWO : TEAM_ONE;
 
+    const startingTeamWordCount = ONE_TEAM_WORDS;
+    const otherTeamWordCount = startingTeamWordCount - 1;
+    const neutralWordCount =
+      selectedWords.length - startingTeamWordCount - otherTeamWordCount - 1;
+
     const colors = shuffle([
-      ...Array(9).fill(startingTeam),
-      ...Array(8).fill(otherTeam),
-      ...Array(7).fill(""),
+      ...Array(startingTeamWordCount).fill(startingTeam),
+      ...Array(otherTeamWordCount).fill(otherTeam),
+      ...Array(neutralWordCount).fill(""),
       "black",
     ]);
 
@@ -193,22 +244,25 @@ onNet(EVENTS.PICK_SPYMASTER, (roomId) => {
       state: "started",
     };
 
+    console.log("startGame");
+    console.log(JSON.stringify(room));
+
     rooms.set(roomId, room);
 
-    room.players.forEach((player) =>
-      emitNet(EVENTS.STARTED_GAME, player.id, roomId, room.players, words),
-    );
+    room.players.forEach((player) => {
+      emitNet(EVENTS.STARTED_GAME, player.id, roomId, room.players, words);
+    });
   }
-});
+}
 
 //#region SZOBÁBA KILÉPÉS
 onNet(EVENTS.LEAVE_ROOM, (roomId) => {
   const leaverId = source;
 
-  if (!currentRoom.players.some((p) => p.id === leaverId)) return;
-
   if (rooms.size > 0 && rooms.has(roomId)) {
     const currentRoom = rooms.get(roomId);
+
+    if (!currentRoom.players.some((p) => p.id === leaverId)) return;
 
     const room = {
       ...currentRoom,
@@ -243,6 +297,7 @@ onNet(EVENTS.LEAVE_ROOM, (roomId) => {
       room.startsAt = null;
 
       room.state = "joinable";
+      rooms.set(roomId, room);
     }
   }
 });

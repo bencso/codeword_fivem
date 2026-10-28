@@ -91,6 +91,43 @@ window.addEventListener("message", (event) => {
       break;
     }
 
+    case "userDroped": {
+      showView("waiting");
+
+      const waitingTimer = document.getElementById(
+        "codename_countdown-waiting",
+      );
+      waitingTimer.classList.add("hidden");
+      if (countdownInterval) clearInterval(countdownInterval);
+
+      refreshPlayerList(data.lobbyPlayers, "waiting");
+      joinBtn.disabled = false;
+      spymasterBtn.disabled = true;
+
+      break;
+    }
+
+    case "gameStarted": {
+      showView("game");
+
+      const waitingTimer = document.getElementById(
+        "codename_countdown-waiting",
+      );
+      waitingTimer.classList.add("hidden");
+      if (countdownInterval) clearInterval(countdownInterval);
+
+      joinBtn.disabled = true;
+      spymasterBtn.disabled = true;
+
+      const isSpymaster = data.lobbyPlayers.some(
+        (lp) => lp.id === data.playerId && lp.spymaster,
+      );
+
+      createWordCards(data.words, isSpymaster);
+
+      break;
+    }
+
     case "leaved": {
       if (data.leaverId === data.playerId) showView("lobby");
 

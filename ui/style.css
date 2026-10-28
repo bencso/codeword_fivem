@@ -188,37 +188,6 @@ body {
   perspective: 1400px;
 }
 
-.codename_side {
-  align-self: center;
-  padding: 1.2rem 1.3rem;
-  border-radius: 1rem;
-  transform-style: preserve-3d;
-  box-shadow: 0 1.3rem 50px rgba(0, 0, 0, 0.45);
-}
-
-.codename_side-blue {
-  transform-origin: left center;
-  transform: rotateY(28deg);
-  background: linear-gradient(
-    160deg,
-    rgba(47, 107, 255, 0.55),
-    rgba(23, 58, 153, 0.35)
-  );
-  border-left: 5px solid var(--blue);
-}
-
-.codename_side-red {
-  transform-origin: right center;
-  transform: rotateY(-28deg);
-  background: linear-gradient(
-    200deg,
-    rgba(255, 59, 59, 0.55),
-    rgba(143, 23, 23, 0.35)
-  );
-  border-right: 5px solid var(--red);
-  text-align: right;
-}
-
 .codename_side h2 {
   margin: 0 0 1rem;
   font-size: 1rem;
@@ -240,7 +209,6 @@ body {
 .codename_side-players li {
   font-size: 1.2rem;
   font-weight: 800;
-  text-shadow: 0 2px 0.5rem rgba(0, 0, 0, 0.8);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -319,13 +287,13 @@ body {
   filter: brightness(1.06);
 }
 
-.codename_card.blue {
+.codename_card.teamOne {
   background: var(--blue);
   border-bottom-color: var(--blue-dark);
   color: #fff;
 }
 
-.codename_card.red {
+.codename_card.teamTwo {
   background: var(--red);
   border-bottom-color: var(--red-dark);
   color: #fff;
@@ -337,14 +305,10 @@ body {
   color: #3a3a3a;
 }
 
-.codename_card.assassin {
+.codename_card.black {
   background: #151515;
   border-bottom-color: #000;
   color: #fff;
-}
-
-.codename_card.hint {
-  opacity: 0.55;
 }
 
 .codename_card.revealed {
