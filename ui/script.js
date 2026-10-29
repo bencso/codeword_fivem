@@ -145,6 +145,7 @@ window.addEventListener("message", (event) => {
       spymasterBtn.disabled = true;
 
       const teamText = document.getElementById("codename_turnText");
+      teamText.classList.remove("teamTwo");
       teamText.textContent = `${data.startingTeam ?? ""} köre`;
       if (data.startingTeam === TEAM_TWO) teamText.classList.add("teamTwo");
 
@@ -156,6 +157,7 @@ window.addEventListener("message", (event) => {
       if (playerData) {
         const isSpymaster = playerData.spymaster;
         isPlayerSpymaster = isSpymaster;
+        playerTeam = playerData.team;
 
         createIngamePlyerList(data.lobbyPlayers);
         createWordCards(data.words, isSpymaster, playerTeam);
@@ -171,6 +173,7 @@ window.addEventListener("message", (event) => {
       if (countdownInterval) clearInterval(countdownInterval);
 
       const teamText = document.getElementById("codename_turnText");
+      teamText.classList.remove("teamTwo");
       teamText.textContent = `${data.currentTeam ?? ""} köre`;
       if (data.currentTeam === TEAM_TWO) teamText.classList.add("teamTwo");
 

@@ -42,6 +42,8 @@ onNet(
   async (roomId, leaverId, lobbyPlayers, activePlayers) => {
     console.log(roomId + "| Kilépett játékos: " + leaverId);
 
+    const playerId = GetPlayerServerId(PlayerId());
+
     if (leaverId === playerId) {
       currentRoomId = null;
       clearHeadshots();

@@ -311,6 +311,17 @@ onNet(EVENTS.LEAVE_ROOM, (roomId) => {
       room.players.length >= MIN_PLAYERS,
     );
 
+    room.players.forEach((player) =>
+      emitNet(
+        EVENTS.LEAVED_ROOM,
+        player.id,
+        roomId,
+        leaverId,
+        room.players,
+        room.players.length >= MIN_PLAYERS,
+      ),
+    );
+
     if (
       room.state === "joinable" &&
       room.players.length < MIN_PLAYERS &&
@@ -410,16 +421,31 @@ function nextRound(roomId) {
     const endsTime = room.endsAt ? room.endsAt - Date.now() : null;
 
     room.players.forEach((player) => {
-      emitNet(
-        EVENTS.NEXT_ROUND,
-        player.id,
-        roomId,
-        clueData.clue,
-        clueData.count,
-        room.words,
-        room.currentTeam,
-        endsTime,
-      );
+      if (player.spymaster) {
+        emitNet(
+          EVENTS.STARTED_GAME,
+          player.id,
+          roomId,
+          room.players,
+          words,
+          startingTeam,
+          endsTime,
+        );
+      } else {
+        const wordsWithoutColor = words.map((word) => {
+          return { word: word.word, revealed: word.revealed };
+        });
+
+        emitNet(
+          EVENTS.STARTED_GAME,
+          player.id,
+          roomId,
+          room.players,
+          wordsWithoutColor,
+          startingTeam,
+          endsTime,
+        );
+      }
     });
   }
 }
