@@ -292,60 +292,7 @@ function startGame(roomId) {
 
 //#region SZOBÁBA KILÉPÉS
 onNet(EVENTS.LEAVE_ROOM, (roomId) => {
-  const leaverId = source;
-
-  if (rooms.size > 0 && rooms.has(roomId)) {
-    const currentRoom = rooms.get(roomId);
-
-    if (!currentRoom.players.some((p) => p.id === leaverId)) return;
-    const leaver = currentRoom.players.find((p) => p.id === leaverId);
-
-    const room = {
-      ...currentRoom,
-      players: currentRoom.players.filter((p) => p.id !== leaverId),
-    };
-
-    rooms.set(roomId, room);
-
-    emitNet(
-      EVENTS.LEAVED_ROOM,
-      leaverId,
-      roomId,
-      leaverId,
-      room.players,
-      room.players.length >= MIN_PLAYERS,
-    );
-
-    room.players.forEach((player) =>
-      emitNet(
-        EVENTS.LEAVED_ROOM,
-        player.id,
-        roomId,
-        leaverId,
-        room.players,
-        room.players.length >= MIN_PLAYERS,
-      ),
-    );
-
-    if (
-      room.state === "joinable" &&
-      room.players.length < MIN_PLAYERS &&
-      room.countDownTimer
-    )
-      resetRoom(roomId);
-
-    if (room.state === "selecting" || room.state === "started") {
-      const teamEmpty = [TEAM_ONE, TEAM_TWO].some(
-        (t) => !room.players.some((p) => p.team === t),
-      );
-
-      //TODO: Itt a spymasterLeft, akkor kijelöl egy másikat helyette a rendszer
-      const spymasterLeft = room.state === "started" && leaver.spymaster;
-
-      if (room.players.length < MIN_PLAYERS || teamEmpty || spymasterLeft)
-        resetRoom(roomId);
-    }
-  }
+  leaveRoom(roomId, source);
 });
 
 //#region CLUE ADD
@@ -472,4 +419,16 @@ function nextRound(roomId) {
     });
   }
 }
+//#endregion
+
+//#region Lelép a játékos a szerverről
+on("playerDropped", () => {
+  const droppedId = Number(source);
+
+  for (const [roomId, room] of rooms) {
+    if (room.players.some((p) => p.id === droppedId)) {
+      leaveRoom(roomId, droppedId);
+    }
+  }
+});
 //#endregion

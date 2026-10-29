@@ -19,6 +19,7 @@ client_scripts {
 }
 
 server_scripts {
+    'server/helpers/leaveRoom.js',
     'server/helpers/resetRoom.js',
     'server/helpers/shuffle.js',
     'server/server.js'
