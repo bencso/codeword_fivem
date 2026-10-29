@@ -47,4 +47,8 @@ clueText.addEventListener("keydown", (e) => {
   if (e.key === "Enter") submitClue();
 });
 
+clueText.addEventListener("input", () => {
+  updateClueState();
+});
+
 clueSubmit.addEventListener("click", submitClue);

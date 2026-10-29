@@ -25,8 +25,8 @@ onNet(EVENTS.DROPED_USER, async (roomId, players) => {
 onNet(
   EVENTS.STARTED_GAME,
   async (roomId, players, words, startingTeam, endsTime) => {
-    const myId = GetPlayerServerId(PlayerId());
     console.log(roomId + "| Játék elindult");
+    const playerId = GetPlayerServerId(PlayerId());
 
     const withPhotos = await Promise.all(
       players.map(async (p) => ({
@@ -41,7 +41,7 @@ onNet(
         roomId,
         players,
         lobbyPlayers: withPhotos,
-        playerId: myId,
+        playerId,
         words,
         startingTeam,
         endsTime,

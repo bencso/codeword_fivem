@@ -37,26 +37,36 @@ onNet(
 //#endregion
 
 //#region Szobából kilépés
-onNet(EVENTS.LEAVED_ROOM, (roomId, leaverId, lobbyPlayers, activePlayers) => {
-  const myId = GetPlayerServerId(PlayerId());
-  console.log(roomId + "| Kilépett játékos: " + leaverId);
+onNet(
+  EVENTS.LEAVED_ROOM,
+  async (roomId, leaverId, lobbyPlayers, activePlayers) => {
+    const myId = GetPlayerServerId(PlayerId());
+    console.log(roomId + "| Kilépett játékos: " + leaverId);
 
-  if (leaverId === myId) {
-    currentRoomId = null;
-    clearHeadshots();
-  } else {
-    removePlayerHeadshot(leaverId);
-  }
+    if (leaverId === myId) {
+      currentRoomId = null;
+      clearHeadshots();
+    } else {
+      removePlayerHeadshot(leaverId);
+    }
 
-  SendNuiMessage(
-    JSON.stringify({
-      action: "leaved",
-      roomId,
-      leaverId,
-      playerId: myId,
-      lobbyPlayers,
-      activePlayers,
-    }),
-  );
-});
+    const withPhotos = await Promise.all(
+      lobbyPlayers.map(async (p) => ({
+        ...p,
+        photo: await getPlayerHeadshot(p.id),
+      })),
+    );
+
+    SendNuiMessage(
+      JSON.stringify({
+        action: "leaved",
+        roomId,
+        leaverId,
+        playerId: myId,
+        lobbyPlayers: withPhotos,
+        activePlayers,
+      }),
+    );
+  },
+);
 //#endregion

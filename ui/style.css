@@ -102,6 +102,11 @@ body {
   text-align: center;
 }
 
+.codename_turnTimer.urgent {
+  background-color: #8f1717 !important;
+  color: #ffff;
+}
+
 .codename_btn-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -253,6 +258,13 @@ body {
   gap: 14px;
 }
 
+.codename_board-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+}
+
 .codename_turn {
   padding: 7px 16px;
   border-radius: 8px;
@@ -260,6 +272,17 @@ body {
   border: 1px solid var(--line);
   background-color: var(--teamOne);
   font-size: 14px;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.codename_turnTimer,
+.codename_clue {
+  padding: 7px 16px;
+  border-radius: 8px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  font-size: 1rem;
   margin-bottom: 12px;
   font-weight: 500;
 }

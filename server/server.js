@@ -182,7 +182,13 @@ onNet(EVENTS.PICK_SPYMASTER, (roomId) => {
     );
 
     currentRoom.players.forEach((p) =>
-      emitNet(EVENTS.SPYMASTER_SELECTED, p.id, roomId, currentRoom.players),
+      emitNet(
+        EVENTS.SPYMASTER_SELECTED,
+        p.id,
+        roomId,
+        currentRoom.players,
+        selector.team,
+      ),
     );
 
     const bothReady =

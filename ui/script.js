@@ -1,8 +1,6 @@
 //TODO: A cluet megosztani a room-mal, ez a csapat következik alatt lesz maga a szó és a szám :D
 //TODO: A játékosok tippelése, és azoknak kezelése szerver felé, itt ugye alapból megjelölnek csak és ha mindegyik ugy gondolja akkor adja be
 
-//TODO: Szerver oldali timer játék alatt
-
 //TODO: Kör kezdődik, akkor szerverről át kell adni kié a kör, és maga hogy a kör mikor lesz vége
 //TODO: Kör vége: ha lejár a timer, befejezik a játokos a kört, vagy szar tipp, vagy kitippelték a megadott számot (ha nulla akkor végtelent lehet tippelni)
 
@@ -88,14 +86,32 @@ window.addEventListener("message", (event) => {
     case "spymaster_selection": {
       showView("team");
 
-      console.log(JSON.stringify(data.players));
-
       refreshPlayerList(data.players, "team");
       spymasterBtn.disabled = false;
 
       const teamTimer = document.getElementById("codename_countdown-team");
       teamTimer.classList.remove("hidden");
       startCountdown(data.endsTime, teamTimer);
+
+      break;
+    }
+
+    case "spymaster_selected": {
+      refreshPlayerList(data.players, "team");
+      spymasterBtn.disabled = false;
+
+      const playerData = data.lobbyPlayers.find(
+        (lp) => lp.id === data.playerId,
+      );
+
+      if (playerData) {
+        const playerTeam = playerData.team;
+        const selectBtn = document.getElementById("codename_pickSpymasterBtn");
+
+        if (data.spymasterTeam === playerTeam && selectBtn) {
+          selectBtn.disabled = true;
+        }
+      }
 
       break;
     }
@@ -128,6 +144,9 @@ window.addEventListener("message", (event) => {
       teamText.textContent = `${data.startingTeam ?? ""} köre`;
       if (data.startingTeam === TEAM_TWO) teamText.classList.add("teamTwo");
 
+      const timer = document.getElementById("codename_turnTimerText");
+      startCountdown(data.endsTime, timer);
+
       const playerData = data.lobbyPlayers.find(
         (lp) => lp.id === data.playerId,
       );
@@ -147,20 +166,34 @@ window.addEventListener("message", (event) => {
     }
 
     case "leaved": {
-      if (data.leaverId === data.playerId) showView("lobby");
+      const isMe = data.leaverId === data.playerId;
 
-      const waitingTimer = document.getElementById(
-        "codename_countdown-waiting",
-      );
+      const activeView = document
+        .querySelector(".codename_view.active")
+        ?.id.replace("codename_view-", "");
 
-      if (data.activePlayers !== true) {
+      if (isMe) {
         clearInterval(countdownInterval);
-        waitingTimer.classList.add("hidden");
+        joinBtn.disabled = false;
+        spymasterBtn.disabled = true;
+        showView("lobby");
+        break;
       }
 
-      refreshPlayerList(data.lobbyPlayers, "waiting");
-      joinBtn.disabled = false;
-      spymasterBtn.disabled = true;
+      if (activeView === "team") {
+        refreshPlayerList(data.lobbyPlayers, "team");
+      } else {
+        const waitingTimer = document.getElementById(
+          "codename_countdown-waiting",
+        );
+
+        if (data.activePlayers !== true) {
+          clearInterval(countdownInterval);
+          waitingTimer.classList.add("hidden");
+        }
+
+        refreshPlayerList(data.lobbyPlayers, "waiting");
+      }
 
       break;
     }
