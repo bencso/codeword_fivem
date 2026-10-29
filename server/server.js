@@ -359,6 +359,7 @@ function nextRound(roomId) {
     const currentRoom = rooms.get(roomId);
 
     if (currentRoom.countDownTimer) clearTimeout(currentRoom.countDownTimer);
+    currentRoom.selectedWords.clear();
     const enemy = currentRoom.currentTeam === TEAM_ONE ? TEAM_TWO : TEAM_ONE;
 
     const clueData = {
@@ -502,13 +503,11 @@ onNet(EVENTS.PICK_WORD, (roomId, pickedWord) => {
       } else if (cardTeam === "black") {
         //TODO: az ellenfél nyert (vége)
       } else if (cardTeam === "") {
-        currentRoom.selectedWords.clear();
         nextRound(roomId);
       } else {
         if (cardsLeft(cardTeam) === 0) {
           //TODO: az ellenfél nyert (vége)
         } else {
-          currentRoom.selectedWords.clear();
           nextRound(roomId);
         }
       }
