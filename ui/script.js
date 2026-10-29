@@ -1,8 +1,18 @@
-//TODO: A cluet megosztani a room-mal, ez a csapat következik alatt lesz maga a szó és a szám :D
-//TODO: A játékosok tippelése, és azoknak kezelése szerver felé, itt ugye alapból megjelölnek csak és ha mindegyik ugy gondolja akkor adja be
-
-//TODO: Kör kezdődik, akkor szerverről át kell adni kié a kör, és maga hogy a kör mikor lesz vége
-//TODO: Kör vége: ha lejár a timer, befejezik a játokos a kört, vagy szar tipp, vagy kitippelték a megadott számot (ha nulla akkor végtelent lehet tippelni)
+//TODO:
+/*
+#	Mi	Hol	Teendő	Típus
+3	A tipp nincs ellenőrizve	server ADD_CLUE + NUI	üres, szóköz, táblán lévő szó, count. Tartalmi hibánál CLUE_REJECTED, a NUI kiírja, és újraengedélyezi a gombot	🟠 hiba
+4	A később csatlakozók nem látják a laptopot	kliens + szerver	a meglévő laptopok lekérése belépéskor	🟠 hiba
+5	Tippelés a kliensen	NUI + kliens	kártyakattintásra pickWord callback, ami PICK_WORD-öt küld. A kémfőnöknél és a nem soros csapatnál ne legyen kattintható	🟢 hiányzik
+6	Szavazatok megjelenítése	NUI + kliens	VOTED_WORD handler: ki melyik kártyát jelölte (például avatar vagy név a kártyán)	🟢 hiányzik
+7	Felfordítás megjelenítése	NUI + kliens	SELECTED_WORD handler: createWordCards az új listával, a szavazatjelölések törlése	🟢 hiányzik
+8	Játék vége	server	endGame(roomId, winnerTeam): időzítő leállítása, finished, színes lista mindenkinek, GAME_ENDED. A három TODO hívja	🟢 hiányzik
+9	Játék vége képernyő, új játék	NUI + kliens + server	ki nyert, majd vissza a lobbyba vagy újrakezdés	🟢 hiányzik
+10	“Kör vége” gomb	NUI + server	a tippelők önként befejezhetik a kört (nextRound)	🟢 hiányzik
+11	Hátralévő kártyák számlálója	NUI + server	csapatonként, a cardsLeft értékét is ki lehet küldeni	🟢 hiányzik
+13	Kémfőnök pótlása	server	a resetRoom helyett új kémfőnök kijelölése	⚪ későbbre
+14	Újraindulás resetRoom után	server	a visszaszámlálás csak új belépésnél indul, akkor is, ha megvan a létszám	⚪ apróság
+*/
 
 const isFiveM = typeof GetParentResourceName === "function";
 const app = document.getElementById("codename_window");
