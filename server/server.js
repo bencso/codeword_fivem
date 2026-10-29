@@ -454,6 +454,7 @@ onNet(EVENTS.PICK_WORD, (roomId, pickedWord) => {
 
     currentRoom.selectedWords.set(playerId, pickedWord);
     currentRoom.players.forEach((player) => {
+      //TODO: Ezt is betenni
       emitNet(EVENTS.VOTED_WORD, player.id, roomId, pickedWord, playerId);
     });
 
@@ -483,6 +484,7 @@ onNet(EVENTS.PICK_WORD, (roomId, pickedWord) => {
           });
 
           emitNet(
+            //TODO: Ezt is betenni
             EVENTS.SELECTED_WORD,
             player.id,
             roomId,
