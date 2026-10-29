@@ -190,7 +190,7 @@ window.addEventListener("message", (event) => {
         clueText.textContent = data.clue.clue;
       }
 
-      if (clueCountText && data.clue.count) {
+      if (clueCountText && data.clue.count >= 0) {
         clueCountText.classList.remove("hidden");
         clueCountText.textContent = data.clue.count;
       }

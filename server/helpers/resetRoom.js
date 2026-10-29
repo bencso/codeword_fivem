@@ -16,6 +16,7 @@ function resetRoom(roomId, notify = true) {
     name: p.name,
     team: "",
   }));
+  room.guesses = 0;
 
   if (!notify) return;
 

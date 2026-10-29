@@ -10,6 +10,9 @@ function leaveRoom(roomId, leaverId) {
     players: currentRoom.players.filter((p) => p.id !== leaverId),
   };
 
+  if (room.selectedWords && room.selectedWords.has(leaverId))
+    room.selectedWords.delete(leaverId);
+
   rooms.set(roomId, room);
 
   emitNet(

@@ -14,9 +14,10 @@ function selectedClueCards() {
 
 function updateClueState() {
   const count = selectedClueCards().length;
-  clueCount.textContent = count;
+  clueCount.value = count;
   clueCount.classList.toggle("empty", count === 0);
-  clueSubmit.disabled = clueText.value.trim() === "" || count === 1;
+  clueCount.max = ONE_TEAM_WORDS;
+  clueSubmit.disabled = clueText.value.trim() === "";
 }
 
 function toggleClueCard(card) {

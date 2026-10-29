@@ -14,6 +14,7 @@ onNet(EVENTS.CREATE_ROOM, (pos) => {
     countDownTimer: null,
     endsAt: null,
     selectedWords: new Map(),
+    guesses: 0,
     state: "joinable",
   };
 
@@ -307,6 +308,7 @@ onNet(EVENTS.ADD_CLUE, (roomId, clue, count) => {
     if (!currentRoom.players.some((p) => p.id === sender && p.spymaster))
       return;
 
+    currentRoom.guesses = 0;
     const playerData = currentRoom.players.find((p) => p.id === sender);
 
     if (playerData.team !== currentRoom.currentTeam) return;
@@ -360,6 +362,8 @@ function nextRound(roomId) {
 
     if (currentRoom.countDownTimer) clearTimeout(currentRoom.countDownTimer);
     currentRoom.selectedWords.clear();
+    currentRoom.guesses = 0;
+
     const enemy = currentRoom.currentTeam === TEAM_ONE ? TEAM_TWO : TEAM_ONE;
 
     const clueData = {
@@ -465,6 +469,8 @@ onNet(EVENTS.PICK_WORD, (roomId, pickedWord) => {
       currentRoom.words[pickedCard].revealed = true;
       currentRoom.selectedWords.clear();
 
+      currentRoom.guesses++;
+
       currentRoom.players.forEach((player) => {
         if (player.spymaster) {
           emitNet(
@@ -501,6 +507,11 @@ onNet(EVENTS.PICK_WORD, (roomId, pickedWord) => {
       if (cardTeam === playerData.team) {
         if (cardsLeft(playerData.team) === 0) {
           //TODO: a csapat nyert (vége)
+        } else if (
+          currentRoom.clue.count > 0 &&
+          currentRoom.guesses >= currentRoom.clue.count + 1
+        ) {
+          nextRound(roomId);
         }
       } else if (cardTeam === "black") {
         //TODO: az ellenfél nyert (vége)
