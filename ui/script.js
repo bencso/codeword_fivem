@@ -1,6 +1,9 @@
 //TODO: A cluet megosztani a room-mal, ez a csapat következik allatt lesz magha a szó és a szám :D
 //TODO: A játékosok tippelése, és azoknak kezelése szerver felé, itt ugye alapból megjelölnek csak és ha mindegyik ugy gondolja akkor adja be
+
 //TODO: Szerver oldali timer játék alatt
+
+//TODO: Kör kezdődik, akkor szerverről át kell adni kié a kör, és maga hogy a kör mikor lesz vége
 //TODO: Kör vége: ha lejár a timer, befejezik a játokos a kört, vagy szar tipp, vagy kitippelték a megadott számot (ha nulla akkor végtelent lehet tippelni)
 
 const isFiveM = typeof GetParentResourceName === "function";
@@ -133,7 +136,6 @@ window.addEventListener("message", (event) => {
 
         createIngamePlyerList(data.lobbyPlayers);
         createWordCards(data.words, isSpymaster, playerTeam);
-        showClueInput(true);
       }
 
       break;
