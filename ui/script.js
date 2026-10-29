@@ -146,7 +146,7 @@ window.addEventListener("message", (event) => {
 
       const teamText = document.getElementById("codename_turnText");
       teamText.classList.remove("teamTwo");
-      teamText.textContent = `${TEAM_NAMES[data.currentTeam] ?? ""} köre`;
+      teamText.textContent = `${TEAM_NAMES[data.startingTeam] ?? ""} köre`;
       if (data.startingTeam === TEAM_TWO) teamText.classList.add("teamTwo");
 
       const timer = document.getElementById("codename_turnTimerText");
