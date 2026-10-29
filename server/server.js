@@ -423,26 +423,28 @@ function nextRound(roomId) {
     room.players.forEach((player) => {
       if (player.spymaster) {
         emitNet(
-          EVENTS.STARTED_GAME,
+          EVENTS.NEXT_ROUND,
           player.id,
           roomId,
-          room.players,
-          words,
-          startingTeam,
+          clueData.clue,
+          clueData.count,
+          room.words,
+          room.currentTeam,
           endsTime,
         );
       } else {
-        const wordsWithoutColor = words.map((word) => {
+        const wordsWithoutColor = room.words.map((word) => {
           return { word: word.word, revealed: word.revealed };
         });
 
         emitNet(
-          EVENTS.STARTED_GAME,
+          EVENTS.NEXT_ROUND,
           player.id,
           roomId,
-          room.players,
+          clueData.clue,
+          clueData.count,
           wordsWithoutColor,
-          startingTeam,
+          room.currentTeam,
           endsTime,
         );
       }
