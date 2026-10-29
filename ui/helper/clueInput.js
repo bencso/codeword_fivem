@@ -1,6 +1,6 @@
 const clueBar = document.getElementById("codename_clueBar");
-const clueText = document.getElementById("codename_clueText");
-const clueCount = document.getElementById("codename_clueCount");
+const clueText = document.getElementById("codename_clueTextInput");
+const clueCount = document.getElementById("codename_clueCountInput");
 const clueSubmit = document.getElementById("codename_clueSubmit");
 
 function showClueInput(show) {

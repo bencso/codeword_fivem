@@ -83,7 +83,7 @@ window.addEventListener("message", (event) => {
       break;
     }
 
-    case "spymaster_selection": {
+    case "spymasterSelection": {
       showView("team");
 
       refreshPlayerList(data.players, "team");
@@ -96,7 +96,7 @@ window.addEventListener("message", (event) => {
       break;
     }
 
-    case "spymaster_selected": {
+    case "spymasterSelected": {
       refreshPlayerList(data.players, "team");
       spymasterBtn.disabled = false;
 
@@ -160,6 +160,34 @@ window.addEventListener("message", (event) => {
 
         if (data.startingTeam === playerTeam && isSpymaster)
           showClueInput(true);
+      }
+
+      break;
+    }
+
+    case "clueAdded": {
+      if (countdownInterval) clearInterval(countdownInterval);
+
+      const teamText = document.getElementById("codename_turnText");
+      teamText.textContent = `${data.currentTeam ?? ""} köre`;
+      if (data.currentTeam === TEAM_TWO) teamText.classList.add("teamTwo");
+
+      const timer = document.getElementById("codename_turnTimerText");
+
+      startCountdown(data.endsTime, timer);
+      showClueInput(false);
+
+      const clueText = document.getElementById("codename_clueText");
+      const clueCountText = document.getElementById("codename_clueCount");
+
+      if (clueText && data.clue.clue) {
+        clueText.classList.remove("hidden");
+        clueText.textContent = data.clue.clue;
+      }
+
+      if (clueCountText && data.clue.count) {
+        clueCountText.classList.remove("hidden");
+        clueCountText.textContent = data.clue.count;
       }
 
       break;

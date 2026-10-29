@@ -11,7 +11,7 @@ onNet(EVENTS.SPYMASTER_SELECTION, async (roomId, players, endsTime) => {
 
   SendNuiMessage(
     JSON.stringify({
-      action: "spymaster_selection",
+      action: "spymasterSelection",
       roomId,
       players: withPhotos,
       endsTime,
@@ -37,7 +37,7 @@ onNet(
 
     SendNuiMessage(
       JSON.stringify({
-        action: "spymaster_selected",
+        action: "spymasterSelected",
         roomId,
         lobbyPlayers: withPhotos,
         spymasterTeam,

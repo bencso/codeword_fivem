@@ -50,3 +50,37 @@ onNet(
   },
 );
 //#endregion
+
+//#region Clue megjelenítése
+onNet(EVENTS.ADDED_CLUE, async (roomId, clue, count, currentTeam, endsTime) => {
+  console.log(roomId + "| Clue kiadva");
+
+  SendNuiMessage(
+    JSON.stringify({
+      action: "clueAdded",
+      roomId,
+      clue,
+      count,
+      currentTeam,
+      endsTime,
+    }),
+  );
+});
+//#endregion
+
+//#region Következő kör
+onNet(EVENTS.NEXT_ROUND, async (roomId, clue, count, currentTeam, endsTime) => {
+  console.log(roomId + "| Következő kör");
+
+  SendNuiMessage(
+    JSON.stringify({
+      action: "nextRound",
+      roomId,
+      clue,
+      count,
+      currentTeam,
+      endsTime,
+    }),
+  );
+});
+//#endregion

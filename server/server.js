@@ -366,7 +366,7 @@ onNet(EVENTS.ADD_CLUE, (roomId, clue, count) => {
         EVENTS.ADDED_CLUE,
         player.id,
         roomId,
-        clue,
+        clueData,
         count,
         room.currentTeam,
         endsTime,
