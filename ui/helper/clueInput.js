@@ -40,7 +40,7 @@ function submitClue() {
   if (clue.length > 1) {
     post("giveClue", { roomId, clue, count });
     resetClueInput();
-    showClueInput(false);
+    clueSubmit.disabled = true;
   }
 }
 
