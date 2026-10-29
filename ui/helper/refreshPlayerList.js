@@ -7,28 +7,39 @@ function refreshPlayerList(players, view) {
 
   playerListUl.textContent = "";
 
+  if (players.length === 0) {
+    const li = document.createElement("li");
+    li.className = "empty";
+    li.textContent = "Várakozás a többiekre";
+    playerListUl.appendChild(li);
+    return;
+  }
+
   players.forEach((p) => {
     const li = document.createElement("li");
+    li.className = "codename_chip";
+    li.dataset.playerId = p.id;
+
+    if (p.team) li.classList.add(p.team === TEAM_ONE ? "teamOne" : "teamTwo");
+    if (p.spymaster) li.classList.add("spymaster");
 
     if (p.photo) {
       const img = document.createElement("img");
       img.className = "codename_avatar";
-      img.dataset.playerId = p.id;
       img.src = p.photo;
-      img.alt = p.name.toUpperCase();
-
-      if (p.team)
-        img.style.backgroundColor =
-          p.team === TEAM_ONE ? TEAM_ONE_COLOR : TEAM_TWO_COLOR;
-
+      img.alt = "";
       li.appendChild(img);
     } else {
       const fallback = document.createElement("span");
-      fallback.dataset.playerId = p.id;
       fallback.className = "codename_avatar codename_avatar-fallback";
       fallback.textContent = p.name.charAt(0).toUpperCase();
       li.appendChild(fallback);
     }
+
+    const name = document.createElement("span");
+    name.className = "codename_chip-name";
+    name.textContent = p.name;
+    li.appendChild(name);
 
     playerListUl.appendChild(li);
   });

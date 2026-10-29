@@ -2,66 +2,80 @@
 <html lang="hu">
   <head>
     <meta charset="UTF-8" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@700;800&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <div id="codename_window">
-      <!-- ========== LOBBY még nincs belépve ========== -->
+      <!-- ========== LOBBY: még nincs belépve ========== -->
       <section id="codename_view-lobby" class="codename_view">
         <div class="codename_panel">
-          <div class="codename_btn-stack">
+          <div class="codename_btn-row">
+            <button id="codename_exitBtn" class="codename_btn">Kilépés</button>
             <button
               id="codename_joinBtn"
-              class="codename_btn codename_btn-ghost"
+              class="codename_btn codename_btn-confirm"
             >
               Csatlakozás
             </button>
-            <button
-              id="codename_exitBtn"
-              class="codename_btn codename_btn-ghost"
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== VÁRAKOZÁS: belépett, indulásra vár ========== -->
+      <section id="codename_view-waiting" class="codename_view">
+        <div class="codename_panel">
+          <header class="codename_panel-head codename_panel-head--split">
+            <div>
+              <h1 class="codename_title">Várakozás</h1>
+              <p class="codename_subtitle">A játék hamarosan kezdődik</p>
+            </div>
+            <div
+              class="codename_countdown hidden"
+              id="codename_countdown-waiting"
             >
-              Kilépés
+              30
+            </div>
+          </header>
+
+          <ul class="codename_lobby-players" id="codename_lobbyPlayers"></ul>
+
+          <div class="codename_btn-row codename_btn-row--single">
+            <button
+              id="codename_leaveBtn"
+              class="codename_btn codename_btn-danger"
+            >
+              Kilépés a szobából
             </button>
           </div>
         </div>
       </section>
 
-      <!-- ========== WAITING ROOM belépes után, várakozásra ========== -->
-      <section id="codename_view-waiting" class="codename_view">
-        <div class="codename_panel">
-          <div
-            class="codename_countdown hidden"
-            id="codename_countdown-waiting"
-          >
-            <span id="codename_countdownNum">30</span>
-          </div>
-
-          <ul class="codename_lobby-players" id="codename_lobbyPlayers"></ul>
-
-          <button
-            id="codename_leaveBtn"
-            class="codename_btn codename_btn-danger"
-          >
-            Kilépés a szobából
-          </button>
-        </div>
-      </section>
-
-      <!-- ========== SPYMASTER SELECTION ROOM  ========== -->
+      <!-- ========== SPYMASTER VÁLASZTÁS ========== -->
       <section id="codename_view-team" class="codename_view">
         <div class="codename_panel">
-          <div class="codename_countdown hidden" id="codename_countdown-team">
-            <span id="codename_countdownNum">30</span>
-          </div>
+          <header class="codename_panel-head codename_panel-head--split">
+            <div>
+              <h1 class="codename_title">Spymaster választás</h1>
+            </div>
+            <div class="codename_countdown hidden" id="codename_countdown-team">
+              30
+            </div>
+          </header>
 
           <ul class="codename_lobby-players" id="codename_lobbyPlayers"></ul>
 
-          <button
-            id="codename_pickSpymasterBtn"
-            class="codename_btn codename_btn-danger"
-          >
-            Leszek Spymaster
-          </button>
+          <div class="codename_btn-row codename_btn-row--single">
+            <button
+              id="codename_pickSpymasterBtn"
+              class="codename_btn codename_btn-confirm"
+            >
+              Leszek a spymaster
+            </button>
+          </div>
         </div>
       </section>
 
@@ -69,7 +83,7 @@
       <section id="codename_view-game" class="codename_view">
         <div class="codename_stage">
           <aside class="codename_side codename_side-teamOne">
-            <h2>Csapat 1</h2>
+            <h2 class="codename_side-title">Csapat 1</h2>
             <ul class="codename_side-players" id="codename_teamOnePlayers"></ul>
           </aside>
 
@@ -81,7 +95,7 @@
           </main>
 
           <aside class="codename_side codename_side-teamTwo">
-            <h2>Csapat 2</h2>
+            <h2 class="codename_side-title">Csapat 2</h2>
             <ul class="codename_side-players" id="codename_teamTwoPlayers"></ul>
           </aside>
         </div>
@@ -93,6 +107,7 @@
     <script src="helper/uiHelper.js"></script>
     <script src="helper/countdown.js"></script>
     <script src="helper/refreshPlayerList.js"></script>
+    <script src="helper/ingamePlayerList.js"></script>
     <script src="helper/createWordCards.js"></script>
     <script src="script.js"></script>
   </body>

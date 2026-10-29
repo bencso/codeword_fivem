@@ -32,6 +32,7 @@ files {
     'ui/helper/post.js',
     'ui/helper/uiHelper.js',
     'ui/helper/createWordCards.js',
+    'ui/helper/ingamePlayerList.js',
     'ui/index.html',
     'ui/style.css',
     'ui/script.js'

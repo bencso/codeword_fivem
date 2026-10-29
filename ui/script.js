@@ -86,6 +86,7 @@ window.addEventListener("message", (event) => {
       spymasterBtn.disabled = false;
 
       const teamTimer = document.getElementById("codename_countdown-team");
+      teamTimer.classList.remove("hidden");
       startCountdown(data.startsIn, teamTimer);
 
       break;
@@ -110,10 +111,6 @@ window.addEventListener("message", (event) => {
     case "gameStarted": {
       showView("game");
 
-      const waitingTimer = document.getElementById(
-        "codename_countdown-waiting",
-      );
-      waitingTimer.classList.add("hidden");
       if (countdownInterval) clearInterval(countdownInterval);
 
       joinBtn.disabled = true;
@@ -123,6 +120,7 @@ window.addEventListener("message", (event) => {
         (lp) => lp.id === data.playerId && lp.spymaster,
       );
 
+      createIngamePlyerList(data.lobbyPlayers);
       createWordCards(data.words, isSpymaster);
 
       break;
