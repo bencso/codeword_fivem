@@ -13,6 +13,7 @@ onNet(EVENTS.CREATE_ROOM, (pos) => {
     words: [],
     countDownTimer: null,
     endsAt: null,
+    selectedWords: new Map(),
     state: "joinable",
   };
 
@@ -294,6 +295,7 @@ function startGame(roomId) {
 onNet(EVENTS.LEAVE_ROOM, (roomId) => {
   leaveRoom(roomId, source);
 });
+//#endregion
 
 //#region CLUE ADD
 onNet(EVENTS.ADD_CLUE, (roomId, clue, count) => {
@@ -421,9 +423,75 @@ function nextRound(roomId) {
 }
 //#endregion
 
+//#region SZÓMEGJELÖLÉS
+onNet(EVENTS.PICK_WORD, (roomId, pickedWord) => {
+  if (rooms.size > 0 && rooms.has(roomId)) {
+    const currentRoom = rooms.get(roomId);
+
+    const playerId = source;
+    const playerData = currentRoom.players.find((p) => p.id === playerId);
+
+    if (!playerData) return;
+    if (playerData.spymaster) return;
+    if (
+      currentRoom.state !== "started" ||
+      currentRoom.currentTeam !== playerData.team ||
+      !currentRoom.clue?.clue
+    )
+      return;
+    if (currentRoom.words[pickedCard].revealed) return;
+
+    const playerTeamPlayercount = currentRoom.players.filter(
+      (p) => p.team == playerData.team && !p.spymaster,
+    ).length;
+
+    const pickedCard = currentRoom.words.findIndex(
+      (w) => w.word === pickedWord,
+    );
+
+    if (pickedCard === -1) return;
+
+    currentRoom.selectedWords.set(playerId, pickedWord);
+    currentRoom.players.forEach((player) => {
+      emitNet(EVENTS.VOTED_WORD, player.id, roomId, pickedWord, playerId);
+    });
+
+    const votes = [...currentRoom.selectedWords.values()];
+    const allSame = votes.every((v) => v === votes[0]);
+
+    if (currentRoom.selectedWords.size === playerTeamPlayercount && allSame) {
+      currentRoom.words[pickedCard].revealed = true;
+      currentRoom.selectedWords.clear();
+
+      currentRoom.players.forEach((player) => {
+        if (player.spymaster) {
+          emitNet(EVENTS.SELECTED_WORD, player.id, roomId, currentRoom.words);
+        } else {
+          const wordsWithoutColor = currentRoom.words.map((word) => {
+            return {
+              word: word.word,
+              team: word.revealed ? word.team : "",
+              revealed: word.revealed,
+            };
+          });
+
+          emitNet(
+            EVENTS.SELECTED_WORD,
+            player.id,
+            roomId,
+            wordsWithoutColor,
+            playerId,
+          );
+        }
+      });
+    }
+  }
+});
+//#endregion
+
 //#region Lelép a játékos a szerverről
 on("playerDropped", () => {
-  const droppedId = Number(source);
+  const droppedId = source;
 
   for (const [roomId, room] of rooms) {
     if (room.players.some((p) => p.id === droppedId)) {

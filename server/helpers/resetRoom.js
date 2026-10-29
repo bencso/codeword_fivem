@@ -10,6 +10,7 @@ function resetRoom(roomId, notify = true) {
   room.words = [];
   room.clue = null;
   room.currentTeam = null;
+  room.selectedWords = new Map();
   room.players = room.players.map((p) => ({
     id: p.id,
     name: p.name,

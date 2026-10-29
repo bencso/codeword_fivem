@@ -25,6 +25,10 @@ const EVENTS = {
   ADDED_CLUE: "codenames:addedClue",
 
   NEXT_ROUND: "codenames:nextRound",
+
+  PICK_WORD: "codenames:pickWord",
+  VOTED_WORD: "codenames:votedWord",
+  SELECTED_WORD: "codenames:selectedWord",
 };
 
 const PROP = "vw_prop_casino_cards_02";
