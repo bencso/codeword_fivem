@@ -439,7 +439,6 @@ onNet(EVENTS.PICK_WORD, (roomId, pickedWord) => {
       !currentRoom.clue?.clue
     )
       return;
-    if (currentRoom.words[pickedCard].revealed) return;
 
     const playerTeamPlayercount = currentRoom.players.filter(
       (p) => p.team == playerData.team && !p.spymaster,
@@ -450,6 +449,7 @@ onNet(EVENTS.PICK_WORD, (roomId, pickedWord) => {
     );
 
     if (pickedCard === -1) return;
+    if (currentRoom.words[pickedCard].revealed) return;
 
     currentRoom.selectedWords.set(playerId, pickedWord);
     currentRoom.players.forEach((player) => {
@@ -465,7 +465,13 @@ onNet(EVENTS.PICK_WORD, (roomId, pickedWord) => {
 
       currentRoom.players.forEach((player) => {
         if (player.spymaster) {
-          emitNet(EVENTS.SELECTED_WORD, player.id, roomId, currentRoom.words);
+          emitNet(
+            EVENTS.SELECTED_WORD,
+            player.id,
+            roomId,
+            currentRoom.words,
+            playerId,
+          );
         } else {
           const wordsWithoutColor = currentRoom.words.map((word) => {
             return {
@@ -484,6 +490,19 @@ onNet(EVENTS.PICK_WORD, (roomId, pickedWord) => {
           );
         }
       });
+
+      const cardTeam = currentRoom.words[pickedCard].team;
+
+      if (cardTeam === playerData.team) {
+        //TODO: Ha van még idő akkor lehet pickelni, ha nincs következő
+      } else if (cardTeam === "black") {
+        //TODO: Vége a játéknak
+      } else {
+        /*
+      ha az ellenfélnek 0 kártyája maradt → az ellenfél nyert (vége)
+      különben → nextRound
+      */
+      }
     }
   }
 });
