@@ -1,3 +1,8 @@
+//TODO: A cluet megosztani a room-mal, ez a csapat következik allatt lesz magha a szó és a szám :D
+//TODO: A játékosok tippelése, és azoknak kezelése szerver felé, itt ugye alapból megjelölnek csak és ha mindegyik ugy gondolja akkor adja be
+//TODO: Szerver oldali timer játék alatt
+//TODO: Kör vége: ha lejár a timer, befejezik a játokos a kört, vagy szar tipp, vagy kitippelték a megadott számot (ha nulla akkor végtelent lehet tippelni)
+
 const isFiveM = typeof GetParentResourceName === "function";
 const app = document.getElementById("codename_window");
 const joinBtn = document.getElementById("codename_joinBtn");
