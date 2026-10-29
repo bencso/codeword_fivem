@@ -146,7 +146,7 @@ window.addEventListener("message", (event) => {
 
       const teamText = document.getElementById("codename_turnText");
       teamText.classList.remove("teamTwo");
-      teamText.textContent = `${data.startingTeam ?? ""} köre`;
+      teamText.textContent = `${TEAM_NAMES[data.currentTeam] ?? ""} köre`;
       if (data.startingTeam === TEAM_TWO) teamText.classList.add("teamTwo");
 
       const timer = document.getElementById("codename_turnTimerText");
@@ -174,7 +174,7 @@ window.addEventListener("message", (event) => {
 
       const teamText = document.getElementById("codename_turnText");
       teamText.classList.remove("teamTwo");
-      teamText.textContent = `${data.currentTeam ?? ""} köre`;
+      teamText.textContent = `${TEAM_NAMES[data.currentTeam] ?? ""} köre`;
       if (data.currentTeam === TEAM_TWO) teamText.classList.add("teamTwo");
 
       const timer = document.getElementById("codename_turnTimerText");
@@ -203,7 +203,7 @@ window.addEventListener("message", (event) => {
       const teamText = document.getElementById("codename_turnText");
 
       teamText.classList.remove("teamTwo");
-      teamText.textContent = `${data.currentTeam ?? ""} köre`;
+      teamText.textContent = `${TEAM_NAMES[data.currentTeam] ?? ""} köre`;
       if (data.currentTeam === TEAM_TWO) teamText.classList.add("teamTwo");
 
       const timer = document.getElementById("codename_turnTimerText");

@@ -41,3 +41,8 @@ const ROUND_COUNTDOWN_MS = 5 * 1000;
 const WORDS_FILE = "magyar-szavak.txt";
 const RANDOM_WORDS = 25;
 const ONE_TEAM_WORDS = 6;
+
+const TEAM_NAMES = {
+  [TEAM_ONE]: "Csapat 1",
+  [TEAM_TWO]: "Csapat 2",
+};
