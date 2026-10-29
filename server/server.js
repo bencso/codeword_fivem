@@ -268,8 +268,12 @@ function startGame(roomId) {
           endsTime,
         );
       } else {
-        const wordsWithoutColor = words.map((word) => {
-          return { word: word.word, revealed: word.revealed };
+        const wordsWithoutColor = room.words.map((word) => {
+          return {
+            word: word.word,
+            team: word.revealed ? word.team : "",
+            revealed: word.revealed,
+          };
         });
 
         emitNet(
@@ -434,7 +438,11 @@ function nextRound(roomId) {
         );
       } else {
         const wordsWithoutColor = room.words.map((word) => {
-          return { word: word.word, revealed: word.revealed };
+          return {
+            word: word.word,
+            team: word.revealed ? word.team : "",
+            revealed: word.revealed,
+          };
         });
 
         emitNet(
