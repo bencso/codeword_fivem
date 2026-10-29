@@ -12,7 +12,7 @@ onNet(EVENTS.CREATE_ROOM, (pos) => {
     players: [],
     words: [],
     countDownTimer: null,
-    startsAt: null,
+    endsAt: null,
     state: "joinable",
   };
 
@@ -63,20 +63,17 @@ onNet(EVENTS.JOIN_ROOM, (roomId) => {
     rooms.set(roomId, room);
 
     if (room.players.length >= MIN_PLAYERS && !room.countDownTimer) {
-      room.startsAt = Date.now() + AFTERMIN_COUNTDOWN_MS;
+      room.endsAt = Date.now() + AFTERMIN_COUNTDOWN_MS;
 
       room.countDownTimer = setTimeout(() => {
         const currentRoom = rooms.get(roomId);
         if (!currentRoom) return;
 
         currentRoom.countDownTimer = null;
-        currentRoom.startsAt = null;
+        currentRoom.endsAt = null;
 
         if (currentRoom.players.length < MIN_PLAYERS) {
-          currentRoom.countDownTimer = null;
-          currentRoom.startsAt = null;
-
-          currentRoom.state = "joinable";
+          resetRoom(roomId);
           return;
         }
 
@@ -84,7 +81,7 @@ onNet(EVENTS.JOIN_ROOM, (roomId) => {
       }, AFTERMIN_COUNTDOWN_MS);
     }
 
-    const startsIn = room.startsAt ? room.startsAt - Date.now() : null;
+    const endsTime = room.endsAt ? room.endsAt - Date.now() : null;
 
     room.players.forEach((player) =>
       emitNet(
@@ -95,7 +92,7 @@ onNet(EVENTS.JOIN_ROOM, (roomId) => {
         joinedPlayerData,
         room.players,
         room.players.length >= MIN_PLAYERS,
-        startsIn,
+        endsTime,
       ),
     );
   }
@@ -122,24 +119,17 @@ function switchSpymasterSelector(roomId) {
       state: "selecting",
     };
 
-    room.startsAt = Date.now() + AFTERMIN_COUNTDOWN_MS;
+    room.endsAt = Date.now() + AFTERMIN_COUNTDOWN_MS;
 
     room.countDownTimer = setTimeout(() => {
       const currentRoom = rooms.get(roomId);
       if (!currentRoom || currentRoom.state !== "selecting") return;
 
       currentRoom.countDownTimer = null;
-      currentRoom.startsAt = null;
+      currentRoom.endsAt = null;
 
       if (currentRoom.players.length < MIN_PLAYERS) {
-        currentRoom.countDownTimer = null;
-        currentRoom.startsAt = null;
-
-        currentRoom.state = "joinable";
-
-        currentRoom.players.forEach((player) =>
-          emitNet(EVENTS.DROPED_USER, player.id, roomId, currentRoom.players),
-        );
+        resetRoom(roomId);
 
         return;
       }
@@ -157,25 +147,28 @@ function switchSpymasterSelector(roomId) {
 
     rooms.set(roomId, room);
 
+    const endsTime = room.endsAt ? room.endsAt - Date.now() : null;
+
     room.players.forEach((player) =>
       emitNet(
         EVENTS.SPYMASTER_SELECTION,
         player.id,
         roomId,
         room.players,
-        room.startsAt - Date.now(),
+        endsTime,
       ),
     );
   }
 }
 
+//#region Spymaster pickelés
 onNet(EVENTS.PICK_SPYMASTER, (roomId) => {
   if (rooms.size > 0 && rooms.has(roomId)) {
     const currentRoom = rooms.get(roomId);
 
     const selectorId = source;
     const selector = currentRoom.players.find((p) => p.id === selectorId);
-    console.log(JSON.stringify(currentRoom));
+
     if (!selector || currentRoom.state !== "selecting") return;
 
     const teamHasSpymaster = currentRoom.players.some(
@@ -202,6 +195,7 @@ onNet(EVENTS.PICK_SPYMASTER, (roomId) => {
   }
 });
 
+//#region Játék indítása
 function startGame(roomId) {
   if (rooms.size > 0 && rooms.has(roomId)) {
     const currentRoom = rooms.get(roomId);
@@ -240,14 +234,48 @@ function startGame(roomId) {
     const room = {
       ...currentRoom,
       words,
-      startsAt: null,
       state: "started",
+      currentTeam: startingTeam,
     };
+
+    room.endsAt = Date.now() + ROUND_COUNTDOWN_MS;
+    room.countDownTimer = setTimeout(() => {
+      const currentRoom = rooms.get(roomId);
+      if (!currentRoom || currentRoom.state !== "started") return;
+
+      nextRound(roomId);
+    }, ROUND_COUNTDOWN_MS);
 
     rooms.set(roomId, room);
 
+    const endsTime = room.endsAt ? room.endsAt - Date.now() : null;
+
     room.players.forEach((player) => {
-      emitNet(EVENTS.STARTED_GAME, player.id, roomId, room.players, words);
+      if (player.spymaster) {
+        emitNet(
+          EVENTS.STARTED_GAME,
+          player.id,
+          roomId,
+          room.players,
+          words,
+          startingTeam,
+          endsTime,
+        );
+      } else {
+        const wordsWithoutColor = words.map((word) => {
+          return { word: word.word, revealed: word.revealed };
+        });
+
+        emitNet(
+          EVENTS.STARTED_GAME,
+          player.id,
+          roomId,
+          room.players,
+          wordsWithoutColor,
+          startingTeam,
+          endsTime,
+        );
+      }
     });
   }
 }
@@ -277,24 +305,115 @@ onNet(EVENTS.LEAVE_ROOM, (roomId) => {
       room.players.length >= MIN_PLAYERS,
     );
 
-    room.players.forEach((player) =>
-      emitNet(
-        EVENTS.LEAVED_ROOM,
-        player.id,
-        roomId,
-        leaverId,
-        room.players,
-        room.players.length >= MIN_PLAYERS,
-      ),
-    );
-
-    if (room.players.length < MIN_PLAYERS && room.countDownTimer) {
-      clearTimeout(room.countDownTimer);
-      room.countDownTimer = null;
-      room.startsAt = null;
-
-      room.state = "joinable";
-      rooms.set(roomId, room);
-    }
+    if (
+      room.state === "joinable" &&
+      room.players.length < MIN_PLAYERS &&
+      room.countDownTimer
+    )
+      resetRoom(roomId);
   }
 });
+
+//#region CLUE ADD
+onNet(EVENTS.ADD_CLUE, (roomId, clue, count) => {
+  const sender = source;
+
+  if (rooms.size > 0 && rooms.has(roomId)) {
+    const currentRoom = rooms.get(roomId);
+
+    if (!currentRoom.players.some((p) => p.id === sender && p.spymaster))
+      return;
+
+    const playerData = currentRoom.players.find((p) => p.id === sender);
+
+    if (playerData.team !== currentRoom.currentTeam) return;
+    if (currentRoom.clue && currentRoom.clue.clue) return;
+    if (currentRoom.countDownTimer) clearTimeout(currentRoom.countDownTimer);
+
+    const clueData = {
+      clue,
+      count,
+      team: playerData.team,
+    };
+
+    const room = {
+      ...currentRoom,
+      clue: clueData,
+      currentTeam: clueData.team,
+    };
+
+    room.endsAt = Date.now() + ROUND_COUNTDOWN_MS;
+
+    room.countDownTimer = setTimeout(() => {
+      const currentRoom = rooms.get(roomId);
+      if (!currentRoom || currentRoom.state !== "started") return;
+
+      nextRound(roomId);
+    }, ROUND_COUNTDOWN_MS);
+
+    rooms.set(roomId, room);
+
+    const endsTime = room.endsAt ? room.endsAt - Date.now() : null;
+
+    room.players.forEach((player) => {
+      emitNet(
+        EVENTS.ADDED_CLUE,
+        player.id,
+        roomId,
+        clue,
+        count,
+        room.currentTeam,
+        endsTime,
+      );
+    });
+  }
+});
+//#endregion
+
+//#region KÖVETKEZŐ ROUND
+function nextRound(roomId) {
+  if (rooms.size > 0 && rooms.has(roomId)) {
+    const currentRoom = rooms.get(roomId);
+
+    if (currentRoom.countDownTimer) clearTimeout(currentRoom.countDownTimer);
+    const enemy = currentRoom.currentTeam === TEAM_ONE ? TEAM_TWO : TEAM_ONE;
+
+    const clueData = {
+      clue: "",
+      count: 0,
+      team: enemy,
+    };
+
+    const room = {
+      ...currentRoom,
+      clue: clueData,
+      currentTeam: enemy,
+    };
+
+    room.endsAt = Date.now() + ROUND_COUNTDOWN_MS;
+
+    room.countDownTimer = setTimeout(() => {
+      const currentRoom = rooms.get(roomId);
+      if (!currentRoom || currentRoom.state !== "started") return;
+
+      nextRound(roomId);
+    }, ROUND_COUNTDOWN_MS);
+
+    rooms.set(roomId, room);
+
+    const endsTime = room.endsAt ? room.endsAt - Date.now() : null;
+
+    room.players.forEach((player) => {
+      emitNet(
+        EVENTS.NEXT_ROUND,
+        player.id,
+        roomId,
+        clueData.clue,
+        clueData.count,
+        room.currentTeam,
+        endsTime,
+      );
+    });
+  }
+}
+//#endregion

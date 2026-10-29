@@ -1,5 +1,5 @@
 //#region Csapatok sorsolása | Csapatok választhatnak ki legyen a spymaster
-onNet(EVENTS.SPYMASTER_SELECTION, async (roomId, players, startsIn) => {
+onNet(EVENTS.SPYMASTER_SELECTION, async (roomId, players, endsTime) => {
   console.log(roomId + "| Játék indul");
 
   const withPhotos = await Promise.all(
@@ -14,7 +14,7 @@ onNet(EVENTS.SPYMASTER_SELECTION, async (roomId, players, startsIn) => {
       action: "spymaster_selection",
       roomId,
       players: withPhotos,
-      startsIn,
+      endsTime,
     }),
   );
 });

@@ -3,6 +3,7 @@ RegisterNuiCallbackType("joinRoom");
 RegisterNuiCallbackType("leaveRoom");
 RegisterNuiCallbackType("pickSpymaster");
 RegisterNuiCallbackType("close");
+RegisterNuiCallbackType("giveClue");
 
 on("__cfx_nui:joinRoom", (data, cb) => {
   emitNet(EVENTS.JOIN_ROOM, data.roomId);
@@ -25,6 +26,11 @@ on("__cfx_nui:close", (_data, cb) => {
 
   SendNuiMessage(JSON.stringify({ action: "close" }));
 
+  cb({});
+});
+
+on("__cfx_nui:giveClue", (data, cb) => {
+  emitNet(EVENTS.ADD_CLUE, data.roomId, data.clue, data.count);
   cb({});
 });
 

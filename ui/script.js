@@ -1,4 +1,4 @@
-//TODO: A cluet megosztani a room-mal, ez a csapat következik allatt lesz magha a szó és a szám :D
+//TODO: A cluet megosztani a room-mal, ez a csapat következik alatt lesz maga a szó és a szám :D
 //TODO: A játékosok tippelése, és azoknak kezelése szerver felé, itt ugye alapból megjelölnek csak és ha mindegyik ugy gondolja akkor adja be
 
 //TODO: Szerver oldali timer játék alatt
@@ -13,8 +13,6 @@ const spymasterBtn = document.getElementById("codename_pickSpymasterBtn");
 
 let roomId = null;
 let countdownInterval = null;
-
-let clueCard = [];
 
 joinBtn.addEventListener("click", () => {
   joinBtn.disabled = true;
@@ -75,9 +73,9 @@ window.addEventListener("message", (event) => {
         "codename_countdown-waiting",
       );
 
-      if (data.activePlayers === true && data.startsIn) {
+      if (data.activePlayers === true && data.endsTime) {
         waitingTimer.classList.remove("hidden");
-        startCountdown(data.startsIn, waitingTimer);
+        startCountdown(data.endsTime, waitingTimer);
       } else {
         clearInterval(countdownInterval);
         waitingTimer.classList.add("hidden");
@@ -97,7 +95,7 @@ window.addEventListener("message", (event) => {
 
       const teamTimer = document.getElementById("codename_countdown-team");
       teamTimer.classList.remove("hidden");
-      startCountdown(data.startsIn, teamTimer);
+      startCountdown(data.endsTime, teamTimer);
 
       break;
     }
@@ -126,6 +124,10 @@ window.addEventListener("message", (event) => {
       joinBtn.disabled = true;
       spymasterBtn.disabled = true;
 
+      const teamText = document.getElementById("codename_turnText");
+      teamText.textContent = `${data.startingTeam ?? ""} köre`;
+      if (data.startingTeam === TEAM_TWO) teamText.classList.add("teamTwo");
+
       const playerData = data.lobbyPlayers.find(
         (lp) => lp.id === data.playerId,
       );
@@ -136,6 +138,9 @@ window.addEventListener("message", (event) => {
 
         createIngamePlyerList(data.lobbyPlayers);
         createWordCards(data.words, isSpymaster, playerTeam);
+
+        if (data.startingTeam === playerTeam && isSpymaster)
+          showClueInput(true);
       }
 
       break;

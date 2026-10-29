@@ -20,6 +20,11 @@ const EVENTS = {
 
   PICK_SPYMASTER: "codenames:pickSpymaster",
   DROPED_USER: "codenames:dropedUser",
+
+  ADD_CLUE: "codenames:addClue",
+  ADDED_CLUE: "codenames:addedClue",
+
+  NEXT_ROUND: "codenames:nextRound",
 };
 
 const PROP = "vw_prop_casino_cards_02";
@@ -31,7 +36,7 @@ const TEAM_ONE_COLOR = "rgba(255, 0, 0, 0.6)";
 const TEAM_TWO_COLOR = "rgba(0, 132, 255, 0.6)";
 
 const AFTERMIN_COUNTDOWN_MS = 5 * 1000;
-const ROUND_COUNTDOWN_MS = 60 * 1000;
+const ROUND_COUNTDOWN_MS = 5 * 1000;
 
 const WORDS_FILE = "magyar-szavak.txt";
 const RANDOM_WORDS = 25;

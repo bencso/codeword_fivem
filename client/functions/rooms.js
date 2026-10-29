@@ -7,7 +7,7 @@ onNet(
     joinedPlayerData,
     players,
     activePlayers,
-    startsIn,
+    endsTime,
   ) => {
     const myId = GetPlayerServerId(PlayerId());
     console.log(roomId + "| Új játékos: " + joinedPlayerData.id);
@@ -29,7 +29,7 @@ onNet(
         lobbyPlayers: withPhotos,
         playerId: myId,
         activePlayers,
-        startsIn,
+        endsTime,
       }),
     );
   },

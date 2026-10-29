@@ -15,11 +15,11 @@ function createWordCards(words, isSpymaster, myTeam) {
     if (word.word.length > 12) wordDiv.classList.add("long");
 
     if (isSpymaster || word.revealed) {
-      if (word.team === "") wordDiv.classList.add("neutral");
+      if (!word.team || word.team === "") wordDiv.classList.add("neutral");
       else if (word.team === "black") wordDiv.classList.add("black");
       else
         wordDiv.classList.add(word.team === TEAM_ONE ? "teamOne" : "teamTwo");
-    }
+    } else wordDiv.classList.add("neutral");
 
     if (word.revealed) wordDiv.classList.add("revealed");
 
