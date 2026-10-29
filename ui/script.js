@@ -197,8 +197,9 @@ window.addEventListener("message", (event) => {
 
     case "nextRound": {
       if (countdownInterval) clearInterval(countdownInterval);
-
       const teamText = document.getElementById("codename_turnText");
+
+      teamText.classList.remove("teamTwo");
       teamText.textContent = `${data.currentTeam ?? ""} köre`;
       if (data.currentTeam === TEAM_TWO) teamText.classList.add("teamTwo");
 
