@@ -9,10 +9,10 @@ onNet(
     activePlayers,
     endsTime,
   ) => {
-    const myId = GetPlayerServerId(PlayerId());
+    const playerId = GetPlayerServerId(PlayerId());
     console.log(roomId + "| Új játékos: " + joinedPlayerData.id);
 
-    if (joinedPlayerId === myId) currentRoomId = roomId;
+    if (joinedPlayerId === playerId) currentRoomId = roomId;
 
     const withPhotos = await Promise.all(
       players.map(async (p) => ({
@@ -27,7 +27,7 @@ onNet(
         roomId,
         joinedPlayerData,
         lobbyPlayers: withPhotos,
-        playerId: myId,
+        playerId,
         activePlayers,
         endsTime,
       }),
@@ -40,10 +40,9 @@ onNet(
 onNet(
   EVENTS.LEAVED_ROOM,
   async (roomId, leaverId, lobbyPlayers, activePlayers) => {
-    const myId = GetPlayerServerId(PlayerId());
     console.log(roomId + "| Kilépett játékos: " + leaverId);
 
-    if (leaverId === myId) {
+    if (leaverId === playerId) {
       currentRoomId = null;
       clearHeadshots();
     } else {
@@ -62,7 +61,6 @@ onNet(
         action: "leaved",
         roomId,
         leaverId,
-        playerId: myId,
         lobbyPlayers: withPhotos,
         activePlayers,
       }),

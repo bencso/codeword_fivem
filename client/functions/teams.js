@@ -26,7 +26,6 @@ onNet(
   async (roomId, lobbyPlayers, spymasterTeam) => {
     console.log(roomId + "| Spymaster kiválasztva");
 
-    const playerId = GetPlayerServerId(PlayerId());
 
     const withPhotos = await Promise.all(
       lobbyPlayers.map(async (p) => ({
@@ -41,7 +40,6 @@ onNet(
         roomId,
         lobbyPlayers: withPhotos,
         spymasterTeam,
-        playerId,
       }),
     );
   },

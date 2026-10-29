@@ -12,6 +12,10 @@ const spymasterBtn = document.getElementById("codename_pickSpymasterBtn");
 let roomId = null;
 let countdownInterval = null;
 
+let isPlayerSpymaster = false;
+let playerTeam = "";
+let playerId = null;
+
 joinBtn.addEventListener("click", () => {
   joinBtn.disabled = true;
   post("joinRoom", { roomId });
@@ -67,6 +71,8 @@ window.addEventListener("message", (event) => {
     case "joined": {
       if (data.joinedPlayerData.id === data.playerId) showView("waiting");
 
+      playerId = data.playerId;
+
       const waitingTimer = document.getElementById(
         "codename_countdown-waiting",
       );
@@ -100,12 +106,10 @@ window.addEventListener("message", (event) => {
       refreshPlayerList(data.players, "team");
       spymasterBtn.disabled = false;
 
-      const playerData = data.lobbyPlayers.find(
-        (lp) => lp.id === data.playerId,
-      );
+      const playerData = data.lobbyPlayers.find((lp) => lp.id === playerId);
 
       if (playerData) {
-        const playerTeam = playerData.team;
+        playerTeam = playerData.team;
         const selectBtn = document.getElementById("codename_pickSpymasterBtn");
 
         if (data.spymasterTeam === playerTeam && selectBtn) {
@@ -147,13 +151,11 @@ window.addEventListener("message", (event) => {
       const timer = document.getElementById("codename_turnTimerText");
       startCountdown(data.endsTime, timer);
 
-      const playerData = data.lobbyPlayers.find(
-        (lp) => lp.id === data.playerId,
-      );
+      const playerData = data.lobbyPlayers.find((lp) => lp.id === playerId);
 
       if (playerData) {
         const isSpymaster = playerData.spymaster;
-        const playerTeam = playerData.team;
+        isPlayerSpymaster = isSpymaster;
 
         createIngamePlyerList(data.lobbyPlayers);
         createWordCards(data.words, isSpymaster, playerTeam);
@@ -193,8 +195,39 @@ window.addEventListener("message", (event) => {
       break;
     }
 
+    case "nextRound": {
+      if (countdownInterval) clearInterval(countdownInterval);
+
+      const teamText = document.getElementById("codename_turnText");
+      teamText.textContent = `${data.currentTeam ?? ""} köre`;
+      if (data.currentTeam === TEAM_TWO) teamText.classList.add("teamTwo");
+
+      const timer = document.getElementById("codename_turnTimerText");
+
+      startCountdown(data.endsTime, timer);
+      showClueInput(false);
+
+      const clueText = document.getElementById("codename_clueText");
+      const clueCountText = document.getElementById("codename_clueCount");
+
+      if (clueText) {
+        clueText.classList.add("hidden");
+        clueText.textContent = "";
+      }
+
+      if (clueCountText) {
+        clueCountText.classList.add("hidden");
+        clueCountText.textContent = "";
+      }
+
+      createWordCards(data.words, isPlayerSpymaster, playerTeam);
+      showClueInput(data.currentTeam === playerTeam && isPlayerSpymaster);
+
+      break;
+    }
+
     case "leaved": {
-      const isMe = data.leaverId === data.playerId;
+      const isMe = data.leaverId === playerId;
 
       const activeView = document
         .querySelector(".codename_view.active")

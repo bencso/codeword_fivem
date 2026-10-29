@@ -1,6 +1,5 @@
 //#region Szobából kilépett valaki, és alacsony szám
 onNet(EVENTS.DROPED_USER, async (roomId, players) => {
-  const myId = GetPlayerServerId(PlayerId());
   console.log(roomId + "| Megszakadt a játék, kevés játékos miatt");
 
   const withPhotos = await Promise.all(
@@ -15,7 +14,6 @@ onNet(EVENTS.DROPED_USER, async (roomId, players) => {
       action: "userDroped",
       roomId,
       lobbyPlayers: withPhotos,
-      playerId: myId,
     }),
   );
 });
@@ -26,7 +24,6 @@ onNet(
   EVENTS.STARTED_GAME,
   async (roomId, players, words, startingTeam, endsTime) => {
     console.log(roomId + "| Játék elindult");
-    const playerId = GetPlayerServerId(PlayerId());
 
     const withPhotos = await Promise.all(
       players.map(async (p) => ({
@@ -41,7 +38,6 @@ onNet(
         roomId,
         players,
         lobbyPlayers: withPhotos,
-        playerId,
         words,
         startingTeam,
         endsTime,
@@ -69,18 +65,22 @@ onNet(EVENTS.ADDED_CLUE, async (roomId, clue, count, currentTeam, endsTime) => {
 //#endregion
 
 //#region Következő kör
-onNet(EVENTS.NEXT_ROUND, async (roomId, clue, count, currentTeam, endsTime) => {
-  console.log(roomId + "| Következő kör");
+onNet(
+  EVENTS.NEXT_ROUND,
+  async (roomId, clue, count, words, currentTeam, endsTime) => {
+    console.log(roomId + "| Következő kör");
 
-  SendNuiMessage(
-    JSON.stringify({
-      action: "nextRound",
-      roomId,
-      clue,
-      count,
-      currentTeam,
-      endsTime,
-    }),
-  );
-});
+    SendNuiMessage(
+      JSON.stringify({
+        action: "nextRound",
+        roomId,
+        clue,
+        count,
+        words,
+        currentTeam,
+        endsTime,
+      }),
+    );
+  },
+);
 //#endregion

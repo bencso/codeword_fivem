@@ -416,6 +416,7 @@ function nextRound(roomId) {
         roomId,
         clueData.clue,
         clueData.count,
+        room.words,
         room.currentTeam,
         endsTime,
       );
