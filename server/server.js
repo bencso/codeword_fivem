@@ -492,16 +492,25 @@ onNet(EVENTS.PICK_WORD, (roomId, pickedWord) => {
       });
 
       const cardTeam = currentRoom.words[pickedCard].team;
+      const cardsLeft = (team) =>
+        currentRoom.words.filter((w) => w.team === team && !w.revealed).length;
 
       if (cardTeam === playerData.team) {
-        //TODO: Ha van még idő akkor lehet pickelni, ha nincs következő
+        if (cardsLeft(playerData.team) === 0) {
+          //TODO: a csapat nyert (vége)
+        }
       } else if (cardTeam === "black") {
-        //TODO: Vége a játéknak
+        //TODO: az ellenfél nyert (vége)
+      } else if (cardTeam === "") {
+        currentRoom.selectedWords.clear();
+        nextRound(roomId);
       } else {
-        /*
-      ha az ellenfélnek 0 kártyája maradt → az ellenfél nyert (vége)
-      különben → nextRound
-      */
+        if (cardsLeft(cardTeam) === 0) {
+          //TODO: az ellenfél nyert (vége)
+        } else {
+          currentRoom.selectedWords.clear();
+          nextRound(roomId);
+        }
       }
     }
   }
