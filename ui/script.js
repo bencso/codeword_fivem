@@ -15,31 +15,22 @@ let countdownInterval = null;
 let isPlayerSpymaster = false;
 let playerTeam = "";
 let playerId = null;
+let inRoom = false;
 
 joinBtn.addEventListener("click", () => {
   joinBtn.disabled = true;
   post("joinRoom", { roomId });
 });
 
-document.getElementById("codename_exitBtn").addEventListener("click", () => {
-  if (roomId) post("leaveRoom", { roomId });
+document.getElementById("codename_exitBtn").addEventListener("click", closeUi);
 
-  joinBtn.disabled = false;
-  closeUi();
+window.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeUi();
 });
 
 document.getElementById("codename_leaveBtn").addEventListener("click", () => {
   post("leaveRoom", { roomId });
   joinBtn.disabled = false;
-});
-
-window.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") {
-    if (roomId) post("leaveRoom", { roomId });
-
-    joinBtn.disabled = false;
-    closeUi();
-  }
 });
 
 spymasterBtn.addEventListener("click", () => {
@@ -55,6 +46,11 @@ window.addEventListener("message", (event) => {
     case "open": {
       if (data.roomId !== undefined) roomId = data.roomId;
 
+      if (inRoom) {
+        app.classList.add("show");
+        break;
+      }
+
       joinBtn.disabled = false;
       spymasterBtn.disabled = true;
       openUi("lobby");
@@ -62,6 +58,7 @@ window.addEventListener("message", (event) => {
     }
 
     case "close": {
+      inRoom = false;
       joinBtn.disabled = false;
       spymasterBtn.disabled = true;
       hideUi();
@@ -69,7 +66,10 @@ window.addEventListener("message", (event) => {
     }
 
     case "joined": {
-      if (data.joinedPlayerData.id === data.playerId) showView("waiting");
+      if (data.joinedPlayerData.id === data.playerId) {
+        inRoom = true;
+        showView("waiting");
+      }
 
       playerId = data.playerId;
 
@@ -103,7 +103,7 @@ window.addEventListener("message", (event) => {
     }
 
     case "spymasterSelected": {
-      refreshPlayerList(data.players, "team");
+      refreshPlayerList(data.lobbyPlayers, "team");
       spymasterBtn.disabled = false;
 
       const playerData = data.lobbyPlayers.find((lp) => lp.id === playerId);
@@ -238,6 +238,7 @@ window.addEventListener("message", (event) => {
         ?.id.replace("codename_view-", "");
 
       if (isMe) {
+        inRoom = false;
         clearInterval(countdownInterval);
         joinBtn.disabled = false;
         spymasterBtn.disabled = true;

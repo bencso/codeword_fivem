@@ -16,7 +16,7 @@ function updateClueState() {
   const count = selectedClueCards().length;
   clueCount.textContent = count;
   clueCount.classList.toggle("empty", count === 0);
-  clueSubmit.disabled = clueText.value.trim() === "" || count === 0;
+  clueSubmit.disabled = clueText.value.trim() === "" || count === 1;
 }
 
 function toggleClueCard(card) {
@@ -37,10 +37,11 @@ function submitClue() {
   const clue = clueText.value.trim();
   const count = selectedClueCards().length;
 
-  post("giveClue", { roomId, clue, count });
-
-  resetClueInput();
-  showClueInput(false);
+  if (clue.length > 1) {
+    post("giveClue", { roomId, clue, count });
+    resetClueInput();
+    showClueInput(false);
+  }
 }
 
 clueText.addEventListener("keydown", (e) => {

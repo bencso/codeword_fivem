@@ -24,8 +24,6 @@ on("__cfx_nui:close", (_data, cb) => {
   uiOpen = false;
   SetNuiFocus(false, false);
 
-  SendNuiMessage(JSON.stringify({ action: "close" }));
-
   cb({});
 });
 

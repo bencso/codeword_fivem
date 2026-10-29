@@ -298,6 +298,7 @@ onNet(EVENTS.LEAVE_ROOM, (roomId) => {
     const currentRoom = rooms.get(roomId);
 
     if (!currentRoom.players.some((p) => p.id === leaverId)) return;
+    const leaver = currentRoom.players.find((p) => p.id === leaverId);
 
     const room = {
       ...currentRoom,
@@ -332,6 +333,18 @@ onNet(EVENTS.LEAVE_ROOM, (roomId) => {
       room.countDownTimer
     )
       resetRoom(roomId);
+
+    if (room.state === "selecting" || room.state === "started") {
+      const teamEmpty = [TEAM_ONE, TEAM_TWO].some(
+        (t) => !room.players.some((p) => p.team === t),
+      );
+
+      //TODO: Itt a spymasterLeft, akkor kijelöl egy másikat helyette a rendszer
+      const spymasterLeft = room.state === "started" && leaver.spymaster;
+
+      if (room.players.length < MIN_PLAYERS || teamEmpty || spymasterLeft)
+        resetRoom(roomId);
+    }
   }
 });
 
