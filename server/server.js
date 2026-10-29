@@ -244,9 +244,6 @@ function startGame(roomId) {
       state: "started",
     };
 
-    console.log("startGame");
-    console.log(JSON.stringify(room));
-
     rooms.set(roomId, room);
 
     room.players.forEach((player) => {
