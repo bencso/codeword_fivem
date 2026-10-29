@@ -6,6 +6,8 @@ const spymasterBtn = document.getElementById("codename_pickSpymasterBtn");
 let roomId = null;
 let countdownInterval = null;
 
+let clueCard = [];
+
 joinBtn.addEventListener("click", () => {
   joinBtn.disabled = true;
   post("joinRoom", { roomId });
@@ -116,12 +118,18 @@ window.addEventListener("message", (event) => {
       joinBtn.disabled = true;
       spymasterBtn.disabled = true;
 
-      const isSpymaster = data.lobbyPlayers.some(
-        (lp) => lp.id === data.playerId && lp.spymaster,
+      const playerData = data.lobbyPlayers.find(
+        (lp) => lp.id === data.playerId,
       );
 
-      createIngamePlyerList(data.lobbyPlayers);
-      createWordCards(data.words, isSpymaster);
+      if (playerData) {
+        const isSpymaster = playerData.spymaster;
+        const playerTeam = playerData.team;
+
+        createIngamePlyerList(data.lobbyPlayers);
+        createWordCards(data.words, isSpymaster, playerTeam);
+        showClueInput(true);
+      }
 
       break;
     }

@@ -1,12 +1,14 @@
-function createWordCards(words, isSpymaster) {
+function createWordCards(words, isSpymaster, myTeam) {
   const grid = document.getElementById("codename_grid");
   grid.textContent = "";
+  grid.classList.toggle("spymaster", !!isSpymaster);
 
-  words.forEach((word) => {
+  words.forEach((word, index) => {
     const wordDiv = document.createElement("div");
     const textSpan = document.createElement("span");
 
     wordDiv.classList.add("codename_card");
+    wordDiv.dataset.index = index;
     textSpan.classList.add("codename_card-text");
     textSpan.textContent = word.word;
 
@@ -21,7 +23,14 @@ function createWordCards(words, isSpymaster) {
 
     if (word.revealed) wordDiv.classList.add("revealed");
 
+    if (isSpymaster && !word.revealed && word.team === myTeam) {
+      wordDiv.classList.add("own");
+      wordDiv.addEventListener("click", () => toggleClueCard(wordDiv));
+    }
+
     wordDiv.appendChild(textSpan);
     grid.appendChild(wordDiv);
   });
+
+  resetClueInput();
 }
