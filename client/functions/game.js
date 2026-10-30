@@ -105,14 +105,31 @@ onNet(EVENTS.VOTED_WORD, async (roomId, pickedWord, playerId, playerName) => {
 //#endregion
 
 //#region Szó felfordítása
-onNet(EVENTS.SELECTED_WORD, async (roomId, words, playerId, amountClue) => {
+onNet(
+  EVENTS.SELECTED_WORD,
+  async (roomId, words, playerId, amountClue, overallClue) => {
+    SendNuiMessage(
+      JSON.stringify({
+        action: "selectedWord",
+        roomId,
+        words,
+        playerId,
+        amountClue,
+        overallClue,
+      }),
+    );
+  },
+);
+//#endregion
+
+//#region Szavazat leadva a skippelésre
+onNet(EVENTS.VOTED_SKIP, (roomId, playerTeamPlayercount, skipperCount) => {
   SendNuiMessage(
     JSON.stringify({
-      action: "selectedWord",
+      action: "votedSkip",
       roomId,
-      words,
-      playerId,
-      amountClue,
+      playerTeamPlayercount,
+      skipperCount,
     }),
   );
 });

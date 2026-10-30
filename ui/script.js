@@ -164,10 +164,8 @@ window.addEventListener("message", (event) => {
           data.startingTeam,
         );
 
-        if (data.startingTeam === playerTeam && isPlayerSpymaster) {
-          if (isPlayerSpymaster) showClueInput(true);
-          else showNextRoundBtn(true);
-        }
+        if (data.startingTeam === playerTeam && isPlayerSpymaster)
+          showClueInput(true);
       }
 
       break;
@@ -177,6 +175,7 @@ window.addEventListener("message", (event) => {
       if (countdownInterval) clearInterval(countdownInterval);
 
       document.querySelectorAll(`.codename_vote`).forEach((el) => el.remove());
+      document.getElementById("codename_nextRoundBtn_count").textContent = "";
 
       const teamText = document.getElementById("codename_turnText");
       teamText.classList.remove("teamTwo");
@@ -202,8 +201,18 @@ window.addEventListener("message", (event) => {
 
       if (clueCountText && data.clue.count >= 0) {
         clueCountText.classList.remove("hidden");
-        clueCountText.textContent = data.clue.count;
+        clueCountText.textContent =
+          data.clue.cound === 0 ? "∞" : data.clue.count;
       }
+
+      break;
+    }
+
+    case "votedSkip": {
+      if (!data.skipperCount || data.skipperCount <= 0) break;
+
+      document.getElementById("codename_nextRoundBtn_count").textContent =
+        `(${data.skipperCount} / ${data.playerTeamPlayercount})`;
 
       break;
     }
@@ -212,6 +221,7 @@ window.addEventListener("message", (event) => {
       if (countdownInterval) clearInterval(countdownInterval);
       const teamText = document.getElementById("codename_turnText");
 
+      document.getElementById("codename_nextRoundBtn_count").textContent = "";
       document.querySelectorAll(`.codename_vote`).forEach((el) => el.remove());
 
       currentTeam = data.currentTeam;
@@ -301,7 +311,7 @@ window.addEventListener("message", (event) => {
 
       if (data.amountClue !== undefined)
         document.getElementById("codename_clueCount").textContent =
-          data.amountClue;
+          data.overallClue === 0 ? "∞" : data.amountClue;
 
       card
         ?.querySelectorAll(".codename_card-votes .codename_vote")

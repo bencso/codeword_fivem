@@ -9,12 +9,12 @@ function showNextRoundBtn(show) {
 }
 
 function submitNextRoundBtn() {
-  if (playerClueSubmit.disabled) return;
+  if (nextRoundBtn.disabled) return;
+  nextRoundBtn.disabled = true;
   post("skipRound", { roomId });
 }
 
 function submitPickCard(pickedWord) {
-  if (playerClueSubmit.disabled) return;
   if (pickedWord.length <= 0) return;
 
   post("pickWord", { roomId, pickedWord });

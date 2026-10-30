@@ -29,6 +29,9 @@ const EVENTS = {
   PICK_WORD: "codenames:pickWord",
   VOTED_WORD: "codenames:votedWord",
   SELECTED_WORD: "codenames:selectedWord",
+
+  SKIP_ROUND: "codenames:skipRound",
+  VOTED_SKIP: "codenames:votedSkip",
 };
 
 const PROP = "codenames_board";

@@ -498,6 +498,7 @@ onNet(EVENTS.PICK_WORD, (roomId, pickedWord) => {
             currentRoom.words,
             playerId,
             amountClue,
+            currentRoom.clue.count,
           );
         } else {
           const wordsWithoutColor = currentRoom.words.map((word) => {
@@ -515,6 +516,7 @@ onNet(EVENTS.PICK_WORD, (roomId, pickedWord) => {
             wordsWithoutColor,
             playerId,
             amountClue,
+            currentRoom.clue.count,
           );
         }
       });
@@ -570,6 +572,18 @@ onNet(EVENTS.SKIP_ROUND, (roomId) => {
     ).length;
 
     currentRoom.skippingRound.add(playerId);
+
+    currentRoom.players
+      .filter((p) => p.team == playerData.team)
+      .forEach((pd) =>
+        emitNet(
+          EVENTS.VOTED_SKIP,
+          pd.id,
+          roomId,
+          playerTeamPlayercount,
+          currentRoom.skippingRound.size,
+        ),
+      );
 
     if (currentRoom.skippingRound.size === playerTeamPlayercount) {
       currentRoom.skippingRound.clear();
