@@ -137,7 +137,14 @@ onNet(EVENTS.VOTED_SKIP, (roomId, playerTeamPlayercount, skipperCount) => {
 
 //#region Játék vége
 
-onNet(EVENTS.GAME_ENDED, () => {
-  
-})
+onNet(EVENTS.GAME_ENDED, (roomId, words, winnerTeam) => {
+  SendNuiMessage(
+    JSON.stringify({
+      action: "gameEnded",
+      roomId,
+      words,
+      winnerTeam,
+    }),
+  );
+});
 //#endregion

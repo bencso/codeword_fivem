@@ -340,6 +340,26 @@ window.addEventListener("message", (event) => {
       break;
     }
 
+    case "gameEnded": {
+      clearInterval(countdownInterval);
+      const timer = document.getElementById("codename_turnTimerText");
+      timer.textContent = "";
+      timer.classList.remove("urgent");
+
+      const teamText = document.getElementById("codename_turnText");
+      teamText.textContent = `${TEAM_NAMES[data.winnerTeam] ?? ""} nyert! 🎉`;
+      teamText.classList.toggle("teamTwo", data.winnerTeam === TEAM_TWO);
+
+      document.getElementById("codename_clueText").classList.add("hidden");
+      document.getElementById("codename_clueCount").classList.add("hidden");
+      showClueInput(false);
+      showNextRoundBtn(false);
+
+      currentTeam = null;
+      modifyWordCards(data.words, true, playerTeam, null);
+
+      break;
+    }
     case "leaved": {
       const isMe = data.leaverId === playerId;
 
