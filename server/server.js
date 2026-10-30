@@ -311,6 +311,10 @@ onNet(EVENTS.ADD_CLUE, (roomId, clue, count) => {
     currentRoom.guesses = 0;
     const playerData = currentRoom.players.find((p) => p.id === sender);
 
+    if (count === -1) {
+      nextRound(roomId);
+      return;
+    }
     if (playerData.team !== currentRoom.currentTeam) return;
     if (currentRoom.clue && currentRoom.clue.clue) return;
     if (currentRoom.countDownTimer) clearTimeout(currentRoom.countDownTimer);

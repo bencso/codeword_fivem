@@ -37,6 +37,7 @@ files {
     'ui/helper/createWordCards.js',
     'ui/helper/ingamePlayerList.js',
     'ui/helper/clueInput.js',
+    'ui/helper/nextRoundBtn.js',
     'ui/index.html',
     'ui/style.css',
     'ui/script.js'

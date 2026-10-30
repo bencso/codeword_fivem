@@ -172,8 +172,10 @@ window.addEventListener("message", (event) => {
         createIngamePlyerList(data.lobbyPlayers);
         createWordCards(data.words, isSpymaster, playerTeam);
 
-        if (data.startingTeam === playerTeam && isSpymaster)
-          showClueInput(true);
+        if (data.startingTeam === playerTeam && isSpymaster) {
+          if (isSpymaster) showClueInput(true);
+          else showNextRoundBtn(true);
+        }
       }
 
       break;
@@ -191,6 +193,7 @@ window.addEventListener("message", (event) => {
 
       startCountdown(data.endsTime, timer);
       showClueInput(false);
+      showNextRoundBtn(false);
 
       const clueText = document.getElementById("codename_clueText");
       const clueCountText = document.getElementById("codename_clueCount");
@@ -220,6 +223,7 @@ window.addEventListener("message", (event) => {
 
       startCountdown(data.endsTime, timer);
       showClueInput(false);
+      showNextRoundBtn(false);
 
       const clueText = document.getElementById("codename_clueText");
       const clueCountText = document.getElementById("codename_clueCount");
@@ -236,6 +240,7 @@ window.addEventListener("message", (event) => {
 
       createWordCards(data.words, isPlayerSpymaster, playerTeam);
       showClueInput(data.currentTeam === playerTeam && isPlayerSpymaster);
+      showNextRoundBtn(data.currentTeam === playerTeam && !isPlayerSpymaster);
 
       break;
     }

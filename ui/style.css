@@ -635,6 +635,6 @@ body {
 .codename_clue-hint {
   margin: 6px 0 0;
   font-size: 11px;
-  color: var(--muted);
+  color: white;
   text-align: center;
 }
