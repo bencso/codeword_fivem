@@ -263,7 +263,8 @@ window.addEventListener("message", (event) => {
 
     case "votedWord": {
       const voter = data.voterWhitPhoto;
-      if (!data.pickedWord || !voter) break;
+
+      if (!voter) break;
 
       document
         .querySelectorAll(`.codename_vote[data-voter-id="${voter.votedId}"]`)
@@ -275,12 +276,22 @@ window.addEventListener("message", (event) => {
       const votesBlock = card?.querySelector(".codename_card-votes");
       if (!votesBlock) break;
 
+      if (!data.pickedWord) {
+        if (voter.votedId === playerId) {
+          document
+            .querySelectorAll(".codename_card-ownPlayerVote")
+            .forEach((c) => c.classList.remove("codename_card-ownPlayerVote"));
+        }
+        break;
+      }
+
       if (voter.votedId === playerId) {
         document
           .querySelectorAll(".codename_card-ownPlayerVote")
           .forEach((c) => c.classList.remove("codename_card-ownPlayerVote"));
         card.classList.add("codename_card-ownPlayerVote");
       }
+
       const photo = document.createElement("span");
       photo.className = "codename_vote";
       photo.dataset.voterId = voter.votedId;

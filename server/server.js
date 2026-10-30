@@ -466,6 +466,22 @@ onNet(EVENTS.PICK_WORD, (roomId, pickedWord) => {
     if (pickedCard === -1) return;
     if (currentRoom.words[pickedCard].revealed) return;
 
+    if (currentRoom.selectedWords.get(playerId) === pickedWord) {
+      currentRoom.selectedWords.delete(playerId);
+
+      currentRoom.players.forEach((player) => {
+        emitNet(
+          EVENTS.VOTED_WORD,
+          player.id,
+          roomId,
+          null,
+          playerId,
+          playerData.name,
+        );
+      });
+      return;
+    }
+
     currentRoom.selectedWords.set(playerId, pickedWord);
     currentRoom.players.forEach((player) => {
       emitNet(
