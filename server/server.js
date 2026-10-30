@@ -308,16 +308,17 @@ onNet(EVENTS.ADD_CLUE, (roomId, clue, count) => {
     if (!currentRoom.players.some((p) => p.id === sender && p.spymaster))
       return;
 
-    currentRoom.guesses = 0;
     const playerData = currentRoom.players.find((p) => p.id === sender);
 
+    if (playerData.team !== currentRoom.currentTeam) return;
+    if (currentRoom.clue && currentRoom.clue.clue) return;
     if (count === -1) {
       nextRound(roomId);
       return;
     }
-    if (playerData.team !== currentRoom.currentTeam) return;
-    if (currentRoom.clue && currentRoom.clue.clue) return;
     if (currentRoom.countDownTimer) clearTimeout(currentRoom.countDownTimer);
+
+    currentRoom.guesses = 0;
 
     const clueData = {
       clue,
@@ -481,6 +482,8 @@ onNet(EVENTS.PICK_WORD, (roomId, pickedWord) => {
 
       currentRoom.guesses++;
 
+      const amountClue = currentRoom.clue.count + 1 - currentRoom.guesses;
+
       currentRoom.players.forEach((player) => {
         if (player.spymaster) {
           emitNet(
@@ -489,7 +492,7 @@ onNet(EVENTS.PICK_WORD, (roomId, pickedWord) => {
             roomId,
             currentRoom.words,
             playerId,
-            currentRoom.guesses,
+            amountClue,
           );
         } else {
           const wordsWithoutColor = currentRoom.words.map((word) => {
@@ -506,7 +509,7 @@ onNet(EVENTS.PICK_WORD, (roomId, pickedWord) => {
             roomId,
             wordsWithoutColor,
             playerId,
-            currentRoom.guesses,
+            amountClue,
           );
         }
       });

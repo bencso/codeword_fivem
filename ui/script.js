@@ -157,10 +157,15 @@ window.addEventListener("message", (event) => {
         playerTeam = playerData.team;
 
         createIngamePlyerList(data.lobbyPlayers);
-        modifyWordCards(data.words, isSpymaster, playerTeam, data.startingTeam);
+        modifyWordCards(
+          data.words,
+          isPlayerSpymaster,
+          playerTeam,
+          data.startingTeam,
+        );
 
-        if (data.startingTeam === playerTeam && isSpymaster) {
-          if (isSpymaster) showClueInput(true);
+        if (data.startingTeam === playerTeam && isPlayerSpymaster) {
+          if (isPlayerSpymaster) showClueInput(true);
           else showNextRoundBtn(true);
         }
       }
@@ -185,7 +190,7 @@ window.addEventListener("message", (event) => {
 
       startCountdown(data.endsTime, timer);
       showClueInput(false);
-      showNextRoundBtn(false);
+      showNextRoundBtn(data.currentTeam === playerTeam && !isPlayerSpymaster);
 
       const clueText = document.getElementById("codename_clueText");
       const clueCountText = document.getElementById("codename_clueCount");
@@ -241,7 +246,7 @@ window.addEventListener("message", (event) => {
         data.currentTeam,
       );
       showClueInput(data.currentTeam === playerTeam && isPlayerSpymaster);
-      showNextRoundBtn(data.currentTeam === playerTeam && !isPlayerSpymaster);
+      showNextRoundBtn(false);
 
       break;
     }
@@ -260,9 +265,12 @@ window.addEventListener("message", (event) => {
       const votesBlock = card?.querySelector(".codename_card-votes");
       if (!votesBlock) break;
 
-      if (voter.votedId === playerId)
+      if (voter.votedId === playerId) {
+        document
+          .querySelectorAll(".codename_card-ownPlayerVote")
+          .forEach((c) => c.classList.remove("codename_card-ownPlayerVote"));
         card.classList.add("codename_card-ownPlayerVote");
-
+      }
       const photo = document.createElement("span");
       photo.className = "codename_vote";
       photo.dataset.voterId = voter.votedId;
@@ -287,16 +295,13 @@ window.addEventListener("message", (event) => {
     }
 
     case "selectedWord": {
-      const voter = data.voterWhitPhoto;
-      if (!data.pickedWord || !voter) break;
-
       const card = [...document.querySelectorAll(".codename_card")].find(
         (c) => c.dataset.word === data.pickedWord,
       );
 
-      if (data.guesses)
+      if (data.amountClue)
         document.getElementById("codename_clueCount").textContent =
-          data.guesses;
+          data.amountClue;
 
       card
         ?.querySelectorAll(".codename_card-votes .codename_vote")

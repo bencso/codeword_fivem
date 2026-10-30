@@ -105,14 +105,14 @@ onNet(EVENTS.VOTED_WORD, async (roomId, pickedWord, playerId, playerName) => {
 //#endregion
 
 //#region Szó felfordítása
-onNet(EVENTS.SELECTED_WORD, async (roomId, words, playerId, guesses) => {
+onNet(EVENTS.SELECTED_WORD, async (roomId, words, playerId, amountClue) => {
   SendNuiMessage(
     JSON.stringify({
       action: "selectedWord",
       roomId,
       words,
       playerId,
-      guesses,
+      amountClue,
     }),
   );
 });
