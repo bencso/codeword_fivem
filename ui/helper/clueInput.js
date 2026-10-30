@@ -20,7 +20,8 @@ function updateClueState() {
   clueSubmit.disabled = clueText.value.trim() === "";
 }
 
-function toggleClueCard(card) {
+function toggleClueCard(card, isRevealed) {
+  if (isRevealed) return;
   if (clueBar.classList.contains("hidden")) return;
   card.classList.toggle("selected");
   updateClueState();

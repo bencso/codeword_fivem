@@ -29,6 +29,7 @@ ui_page 'ui/index.html'
 
 files { 
     'consts.js',
+    'assets/kartya/*.png',
     'ui/helper/countdown.js',
     'ui/helper/refreshPlayerList.js',
     'ui/helper/post.js',
