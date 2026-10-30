@@ -121,8 +121,14 @@ window.addEventListener("message", (event) => {
       const waitingTimer = document.getElementById(
         "codename_countdown-waiting",
       );
-      waitingTimer.classList.add("hidden");
-      if (countdownInterval) clearInterval(countdownInterval);
+
+      if (data.endsTime) {
+        waitingTimer.classList.remove("hidden");
+        startCountdown(data.endsTime, waitingTimer);
+      } else {
+        clearInterval(countdownInterval);
+        waitingTimer.classList.add("hidden");
+      }
 
       refreshPlayerList(data.lobbyPlayers, "waiting");
       joinBtn.disabled = false;

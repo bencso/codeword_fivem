@@ -540,10 +540,13 @@ onNet(EVENTS.PICK_WORD, (roomId, pickedWord) => {
       const cardTeam = currentRoom.words[pickedCard].team;
       const cardsLeft = (team) =>
         currentRoom.words.filter((w) => w.team === team && !w.revealed).length;
+      const enemy = currentRoom.players.find(
+        (p) => p.team != playerData.team,
+      ).team;
 
       if (cardTeam === playerData.team) {
         if (cardsLeft(playerData.team) === 0) {
-          //TODO: a csapat nyert (vége)
+          endGame(roomId, playerData.team);
         } else if (
           currentRoom.clue.count > 0 &&
           currentRoom.guesses >= currentRoom.clue.count + 1
@@ -551,12 +554,12 @@ onNet(EVENTS.PICK_WORD, (roomId, pickedWord) => {
           nextRound(roomId);
         }
       } else if (cardTeam === "black") {
-        //TODO: az ellenfél nyert (vége)
+        endGame(roomId, playerData.team === TEAM_ONE ? TEAM_TWO : TEAM_ONE);
       } else if (cardTeam === "") {
         nextRound(roomId);
       } else {
         if (cardsLeft(cardTeam) === 0) {
-          //TODO: az ellenfél nyert (vége)
+          endGame(roomId, cardTeam);
         } else {
           nextRound(roomId);
         }
@@ -564,6 +567,41 @@ onNet(EVENTS.PICK_WORD, (roomId, pickedWord) => {
     }
   }
 });
+//#endregion
+
+//#region END GAME
+function endGame(roomId, winnerTeam) {
+  if (rooms.size > 0 && rooms.has(roomId)) {
+    const currentRoom = rooms.get(roomId);
+
+    if (!currentRoom || currentRoom.state !== "started") return;
+    if (currentRoom.countDownTimer) clearTimeout(currentRoom.countDownTimer);
+
+    currentRoom.countDownTimer = null;
+    currentRoom.endsAt = null;
+    currentRoom.selectedWords.clear();
+    currentRoom.skippingRound.clear();
+    currentRoom.guesses = 0;
+    currentRoom.state = "finished";
+
+    currentRoom.players.forEach((player) => {
+      emitNet(
+        EVENTS.GAME_ENDED,
+        player.id,
+        roomId,
+        currentRoom.words,
+        winnerTeam,
+      );
+    });
+
+    currentRoom.countDownTimer = setTimeout(() => {
+      const room = rooms.get(roomId);
+      if (!room || room.state !== "finished") return;
+
+      resetRoom(roomId);
+    }, END_SCREEN_MS);
+  }
+}
 //#endregion
 
 //#region KÖR UGRÁS

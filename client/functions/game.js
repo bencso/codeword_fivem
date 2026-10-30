@@ -134,3 +134,10 @@ onNet(EVENTS.VOTED_SKIP, (roomId, playerTeamPlayercount, skipperCount) => {
   );
 });
 //#endregion
+
+//#region Játék vége
+
+onNet(EVENTS.GAME_ENDED, () => {
+  
+})
+//#endregion

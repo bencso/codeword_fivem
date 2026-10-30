@@ -32,6 +32,8 @@ const EVENTS = {
 
   SKIP_ROUND: "codenames:skipRound",
   VOTED_SKIP: "codenames:votedSkip",
+
+  GAME_ENDED: "codenames:gameEnded",
 };
 
 const PROP = "codenames_board";
@@ -44,6 +46,7 @@ const TEAM_TWO_COLOR = "rgba(0, 132, 255, 0.6)";
 
 const AFTERMIN_COUNTDOWN_MS = 5 * 1000;
 const ROUND_COUNTDOWN_MS = 5 * 1000;
+const END_SCREEN_MS = 5 * 1000;
 
 const WORDS_FILE = "/assets/magyar-szavak.txt";
 const RANDOM_WORDS = 25;

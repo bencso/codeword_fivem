@@ -17,7 +17,7 @@ function leaveRoom(roomId, leaverId) {
         EVENTS.VOTED_WORD,
         player.id,
         roomId,
-        pickedWord,
+        null,
         leaverId,
         leaver.name,
       );

@@ -9,6 +9,7 @@ function resetRoom(roomId, notify = true) {
   room.state = "joinable";
   room.words = [];
   room.clue = null;
+  room.skippingRound = new Set();
   room.currentTeam = null;
   room.selectedWords = new Map();
   room.players = room.players.map((p) => ({
@@ -18,9 +19,27 @@ function resetRoom(roomId, notify = true) {
   }));
   room.guesses = 0;
 
+  if (room.players.length >= MIN_PLAYERS) {
+    room.endsAt = Date.now() + AFTERMIN_COUNTDOWN_MS;
+
+    room.countDownTimer = setTimeout(() => {
+      const currentRoom = rooms.get(roomId);
+      if (!currentRoom) return;
+
+      currentRoom.countDownTimer = null;
+      currentRoom.endsAt = null;
+
+      if (currentRoom.players.length < MIN_PLAYERS) return;
+
+      switchSpymasterSelector(roomId);
+    }, AFTERMIN_COUNTDOWN_MS);
+  }
+
   if (!notify) return;
 
+  const endsTime = room.endsAt ? room.endsAt - Date.now() : null;
+
   room.players.forEach((player) =>
-    emitNet(EVENTS.DROPED_USER, player.id, roomId, room.players),
+    emitNet(EVENTS.DROPED_USER, player.id, roomId, room.players, endsTime),
   );
 }
