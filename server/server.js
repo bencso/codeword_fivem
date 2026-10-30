@@ -14,6 +14,7 @@ onNet(EVENTS.CREATE_ROOM, (pos) => {
     countDownTimer: null,
     endsAt: null,
     selectedWords: new Map(),
+    skippingRound: new Set(),
     guesses: 0,
     state: "joinable",
   };
@@ -207,6 +208,9 @@ onNet(EVENTS.PICK_SPYMASTER, (roomId) => {
 function startGame(roomId) {
   if (rooms.size > 0 && rooms.has(roomId)) {
     const currentRoom = rooms.get(roomId);
+    currentRoom.selectedWords.clear();
+    currentRoom.guesses = 0;
+    currentRoom.skippingRound.clear();
 
     if (currentRoom.state !== "selecting") return;
 
@@ -368,6 +372,7 @@ function nextRound(roomId) {
     if (currentRoom.countDownTimer) clearTimeout(currentRoom.countDownTimer);
     currentRoom.selectedWords.clear();
     currentRoom.guesses = 0;
+    currentRoom.skippingRound.clear();
 
     const enemy = currentRoom.currentTeam === TEAM_ONE ? TEAM_TWO : TEAM_ONE;
 
@@ -538,6 +543,37 @@ onNet(EVENTS.PICK_WORD, (roomId, pickedWord) => {
           nextRound(roomId);
         }
       }
+    }
+  }
+});
+//#endregion
+
+//#region KÖR UGRÁS
+onNet(EVENTS.SKIP_ROUND, (roomId) => {
+  if (rooms.size > 0 && rooms.has(roomId)) {
+    const currentRoom = rooms.get(roomId);
+
+    const playerId = source;
+    const playerData = currentRoom.players.find((p) => p.id === playerId);
+
+    if (!playerData) return;
+    if (playerData.spymaster) return;
+    if (
+      currentRoom.state !== "started" ||
+      currentRoom.currentTeam !== playerData.team ||
+      !currentRoom.clue?.clue
+    )
+      return;
+
+    const playerTeamPlayercount = currentRoom.players.filter(
+      (p) => p.team == playerData.team && !p.spymaster,
+    ).length;
+
+    currentRoom.skippingRound.add(playerId);
+
+    if (currentRoom.skippingRound.size === playerTeamPlayercount) {
+      currentRoom.skippingRound.clear();
+      nextRound(roomId);
     }
   }
 });

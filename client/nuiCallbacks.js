@@ -5,6 +5,7 @@ RegisterNuiCallbackType("pickSpymaster");
 RegisterNuiCallbackType("close");
 RegisterNuiCallbackType("giveClue");
 RegisterNuiCallbackType("pickWord");
+RegisterNuiCallbackType("skipRound");
 
 on("__cfx_nui:joinRoom", (data, cb) => {
   emitNet(EVENTS.JOIN_ROOM, data.roomId);
@@ -13,6 +14,11 @@ on("__cfx_nui:joinRoom", (data, cb) => {
 
 on("__cfx_nui:leaveRoom", (data, cb) => {
   emitNet(EVENTS.LEAVE_ROOM, data.roomId);
+  cb({});
+});
+
+on("__cfx_nui:skipRound", (data, cb) => {
+  emitNet(EVENTS.SKIP_ROUND, data.roomId);
   cb({});
 });
 

@@ -13,6 +13,7 @@ function leaveRoom(roomId, leaverId) {
   if (room.selectedWords && room.selectedWords.has(leaverId))
     room.selectedWords.delete(leaverId);
 
+  room.skippingRound?.delete(leaverId);
   rooms.set(roomId, room);
 
   emitNet(
