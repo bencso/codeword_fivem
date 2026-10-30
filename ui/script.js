@@ -299,7 +299,7 @@ window.addEventListener("message", (event) => {
         (c) => c.dataset.word === data.pickedWord,
       );
 
-      if (data.amountClue)
+      if (data.amountClue !== undefined)
         document.getElementById("codename_clueCount").textContent =
           data.amountClue;
 
