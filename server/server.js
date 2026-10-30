@@ -462,8 +462,14 @@ onNet(EVENTS.PICK_WORD, (roomId, pickedWord) => {
 
     currentRoom.selectedWords.set(playerId, pickedWord);
     currentRoom.players.forEach((player) => {
-      //TODO: Ezt is betenni
-      emitNet(EVENTS.VOTED_WORD, player.id, roomId, pickedWord, playerId);
+      emitNet(
+        EVENTS.VOTED_WORD,
+        player.id,
+        roomId,
+        pickedWord,
+        playerId,
+        playerData.name,
+      );
     });
 
     const votes = [...currentRoom.selectedWords.values()];
@@ -483,6 +489,7 @@ onNet(EVENTS.PICK_WORD, (roomId, pickedWord) => {
             roomId,
             currentRoom.words,
             playerId,
+            currentRoom.guesses,
           );
         } else {
           const wordsWithoutColor = currentRoom.words.map((word) => {
@@ -494,12 +501,12 @@ onNet(EVENTS.PICK_WORD, (roomId, pickedWord) => {
           });
 
           emitNet(
-            //TODO: Ezt is betenni
             EVENTS.SELECTED_WORD,
             player.id,
             roomId,
             wordsWithoutColor,
             playerId,
+            currentRoom.guesses,
           );
         }
       });

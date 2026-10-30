@@ -1,6 +1,6 @@
 const revealedCards = new Set();
 
-function createWordCards(words, isSpymaster, myTeam) {
+function modifyWordCards(words, isSpymaster, myTeam, currentTeam) {
   const grid = document.getElementById("codename_grid");
   grid.textContent = "";
   grid.classList.toggle("spymaster", !!isSpymaster);
@@ -9,17 +9,27 @@ function createWordCards(words, isSpymaster, myTeam) {
 
   words.forEach((word, index) => {
     const wordDiv = document.createElement("div");
+    const wordVoterDiv = document.createElement("div");
     const textSpan = document.createElement("span");
+
+    wordVoterDiv.className = "codename_card-votes";
 
     wordDiv.classList.add("codename_card");
     wordDiv.dataset.index = index;
+    wordDiv.dataset.word = word.word;
+    wordDiv.id = `codename_card-${word.word}`;
+
     textSpan.classList.add("codename_card-text");
     textSpan.textContent = word.word;
+
+    if (currentTeam === myTeam) wordDiv.style.cursor = "pointer";
+    else wordDiv.style.cursor = "default";
 
     if (word.word.length > 12) wordDiv.classList.add("long");
 
     if (isSpymaster || word.revealed) {
-      wordDiv.style.cursor = !word.revealed ? "pointer" : "not-allowed";
+      if (currentTeam === myTeam && word.team === myTeam)
+        wordDiv.style.cursor = !word.revealed ? "pointer" : "not-allowed";
 
       if (!word.team || word.team === "") wordDiv.classList.add("neutral");
       else if (word.team === "black") wordDiv.classList.add("black");
@@ -34,7 +44,11 @@ function createWordCards(words, isSpymaster, myTeam) {
       );
     }
 
+    wordDiv.appendChild(wordVoterDiv);
     wordDiv.appendChild(textSpan);
+
+    if (!isSpymaster && currentTeam === myTeam && !word.revealed)
+      wordDiv.onclick = () => submitPickCard(word.word);
 
     if (word.revealed) {
       wordDiv.classList.add("revealed");

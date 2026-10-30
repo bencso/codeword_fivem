@@ -1,19 +1,3 @@
-//TODO:
-/*
-#	Mi	Hol	Teendő	Típus
-3	A tipp nincs ellenőrizve	server ADD_CLUE + NUI	üres, szóköz, táblán lévő szó, count. Tartalmi hibánál CLUE_REJECTED, a NUI kiírja, és újraengedélyezi a gombot	🟠 hiba
-4	A később csatlakozók nem látják a laptopot	kliens + szerver	a meglévő laptopok lekérése belépéskor	🟠 hiba
-5	Tippelés a kliensen	NUI + kliens	kártyakattintásra pickWord callback, ami PICK_WORD-öt küld. A kémfőnöknél és a nem soros csapatnál ne legyen kattintható	🟢 hiányzik
-6	Szavazatok megjelenítése	NUI + kliens	VOTED_WORD handler: ki melyik kártyát jelölte (például avatar vagy név a kártyán)	🟢 hiányzik
-7	Felfordítás megjelenítése	NUI + kliens	SELECTED_WORD handler: createWordCards az új listával, a szavazatjelölések törlése	🟢 hiányzik
-8	Játék vége	server	endGame(roomId, winnerTeam): időzítő leállítása, finished, színes lista mindenkinek, GAME_ENDED. A három TODO hívja	🟢 hiányzik
-9	Játék vége képernyő, új játék	NUI + kliens + server	ki nyert, majd vissza a lobbyba vagy újrakezdés	🟢 hiányzik
-10	“Kör vége” gomb	NUI + server	a tippelők önként befejezhetik a kört (nextRound)	🟢 hiányzik
-11	Hátralévő kártyák számlálója	NUI + server	csapatonként, a cardsLeft értékét is ki lehet küldeni	🟢 hiányzik
-13	Kémfőnök pótlása	server	a resetRoom helyett új kémfőnök kijelölése	⚪ későbbre
-14	Újraindulás resetRoom után	server	a visszaszámlálás csak új belépésnél indul, akkor is, ha megvan a létszám	⚪ apróság
-*/
-
 const isFiveM = typeof GetParentResourceName === "function";
 const app = document.getElementById("codename_window");
 const joinBtn = document.getElementById("codename_joinBtn");
@@ -26,6 +10,7 @@ let isPlayerSpymaster = false;
 let playerTeam = "";
 let playerId = null;
 let inRoom = false;
+let currentTeam = null;
 
 joinBtn.addEventListener("click", () => {
   joinBtn.disabled = true;
@@ -164,13 +149,15 @@ window.addEventListener("message", (event) => {
 
       const playerData = data.lobbyPlayers.find((lp) => lp.id === playerId);
 
+      currentTeam = data.startingTeam;
+
       if (playerData) {
         const isSpymaster = playerData.spymaster;
         isPlayerSpymaster = isSpymaster;
         playerTeam = playerData.team;
 
         createIngamePlyerList(data.lobbyPlayers);
-        createWordCards(data.words, isSpymaster, playerTeam);
+        modifyWordCards(data.words, isSpymaster, playerTeam, data.startingTeam);
 
         if (data.startingTeam === playerTeam && isSpymaster) {
           if (isSpymaster) showClueInput(true);
@@ -184,8 +171,13 @@ window.addEventListener("message", (event) => {
     case "clueAdded": {
       if (countdownInterval) clearInterval(countdownInterval);
 
+      document.querySelectorAll(`.codename_vote`).forEach((el) => el.remove());
+
       const teamText = document.getElementById("codename_turnText");
       teamText.classList.remove("teamTwo");
+
+      currentTeam = data.currentTeam;
+
       teamText.textContent = `${TEAM_NAMES[data.currentTeam] ?? ""} köre`;
       if (data.currentTeam === TEAM_TWO) teamText.classList.add("teamTwo");
 
@@ -215,6 +207,10 @@ window.addEventListener("message", (event) => {
       if (countdownInterval) clearInterval(countdownInterval);
       const teamText = document.getElementById("codename_turnText");
 
+      document.querySelectorAll(`.codename_vote`).forEach((el) => el.remove());
+
+      currentTeam = data.currentTeam;
+
       teamText.classList.remove("teamTwo");
       teamText.textContent = `${TEAM_NAMES[data.currentTeam] ?? ""} köre`;
       if (data.currentTeam === TEAM_TWO) teamText.classList.add("teamTwo");
@@ -238,9 +234,76 @@ window.addEventListener("message", (event) => {
         clueCountText.textContent = "";
       }
 
-      createWordCards(data.words, isPlayerSpymaster, playerTeam);
+      modifyWordCards(
+        data.words,
+        isPlayerSpymaster,
+        playerTeam,
+        data.currentTeam,
+      );
       showClueInput(data.currentTeam === playerTeam && isPlayerSpymaster);
       showNextRoundBtn(data.currentTeam === playerTeam && !isPlayerSpymaster);
+
+      break;
+    }
+
+    case "votedWord": {
+      const voter = data.voterWhitPhoto;
+      if (!data.pickedWord || !voter) break;
+
+      document
+        .querySelectorAll(`.codename_vote[data-voter-id="${voter.votedId}"]`)
+        .forEach((el) => el.remove());
+
+      const card = [...document.querySelectorAll(".codename_card")].find(
+        (c) => c.dataset.word === data.pickedWord,
+      );
+      const votesBlock = card?.querySelector(".codename_card-votes");
+      if (!votesBlock) break;
+
+      if (voter.votedId === playerId)
+        card.classList.add("codename_card-ownPlayerVote");
+
+      const photo = document.createElement("span");
+      photo.className = "codename_vote";
+      photo.dataset.voterId = voter.votedId;
+
+      const initial = (voter.name ?? "?").charAt(0).toUpperCase();
+
+      if (voter.photo) {
+        const img = document.createElement("img");
+        img.src = voter.photo;
+        img.alt = "";
+        img.onerror = () => {
+          img.remove();
+          photo.textContent = initial;
+        };
+        photo.appendChild(img);
+      } else {
+        photo.textContent = initial;
+      }
+
+      votesBlock.appendChild(photo);
+      break;
+    }
+
+    case "selectedWord": {
+      const voter = data.voterWhitPhoto;
+      if (!data.pickedWord || !voter) break;
+
+      const card = [...document.querySelectorAll(".codename_card")].find(
+        (c) => c.dataset.word === data.pickedWord,
+      );
+
+      if (data.guesses)
+        document.getElementById("codename_clueCount").textContent =
+          data.guesses;
+
+      card
+        ?.querySelectorAll(".codename_card-votes .codename_vote")
+        .forEach((el) => el.remove());
+
+      if (currentTeam && playerTeam && isPlayerSpymaster !== null)
+        modifyWordCards(data.words, isPlayerSpymaster, playerTeam, currentTeam);
 
       break;
     }

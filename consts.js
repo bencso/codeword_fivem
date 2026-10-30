@@ -31,7 +31,7 @@ const EVENTS = {
   SELECTED_WORD: "codenames:selectedWord",
 };
 
-const PROP = "vw_prop_casino_cards_02";
+const PROP = "codenames_board";
 
 const MIN_PLAYERS = 1;
 const TEAM_ONE = "blue";

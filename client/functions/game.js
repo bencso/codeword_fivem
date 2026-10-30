@@ -84,3 +84,36 @@ onNet(
   },
 );
 //#endregion
+
+//#region Szó szavazás
+onNet(EVENTS.VOTED_WORD, async (roomId, pickedWord, playerId, playerName) => {
+  const voterWhitPhoto = {
+    votedId: playerId,
+    name: playerName,
+    photo: await getPlayerHeadshot(playerId),
+  };
+
+  SendNuiMessage(
+    JSON.stringify({
+      action: "votedWord",
+      roomId,
+      pickedWord,
+      voterWhitPhoto,
+    }),
+  );
+});
+//#endregion
+
+//#region Szó felfordítása
+onNet(EVENTS.SELECTED_WORD, async (roomId, words, playerId, guesses) => {
+  SendNuiMessage(
+    JSON.stringify({
+      action: "selectedWord",
+      roomId,
+      words,
+      playerId,
+      guesses,
+    }),
+  );
+});
+//#endregion
