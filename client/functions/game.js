@@ -122,6 +122,17 @@ onNet(
 );
 //#endregion
 
+//#region Hibakezelés
+onNet(EVENTS.ERROR, async (issue) => {
+  SendNuiMessage(
+    JSON.stringify({
+      action: "error",
+      issue,
+    }),
+  );
+});
+//#endregion
+
 //#region Szavazat leadva a skippelésre
 onNet(EVENTS.VOTED_SKIP, (roomId, playerTeamPlayercount, skipperCount) => {
   SendNuiMessage(
@@ -136,7 +147,6 @@ onNet(EVENTS.VOTED_SKIP, (roomId, playerTeamPlayercount, skipperCount) => {
 //#endregion
 
 //#region Játék vége
-
 onNet(EVENTS.GAME_ENDED, (roomId, words, winnerTeam) => {
   SendNuiMessage(
     JSON.stringify({

@@ -347,7 +347,7 @@ window.addEventListener("message", (event) => {
       timer.classList.remove("urgent");
 
       const teamText = document.getElementById("codename_turnText");
-      teamText.textContent = `${TEAM_NAMES[data.winnerTeam] ?? ""} nyert! 🎉`;
+      teamText.textContent = `${TEAM_NAMES[data.winnerTeam] ?? ""} nyert!`;
       teamText.classList.toggle("teamTwo", data.winnerTeam === TEAM_TWO);
 
       document.getElementById("codename_clueText").classList.add("hidden");
@@ -360,6 +360,36 @@ window.addEventListener("message", (event) => {
 
       break;
     }
+
+    case "error": {
+      if (!data.issue) break;
+
+      const hint = document.getElementById("codename_clueHint");
+      hint.textContent = ERROR_TEXTS[data.issue] ?? "Hiba történt!";
+      hint.classList.add("error");
+
+      switch (data.issue) {
+        case "isOnTable":
+          document.getElementById("codename_clueSubmit").disabled = false;
+          resetClueInput();
+          break;
+        case "notEnoughLength":
+          document.getElementById("codename_clueSubmit").disabled = false;
+          document.getElementById("codename_clueTextInput").focus();
+          break;
+        case "notCorrectCount":
+          document.getElementById("codename_clueSubmit").disabled = false;
+          document.getElementById("codename_clueCountInput").focus();
+          document.getElementById("codename_clueCountInput").textContent = 0;
+          break;
+        default:
+          document.getElementById("codename_clueSubmit").disabled = false;
+          break;
+      }
+
+      break;
+    }
+
     case "leaved": {
       const isMe = data.leaverId === playerId;
 

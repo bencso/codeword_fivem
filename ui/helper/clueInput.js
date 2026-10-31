@@ -18,6 +18,8 @@ function updateClueState() {
   clueCount.classList.toggle("empty", count === 0);
   clueCount.max = ONE_TEAM_WORDS;
   clueSubmit.disabled = clueText.value.trim() === "";
+  document.getElementById("codename_clueHint").textContent =
+    "Jelöld ki a kártyákat, amelyekre a megadott szó vonatkozik";
 }
 
 function toggleClueCard(card, isRevealed) {

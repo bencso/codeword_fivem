@@ -313,11 +313,35 @@ onNet(EVENTS.ADD_CLUE, (roomId, clue, count) => {
       return;
 
     const playerData = currentRoom.players.find((p) => p.id === sender);
+    const trimmedClue = typeof clue === "string" ? clue.trim() : "";
+    const teamWordCount = currentRoom.words.filter(
+      (p) => p.team === playerData.team && !p.revealed,
+    );
 
     if (playerData.team !== currentRoom.currentTeam) return;
     if (currentRoom.clue && currentRoom.clue.clue) return;
+    if (count !== -1 && trimmedClue.length <= 0) {
+      emitNet(EVENTS.ERROR, sender, "notEnoughLength");
+      return;
+    }
+    if (
+      !Number.isInteger(count) ||
+      count < -1 ||
+      count > teamWordCount.length
+    ) {
+      emitNet(EVENTS.ERROR, sender, "notCorrectCount");
+      return;
+    }
     if (count === -1) {
       nextRound(roomId);
+      return;
+    }
+
+    const isOnTable = currentRoom.words.some(
+      (w) => w.word.toLowerCase() === trimmed.toLowerCase(),
+    );
+    if (isOnTable) {
+      emitNet(EVENTS.ERROR, sender, "isOnTable");
       return;
     }
     if (currentRoom.countDownTimer) clearTimeout(currentRoom.countDownTimer);

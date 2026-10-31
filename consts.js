@@ -29,6 +29,7 @@ const EVENTS = {
   PICK_WORD: "codenames:pickWord",
   VOTED_WORD: "codenames:votedWord",
   SELECTED_WORD: "codenames:selectedWord",
+  ERROR: "codenames:error",
 
   SKIP_ROUND: "codenames:skipRound",
   VOTED_SKIP: "codenames:votedSkip",
@@ -55,4 +56,11 @@ const ONE_TEAM_WORDS = 6;
 const TEAM_NAMES = {
   [TEAM_ONE]: "Csapat 1",
   [TEAM_TWO]: "Csapat 2",
+};
+
+const ERROR_TEXTS = {
+  isOnTable: "Ez a szó rajta van a táblán!",
+  notEnoughLength: "Írj be egy tippet!",
+  notCorrectCount: "Hibás szám!",
+  moreWords: "Csak egy szó lehet!",
 };

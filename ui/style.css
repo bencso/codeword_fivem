@@ -643,6 +643,10 @@ body {
   text-align: center;
 }
 
+.codename_clue-hint.error {
+  color: red;
+}
+
 .codename_card-votes {
   position: absolute;
   top: 6px;
