@@ -30,6 +30,7 @@ on("__cfx_nui:pickSpymaster", (data, cb) => {
 on("__cfx_nui:close", (_data, cb) => {
   uiOpen = false;
   SetNuiFocus(false, false);
+  closeBoardCam();
 
   cb({});
 });
@@ -48,6 +49,7 @@ on("onResourceStop", (resourceName) => {
   if (resourceName !== GetCurrentResourceName()) return;
 
   clearHeadshots();
+  closeBoardCam();
 
   for (const obj of Object.values(codeNameProps)) {
     if (DoesEntityExist(obj)) DeleteEntity(obj);

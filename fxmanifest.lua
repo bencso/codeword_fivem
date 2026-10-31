@@ -9,6 +9,7 @@ shared_script 'consts.js'
 client_scripts {
     'client/nuiCallbacks.js',
     'client/helpers/registCommand.js',
+    'client/helpers/cameraHelper.js',
     'client/helpers/headshotHelper.js',
     'client/helpers/interactHelper.js',
     'client/functions/props.js',

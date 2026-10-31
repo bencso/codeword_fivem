@@ -35,7 +35,10 @@ async function makeInteractible() {
           );
           EndTextCommandDisplayHelp(0, false, true, -1);
 
-          if (IsControlJustReleased(0, 38)) openUI(roomId);
+          if (IsControlJustReleased(0, 38)) {
+            openUI(roomId);
+            openBoardCam(obj);
+          }
           if (IsControlJustReleased(0, 252))
             emitNet(EVENTS.REMOVE_ROOM, roomId);
 
