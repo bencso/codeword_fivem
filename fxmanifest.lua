@@ -28,7 +28,6 @@ server_scripts {
 
 ui_page 'ui/index.html'
 
-data_file 'DLC_ITYP_REQUEST' 'stream/codenames_board.ytyp'
 
 files { 
     'consts.js',

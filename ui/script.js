@@ -116,6 +116,16 @@ window.addEventListener("message", (event) => {
       break;
     }
 
+    case "spymasterChanged": {
+      if (data.newSpymasterId === playerId) isPlayerSpymaster = true;
+      break;
+    }
+
+    case "ingamePlayers": {
+      createIngamePlyerList(data.players.filter((p) => !p.isViewer));
+      break;
+    }
+    
     case "userDroped": {
       showView("waiting");
 

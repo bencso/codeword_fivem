@@ -26,7 +26,6 @@ onNet(
   async (roomId, lobbyPlayers, spymasterTeam) => {
     console.log(roomId + "| Spymaster kiválasztva");
 
-
     const withPhotos = await Promise.all(
       lobbyPlayers.map(async (p) => ({
         ...p,
@@ -44,4 +43,24 @@ onNet(
     );
   },
 );
+//#endregion
+
+//#region  Kilépett spymaster, új spymaster
+onNet(EVENTS.SPYMASTER_CHANGED, async (roomId, newSpymasterId, players) => {
+  SendNuiMessage(
+    JSON.stringify({
+      action: "spymasterChanged",
+      roomId,
+      newSpymasterId,
+    }),
+  );
+
+  const withPhotos = await Promise.all(
+    players.map(async (p) => ({ ...p, photo: await getPlayerHeadshot(p.id) })),
+  );
+
+  SendNuiMessage(
+    JSON.stringify({ action: "ingamePlayers", roomId, players: withPhotos }),
+  );
+});
 //#endregion

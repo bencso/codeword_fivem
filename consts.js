@@ -10,7 +10,6 @@ const EVENTS = {
   PLACE_BOARD: "codenames:spawnProp",
   REMOVE_BOARD: "codenames:removeProp",
 
-  START_GAME: "codenames:startGame",
   SPYMASTER_SELECTION: "codenames:spymasterSelection",
   SPYMASTER_SELECTED: "codenames:spymasterSelected",
   STARTED_GAME: "codenames:startedGame",
@@ -32,6 +31,7 @@ const EVENTS = {
   VOTED_SKIP: "codenames:votedSkip",
 
   GAME_ENDED: "codenames:gameEnded",
+  SPYMASTER_CHANGED: "codenames:spymasterChanged",
 };
 
 const PROP = "codenames_board";
@@ -42,12 +42,11 @@ const TEAM_TWO = "red";
 const TEAM_ONE_COLOR = "rgba(255, 0, 0, 0.6)";
 const TEAM_TWO_COLOR = "rgba(0, 132, 255, 0.6)";
 
-const AFTERMIN_COUNTDOWN_MS = 5 * 1000;
-const ROUND_COUNTDOWN_MS = 5 * 1000;
-const END_SCREEN_MS = 5 * 1000;
+const AFTERMIN_COUNTDOWN_MS = 10 * 1000;
+const ROUND_COUNTDOWN_MS = 10 * 1000;
+const END_SCREEN_MS = 10 * 1000;
 
 const WORDS_FILE = "/assets/magyar-szavak.txt";
-const RANDOM_WORDS = 25;
 const ONE_TEAM_WORDS = 6;
 
 const TEAM_NAMES = {

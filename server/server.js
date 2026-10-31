@@ -306,7 +306,7 @@ function startGame(roomId) {
       .map((w) => w.trim())
       .filter(Boolean);
 
-    const selectedWords = shuffle(defaultWords).slice(0, RANDOM_WORDS);
+    const selectedWords = shuffle(defaultWords).slice(0, 25);
 
     const startingTeam = Math.random() < 0.5 ? TEAM_ONE : TEAM_TWO;
     const otherTeam = startingTeam === TEAM_ONE ? TEAM_TWO : TEAM_ONE;
