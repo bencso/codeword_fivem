@@ -34,7 +34,7 @@ const EVENTS = {
   GAME_ENDED: "codenames:gameEnded",
 };
 
-const PROP = "prop_table_03";
+const PROP = "codenames_board";
 
 const MIN_PLAYERS = 1;
 const TEAM_ONE = "blue";
