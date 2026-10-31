@@ -27,3 +27,13 @@ function showRoundBanner(team) {
   void banner.offsetWidth;
   banner.classList.add("show");
 }
+
+function showWinnerBanner(team) {
+  const banner = document.getElementById("codename_roundBanner");
+  banner.innerHTML = `<span>${TEAM_NAMES[team] ?? ""} győzött</span>`;
+  banner.classList.toggle("teamTwo", team === TEAM_TWO);
+
+  banner.classList.remove("show");
+  void banner.offsetWidth;
+  banner.classList.add("show");
+}

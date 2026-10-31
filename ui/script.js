@@ -125,7 +125,7 @@ window.addEventListener("message", (event) => {
       createIngamePlyerList(data.players.filter((p) => !p.isViewer));
       break;
     }
-    
+
     case "userDroped": {
       showView("waiting");
 
@@ -400,6 +400,8 @@ window.addEventListener("message", (event) => {
       const timer = document.getElementById("codename_turnTimerText");
       timer.textContent = "";
       timer.classList.remove("urgent");
+
+      showWinnerBanner(data.winnerTeam);
 
       const teamText = document.getElementById("codename_turnText");
       teamText.textContent = `${TEAM_NAMES[data.winnerTeam] ?? ""} nyert!`;
