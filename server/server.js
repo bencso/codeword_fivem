@@ -314,9 +314,9 @@ onNet(EVENTS.ADD_CLUE, (roomId, clue, count) => {
 
     const playerData = currentRoom.players.find((p) => p.id === sender);
     const trimmedClue = typeof clue === "string" ? clue.trim() : "";
-    const teamWordCount = currentRoom.words.filter(
-      (p) => p.team === playerData.team && !p.revealed,
-    );
+    const teamWordsLeft = currentRoom.words.filter(
+      (w) => w.team === playerData.team && !w.revealed,
+    ).length;
 
     if (playerData.team !== currentRoom.currentTeam) return;
     if (currentRoom.clue && currentRoom.clue.clue) return;
@@ -324,11 +324,7 @@ onNet(EVENTS.ADD_CLUE, (roomId, clue, count) => {
       emitNet(EVENTS.ERROR, sender, "notEnoughLength");
       return;
     }
-    if (
-      !Number.isInteger(count) ||
-      count < -1 ||
-      count > teamWordCount.length
-    ) {
+    if (!Number.isInteger(count) || count < -1 || count > teamWordsLeft) {
       emitNet(EVENTS.ERROR, sender, "notCorrectCount");
       return;
     }

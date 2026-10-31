@@ -370,8 +370,9 @@ window.addEventListener("message", (event) => {
 
       switch (data.issue) {
         case "isOnTable":
+          document.getElementById("codename_clueTextInput").value = "";
+          document.getElementById("codename_clueTextInput").focus();
           document.getElementById("codename_clueSubmit").disabled = false;
-          resetClueInput();
           break;
         case "notEnoughLength":
           document.getElementById("codename_clueSubmit").disabled = false;
@@ -380,7 +381,7 @@ window.addEventListener("message", (event) => {
         case "notCorrectCount":
           document.getElementById("codename_clueSubmit").disabled = false;
           document.getElementById("codename_clueCountInput").focus();
-          document.getElementById("codename_clueCountInput").textContent = 0;
+          document.getElementById("codename_clueCountInput").value = 0;
           break;
         default:
           document.getElementById("codename_clueSubmit").disabled = false;

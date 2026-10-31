@@ -2,6 +2,7 @@ const clueBar = document.getElementById("codename_clueBar");
 const clueText = document.getElementById("codename_clueTextInput");
 const clueCount = document.getElementById("codename_clueCountInput");
 const clueSubmit = document.getElementById("codename_clueSubmit");
+const clueError = document.getElementById("codename_clueHint");
 
 function showClueInput(show) {
   clueBar.classList.toggle("hidden", !show);
@@ -18,8 +19,9 @@ function updateClueState() {
   clueCount.classList.toggle("empty", count === 0);
   clueCount.max = ONE_TEAM_WORDS;
   clueSubmit.disabled = clueText.value.trim() === "";
-  document.getElementById("codename_clueHint").textContent =
+  clueError.textContent =
     "Jelöld ki a kártyákat, amelyekre a megadott szó vonatkozik";
+  clueError.classList.remove("error");
 }
 
 function toggleClueCard(card, isRevealed) {
