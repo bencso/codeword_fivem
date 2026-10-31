@@ -320,16 +320,16 @@ onNet(EVENTS.ADD_CLUE, (roomId, clue, count) => {
 
     if (playerData.team !== currentRoom.currentTeam) return;
     if (currentRoom.clue && currentRoom.clue.clue) return;
-    if (count !== -1 && trimmedClue.length <= 0) {
-      emitNet(EVENTS.ERROR, sender, "notEnoughLength");
-      return;
-    }
     if (!Number.isInteger(count) || count < -1 || count > teamWordsLeft) {
       emitNet(EVENTS.ERROR, sender, "notCorrectCount");
       return;
     }
     if (count === -1) {
       nextRound(roomId);
+      return;
+    }
+    if (trimmedClue.length <= 0) {
+      emitNet(EVENTS.ERROR, sender, "notEnoughLength");
       return;
     }
 
