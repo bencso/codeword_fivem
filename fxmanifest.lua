@@ -24,6 +24,7 @@ server_scripts {
     'server/helpers/resetRoom.js',
     'server/helpers/shuffle.js',
     'server/server.js'
+    'server/helpers/testBot.js'
 }
 
 ui_page 'ui/index.html'

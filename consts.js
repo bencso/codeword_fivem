@@ -60,3 +60,5 @@ const ERROR_TEXTS = {
   notCorrectCount: "Hibás szám!",
   moreWords: "Csak egy szó lehet!",
 };
+
+const DEBUG = true;

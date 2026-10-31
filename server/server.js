@@ -247,11 +247,12 @@ function switchSpymasterSelector(roomId) {
 }
 
 //#region Spymaster pickelés
-onNet(EVENTS.PICK_SPYMASTER, (roomId) => {
+onNet(EVENTS.PICK_SPYMASTER, (roomId) => pickSpymaster(source, roomId));
+
+function pickSpymaster(selectorId, roomId) {
   if (rooms.size > 0 && rooms.has(roomId)) {
     const currentRoom = rooms.get(roomId);
 
-    const selectorId = source;
     const selector = currentRoom.players.find((p) => p.id === selectorId);
 
     if (!selector || selector.isViewer || currentRoom.state !== "selecting")
@@ -287,7 +288,7 @@ onNet(EVENTS.PICK_SPYMASTER, (roomId) => {
 
     startGame(roomId);
   }
-});
+}
 
 //#region Játék indítása
 function startGame(roomId) {
@@ -387,9 +388,11 @@ onNet(EVENTS.LEAVE_ROOM, (roomId) => {
 //#endregion
 
 //#region CLUE ADD
-onNet(EVENTS.ADD_CLUE, (roomId, clue, count) => {
-  const sender = source;
+onNet(EVENTS.ADD_CLUE, (roomId, clue, count) =>
+  addClue(source, roomId, clue, count),
+);
 
+function addClue(sender, roomId, clue, count) {
   if (rooms.size > 0 && rooms.has(roomId)) {
     const currentRoom = rooms.get(roomId);
 
@@ -470,7 +473,7 @@ onNet(EVENTS.ADD_CLUE, (roomId, clue, count) => {
       );
     });
   }
-});
+}
 //#endregion
 
 //#region KÖVETKEZŐ ROUND
@@ -540,11 +543,14 @@ function nextRound(roomId) {
 //#endregion
 
 //#region SZÓMEGJELÖLÉS
-onNet(EVENTS.PICK_WORD, (roomId, pickedWord) => {
+onNet(EVENTS.PICK_WORD, (roomId, pickedWord) =>
+  pickWord(source, roomId, pickedWord),
+);
+
+function pickWord(playerId, roomId, pickedWord) {
   if (rooms.size > 0 && rooms.has(roomId)) {
     const currentRoom = rooms.get(roomId);
 
-    const playerId = source;
     const playerData = currentRoom.players.find((p) => p.id === playerId);
 
     if (!playerData) return;
@@ -656,7 +662,7 @@ onNet(EVENTS.PICK_WORD, (roomId, pickedWord) => {
       }
     }
   }
-});
+}
 //#endregion
 
 //#region END GAME
@@ -695,11 +701,12 @@ function endGame(roomId, winnerTeam) {
 //#endregion
 
 //#region KÖR UGRÁS
-onNet(EVENTS.SKIP_ROUND, (roomId) => {
+onNet(EVENTS.SKIP_ROUND, (roomId) => skipRound(source, roomId));
+
+function skipRound(playerId, roomId) {
   if (rooms.size > 0 && rooms.has(roomId)) {
     const currentRoom = rooms.get(roomId);
 
-    const playerId = source;
     const playerData = currentRoom.players.find((p) => p.id === playerId);
 
     if (!playerData) return;
@@ -734,7 +741,7 @@ onNet(EVENTS.SKIP_ROUND, (roomId) => {
       nextRound(roomId);
     }
   }
-});
+}
 //#endregion
 
 //#region Lelép a játékos a szerverről
