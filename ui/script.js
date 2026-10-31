@@ -153,6 +153,16 @@ window.addEventListener("message", (event) => {
       const timer = document.getElementById("codename_turnTimerText");
       startCountdown(data.endsTime, timer);
 
+      const teamOneClueHistory = document.getElementById(
+        "codename_teamOneClues",
+      );
+      const teamTwoClueHistory = document.getElementById(
+        "codename_teamTwoClues",
+      );
+
+      teamOneClueHistory.textContent = "";
+      teamTwoClueHistory.textContent = "";
+
       const playerData = data.lobbyPlayers.find((lp) => lp.id === playerId);
 
       currentTeam = data.startingTeam;
@@ -199,6 +209,8 @@ window.addEventListener("message", (event) => {
 
       const clueText = document.getElementById("codename_clueText");
       const clueCountText = document.getElementById("codename_clueCount");
+
+      if (data.clueHistory !== undefined) modifyClueHistory(data.clueHistory);
 
       if (clueText && data.clue.clue) {
         clueText.classList.remove("hidden");

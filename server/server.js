@@ -16,6 +16,7 @@ onNet(EVENTS.CREATE_ROOM, (pos) => {
     selectedWords: new Map(),
     skippingRound: new Set(),
     guesses: 0,
+    clueHistory: [],
     state: "joinable",
   };
 
@@ -211,6 +212,7 @@ function startGame(roomId) {
     currentRoom.selectedWords.clear();
     currentRoom.guesses = 0;
     currentRoom.skippingRound.clear();
+    currentRoom.clueHistory = [];
 
     if (currentRoom.state !== "selecting") return;
 
@@ -367,6 +369,8 @@ onNet(EVENTS.ADD_CLUE, (roomId, clue, count) => {
       nextRound(roomId);
     }, ROUND_COUNTDOWN_MS);
 
+    room.clueHistory.push(clueData);
+
     rooms.set(roomId, room);
 
     const endsTime = room.endsAt ? room.endsAt - Date.now() : null;
@@ -380,6 +384,7 @@ onNet(EVENTS.ADD_CLUE, (roomId, clue, count) => {
         count,
         room.currentTeam,
         endsTime,
+        room.clueHistory,
       );
     });
   }
@@ -562,9 +567,6 @@ onNet(EVENTS.PICK_WORD, (roomId, pickedWord) => {
       const cardTeam = currentRoom.words[pickedCard].team;
       const cardsLeft = (team) =>
         currentRoom.words.filter((w) => w.team === team && !w.revealed).length;
-      const enemy = currentRoom.players.find(
-        (p) => p.team != playerData.team,
-      ).team;
 
       if (cardTeam === playerData.team) {
         if (cardsLeft(playerData.team) === 0) {

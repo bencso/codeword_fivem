@@ -2,7 +2,7 @@ function refreshPlayerList(players, view) {
   if (!players) return;
 
   const playerListUl = document.querySelector(
-    `#codename_view-${view} #codename_lobbyPlayers`,
+    `#codename_view-${view} .codename_lobby-players`,
   );
 
   playerListUl.textContent = "";

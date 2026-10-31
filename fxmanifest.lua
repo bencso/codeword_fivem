@@ -38,6 +38,7 @@ files {
     'ui/helper/uiHelper.js',
     'ui/helper/nextRoundBtn.js',
     'ui/helper/modifyWordCards.js',
+    'ui/helper/modifyClueHistory.js',
     'ui/helper/ingamePlayerList.js',
     'ui/helper/clueInput.js',
     'ui/index.html',

@@ -48,26 +48,30 @@ onNet(
 //#endregion
 
 //#region Clue megjelenítése
-onNet(EVENTS.ADDED_CLUE, async (roomId, clue, count, currentTeam, endsTime) => {
-  console.log(roomId + "| Clue kiadva");
+onNet(
+  EVENTS.ADDED_CLUE,
+  (roomId, clue, count, currentTeam, endsTime, clueHistory) => {
+    console.log(roomId + "| Clue kiadva");
 
-  SendNuiMessage(
-    JSON.stringify({
-      action: "clueAdded",
-      roomId,
-      clue,
-      count,
-      currentTeam,
-      endsTime,
-    }),
-  );
-});
+    SendNuiMessage(
+      JSON.stringify({
+        action: "clueAdded",
+        roomId,
+        clue,
+        count,
+        currentTeam,
+        endsTime,
+        clueHistory,
+      }),
+    );
+  },
+);
 //#endregion
 
 //#region Következő kör
 onNet(
   EVENTS.NEXT_ROUND,
-  async (roomId, clue, count, words, currentTeam, endsTime) => {
+  (roomId, clue, count, words, currentTeam, endsTime) => {
     console.log(roomId + "| Következő kör");
 
     SendNuiMessage(

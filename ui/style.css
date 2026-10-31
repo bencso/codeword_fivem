@@ -701,3 +701,31 @@ body {
     opacity: 1;
   }
 }
+
+.codename_clue-history {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  max-height: 30vh;
+  overflow-y: auto;
+}
+
+.codename_clue-history li {
+  display: flex;
+  gap: 8px;
+}
+
+.codename_clue-history li span {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: var(--panel-raised);
+  border: 1px solid var(--line);
+  font-size: 13px;
+}

@@ -18,6 +18,7 @@ function resetRoom(roomId, notify = true) {
     team: "",
   }));
   room.guesses = 0;
+  room.currentRoom.clueHistory = [];
 
   if (room.players.length >= MIN_PLAYERS) {
     room.endsAt = Date.now() + AFTERMIN_COUNTDOWN_MS;
