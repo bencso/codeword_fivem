@@ -1,6 +1,6 @@
 const revealedCards = new Set();
 
-function modifyWordCards(words, isSpymaster, myTeam, currentTeam) {
+function modifyWordCards(words, isSpymaster, myTeam, currentTeam, isViewer) {
   const grid = document.getElementById("codename_grid");
   grid.textContent = "";
   grid.classList.toggle("spymaster", !!isSpymaster);
@@ -27,7 +27,7 @@ function modifyWordCards(words, isSpymaster, myTeam, currentTeam) {
 
     if (word.word.length > 12) wordDiv.classList.add("long");
 
-    if (isSpymaster || word.revealed) {
+    if (isSpymaster || word.revealed || isViewer) {
       if (currentTeam === myTeam && word.team === myTeam)
         wordDiv.style.cursor = !word.revealed ? "pointer" : "not-allowed";
 
@@ -47,7 +47,7 @@ function modifyWordCards(words, isSpymaster, myTeam, currentTeam) {
     wordDiv.appendChild(wordVoterDiv);
     wordDiv.appendChild(textSpan);
 
-    if (!isSpymaster && currentTeam === myTeam && !word.revealed)
+    if (!isSpymaster && !isViewer && currentTeam === myTeam && !word.revealed)
       wordDiv.onclick = () => submitPickCard(word.word);
 
     if (word.revealed) {

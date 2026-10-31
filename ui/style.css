@@ -707,15 +707,16 @@ body {
   margin: 0;
   padding: 0;
   display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
   max-height: 30vh;
   overflow-y: auto;
 }
 
 .codename_clue-history li {
   display: flex;
-  gap: 8px;
+  gap: 4px;
 }
 
 .codename_clue-history li span {

@@ -18,9 +18,9 @@ function resetRoom(roomId, notify = true) {
     team: "",
   }));
   room.guesses = 0;
-  room.currentRoom.clueHistory = [];
+  room.clueHistory = [];
 
-  if (room.players.length >= MIN_PLAYERS) {
+  if (room.players.filter((p) => !p.isViewer).length >= MIN_PLAYERS) {
     room.endsAt = Date.now() + AFTERMIN_COUNTDOWN_MS;
 
     room.countDownTimer = setTimeout(() => {
@@ -30,7 +30,8 @@ function resetRoom(roomId, notify = true) {
       currentRoom.countDownTimer = null;
       currentRoom.endsAt = null;
 
-      if (currentRoom.players.length < MIN_PLAYERS) return;
+      if (currentRoom.players.filter((p) => !p.isViewer).length < MIN_PLAYERS)
+        return;
 
       switchSpymasterSelector(roomId);
     }, AFTERMIN_COUNTDOWN_MS);

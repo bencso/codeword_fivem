@@ -33,7 +33,7 @@ function leaveRoom(roomId, leaverId) {
     roomId,
     leaverId,
     room.players,
-    room.players.length >= MIN_PLAYERS,
+    room.players.filter((p) => !p.isViewer).length >= MIN_PLAYERS,
   );
 
   room.players.forEach((player) =>
@@ -43,13 +43,13 @@ function leaveRoom(roomId, leaverId) {
       roomId,
       leaverId,
       room.players,
-      room.players.length >= MIN_PLAYERS,
+      room.players.filter((p) => !p.isViewer).length >= MIN_PLAYERS,
     ),
   );
 
   if (
     room.state === "joinable" &&
-    room.players.length < MIN_PLAYERS &&
+    room.players.filter((p) => !p.isViewer).length < MIN_PLAYERS &&
     room.countDownTimer
   ) {
     resetRoom(roomId);
@@ -62,7 +62,12 @@ function leaveRoom(roomId, leaverId) {
     );
     const spymasterLeft = room.state === "started" && leaver.spymaster;
 
-    if (room.players.length < MIN_PLAYERS || teamEmpty || spymasterLeft)
+    //TODO: Nem reset room hanem egy uj spymaster helyette
+    if (
+      room.players.filter((p) => !p.isViewer).length < MIN_PLAYERS ||
+      teamEmpty ||
+      spymasterLeft
+    )
       resetRoom(roomId);
   }
 }

@@ -7,6 +7,7 @@ let roomId = null;
 let countdownInterval = null;
 
 let isPlayerSpymaster = false;
+let isPlayerViewer = false;
 let playerTeam = "";
 let playerId = null;
 let inRoom = false;
@@ -133,6 +134,8 @@ window.addEventListener("message", (event) => {
       refreshPlayerList(data.lobbyPlayers, "waiting");
       joinBtn.disabled = false;
       spymasterBtn.disabled = true;
+      isPlayerViewer = false;
+      isPlayerSpymaster = false;
 
       break;
     }
@@ -140,6 +143,7 @@ window.addEventListener("message", (event) => {
     case "gameStarted": {
       showView("game");
 
+      if (data.playerId) playerId = data.playerId;
       if (countdownInterval) clearInterval(countdownInterval);
 
       joinBtn.disabled = true;
@@ -165,24 +169,39 @@ window.addEventListener("message", (event) => {
 
       const playerData = data.lobbyPlayers.find((lp) => lp.id === playerId);
 
+      inRoom = true;
       currentTeam = data.startingTeam;
+      isPlayerViewer = !!data.isViewer;
+      isPlayerSpymaster = !!playerData?.spymaster;
+      playerTeam = playerData?.team ?? "";
 
-      if (playerData) {
-        const isSpymaster = playerData.spymaster;
-        isPlayerSpymaster = isSpymaster;
-        playerTeam = playerData.team;
+      createIngamePlyerList(data.lobbyPlayers);
+      modifyWordCards(
+        data.words,
+        isPlayerSpymaster,
+        playerTeam,
+        data.startingTeam,
+        isPlayerViewer,
+      );
 
-        createIngamePlyerList(data.lobbyPlayers);
-        modifyWordCards(
-          data.words,
-          isPlayerSpymaster,
-          playerTeam,
-          data.startingTeam,
-        );
+      const clueText = document.getElementById("codename_clueText");
+      const clueCountText = document.getElementById("codename_clueCount");
 
-        if (data.startingTeam === playerTeam && isPlayerSpymaster)
-          showClueInput(true);
+      if (data.clueHistory !== undefined) modifyClueHistory(data.clueHistory);
+
+      if (clueText && data.clue?.clue) {
+        clueText.classList.remove("hidden");
+        clueText.textContent = data.clue.clue;
       }
+
+      if (clueCountText && data.clue?.clue) {
+        clueCountText.classList.remove("hidden");
+        clueCountText.textContent =
+          data.clue.count === 0 ? "∞" : data.clue.count;
+      }
+
+      if (data.startingTeam === playerTeam && isPlayerSpymaster)
+        showClueInput(true);
 
       break;
     }
@@ -205,7 +224,11 @@ window.addEventListener("message", (event) => {
 
       startCountdown(data.endsTime, timer);
       showClueInput(false);
-      showNextRoundBtn(data.currentTeam === playerTeam && !isPlayerSpymaster);
+      showNextRoundBtn(
+        data.currentTeam === playerTeam &&
+          !isPlayerSpymaster &&
+          !isPlayerViewer,
+      );
 
       const clueText = document.getElementById("codename_clueText");
       const clueCountText = document.getElementById("codename_clueCount");
@@ -220,7 +243,7 @@ window.addEventListener("message", (event) => {
       if (clueCountText && data.clue.count >= 0) {
         clueCountText.classList.remove("hidden");
         clueCountText.textContent =
-          data.clue.cound === 0 ? "∞" : data.clue.count;
+          data.clue.count === 0 ? "∞" : data.clue.count;
       }
 
       break;
@@ -272,6 +295,7 @@ window.addEventListener("message", (event) => {
         isPlayerSpymaster,
         playerTeam,
         data.currentTeam,
+        isPlayerViewer,
       );
       showClueInput(data.currentTeam === playerTeam && isPlayerSpymaster);
       showNextRoundBtn(false);
@@ -346,8 +370,14 @@ window.addEventListener("message", (event) => {
         ?.querySelectorAll(".codename_card-votes .codename_vote")
         .forEach((el) => el.remove());
 
-      if (currentTeam && playerTeam && isPlayerSpymaster !== null)
-        modifyWordCards(data.words, isPlayerSpymaster, playerTeam, currentTeam);
+      if (currentTeam && (playerTeam || isPlayerViewer))
+        modifyWordCards(
+          data.words,
+          isPlayerSpymaster,
+          playerTeam,
+          currentTeam,
+          isPlayerViewer,
+        );
 
       break;
     }
@@ -368,7 +398,7 @@ window.addEventListener("message", (event) => {
       showNextRoundBtn(false);
 
       currentTeam = null;
-      modifyWordCards(data.words, true, playerTeam, null);
+      modifyWordCards(data.words, true, playerTeam, null, true);
 
       break;
     }

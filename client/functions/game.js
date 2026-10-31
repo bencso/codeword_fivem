@@ -1,5 +1,5 @@
 //#region Szobából kilépett valaki, és alacsony szám
-onNet(EVENTS.DROPED_USER, async (roomId, players) => {
+onNet(EVENTS.DROPED_USER, async (roomId, players, endsTime) => {
   console.log(roomId + "| Megszakadt a játék, kevés játékos miatt");
 
   const withPhotos = await Promise.all(
@@ -14,6 +14,7 @@ onNet(EVENTS.DROPED_USER, async (roomId, players) => {
       action: "userDroped",
       roomId,
       lobbyPlayers: withPhotos,
+      endsTime,
     }),
   );
 });
@@ -22,7 +23,16 @@ onNet(EVENTS.DROPED_USER, async (roomId, players) => {
 //#region Játék inditása
 onNet(
   EVENTS.STARTED_GAME,
-  async (roomId, players, words, startingTeam, endsTime) => {
+  async (
+    roomId,
+    players,
+    words,
+    startingTeam,
+    endsTime,
+    isViewer,
+    clue,
+    clueHistory,
+  ) => {
     console.log(roomId + "| Játék elindult");
 
     const withPhotos = await Promise.all(
@@ -41,6 +51,10 @@ onNet(
         words,
         startingTeam,
         endsTime,
+        isViewer,
+        clue,
+        clueHistory,
+        playerId: GetPlayerServerId(PlayerId()),
       }),
     );
   },

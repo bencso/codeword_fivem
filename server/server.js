@@ -1,5 +1,12 @@
 const rooms = new Map();
 
+const hideColors = (words) =>
+  words.map((w) => ({
+    word: w.word,
+    team: w.revealed ? w.team : "",
+    revealed: w.revealed,
+  }));
+
 //#region SZOBA LÉTREHOZÁSA / PROP LETEVÉSE
 onNet(EVENTS.CREATE_ROOM, (pos) => {
   const src = source;
@@ -51,12 +58,12 @@ onNet(EVENTS.JOIN_ROOM, (roomId) => {
       prevRoom.players.find((p) => p.id === joinedPlayerId)
     )
       return;
-    if (prevRoom.state !== "joinable") return;
 
     const joinedPlayerData = {
       id: joinedPlayerId,
       name: GetPlayerName(joinedPlayerId),
       team: "",
+      isViewer: prevRoom.state !== "joinable",
     };
 
     const room = {
@@ -66,7 +73,41 @@ onNet(EVENTS.JOIN_ROOM, (roomId) => {
 
     rooms.set(roomId, room);
 
-    if (room.players.length >= MIN_PLAYERS && !room.countDownTimer) {
+    if (room.state === "started") {
+      emitNet(
+        EVENTS.STARTED_GAME,
+        joinedPlayerId,
+        roomId,
+        room.players.filter((p) => !p.isViewer),
+        room.words,
+        room.currentTeam,
+        room.endsAt ? room.endsAt - Date.now() : null,
+        true,
+        room.clue,
+        room.clueHistory,
+      );
+      return;
+    }
+
+    if (room.state !== "joinable") {
+      emitNet(
+        EVENTS.JOINED_ROOM,
+        joinedPlayerId,
+        roomId,
+        joinedPlayerId,
+        joinedPlayerData,
+        room.players,
+        false,
+        null,
+      );
+      return;
+    }
+
+    if (
+      room.state === "joinable" &&
+      room.players.filter((p) => !p.isViewer).length >= MIN_PLAYERS &&
+      !room.countDownTimer
+    ) {
       room.endsAt = Date.now() + AFTERMIN_COUNTDOWN_MS;
 
       room.countDownTimer = setTimeout(() => {
@@ -76,7 +117,9 @@ onNet(EVENTS.JOIN_ROOM, (roomId) => {
         currentRoom.countDownTimer = null;
         currentRoom.endsAt = null;
 
-        if (currentRoom.players.length < MIN_PLAYERS) {
+        if (
+          currentRoom.players.filter((p) => !p.isViewer).length < MIN_PLAYERS
+        ) {
           resetRoom(roomId);
           return;
         }
@@ -95,7 +138,7 @@ onNet(EVENTS.JOIN_ROOM, (roomId) => {
         joinedPlayerId,
         joinedPlayerData,
         room.players,
-        room.players.length >= MIN_PLAYERS,
+        room.players.filter((p) => !p.isViewer).length >= MIN_PLAYERS,
         endsTime,
       ),
     );
@@ -110,12 +153,15 @@ function switchSpymasterSelector(roomId) {
     if (currentRoom.countDownTimer) clearTimeout(currentRoom.countDownTimer);
 
     // CSAPATOK KIOSZTÁSA
-    let half = Math.floor(currentRoom.players.length / 2);
+    const active = shuffle(currentRoom.players.filter((p) => !p.isViewer));
+    let half = Math.floor(
+      currentRoom.players.filter((p) => !p.isViewer).length / 2,
+    );
 
-    const players = shuffle(currentRoom.players).map((p, i) => ({
-      ...p,
-      team: i < half ? TEAM_ONE : TEAM_TWO,
-    }));
+    const players = [
+      ...active.map((p, i) => ({ ...p, team: i < half ? TEAM_ONE : TEAM_TWO })),
+      ...currentRoom.players.filter((p) => p.isViewer),
+    ];
 
     const room = {
       ...currentRoom,
@@ -132,14 +178,16 @@ function switchSpymasterSelector(roomId) {
       currentRoom.countDownTimer = null;
       currentRoom.endsAt = null;
 
-      if (currentRoom.players.length < MIN_PLAYERS) {
+      if (currentRoom.players.filter((p) => !p.isViewer).length < MIN_PLAYERS) {
         resetRoom(roomId);
 
         return;
       }
 
       [TEAM_ONE, TEAM_TWO].forEach((team) => {
-        const teamPlayers = currentRoom.players.filter((p) => p.team === team);
+        const teamPlayers = currentRoom.players.filter(
+          (p) => p.team === team && !p.isViewer,
+        );
         if (teamPlayers.length === 0) return;
         if (teamPlayers.some((p) => p.spymaster)) return;
 
@@ -153,15 +201,17 @@ function switchSpymasterSelector(roomId) {
 
     const endsTime = room.endsAt ? room.endsAt - Date.now() : null;
 
-    room.players.forEach((player) =>
-      emitNet(
-        EVENTS.SPYMASTER_SELECTION,
-        player.id,
-        roomId,
-        room.players,
-        endsTime,
-      ),
-    );
+    room.players
+      .filter((p) => !p.isViewer)
+      .forEach((player) =>
+        emitNet(
+          EVENTS.SPYMASTER_SELECTION,
+          player.id,
+          roomId,
+          room.players.filter((p) => !p.isViewer),
+          endsTime,
+        ),
+      );
   }
 }
 
@@ -173,7 +223,8 @@ onNet(EVENTS.PICK_SPYMASTER, (roomId) => {
     const selectorId = source;
     const selector = currentRoom.players.find((p) => p.id === selectorId);
 
-    if (!selector || currentRoom.state !== "selecting") return;
+    if (!selector || selector.isViewer || currentRoom.state !== "selecting")
+      return;
 
     const teamHasSpymaster = currentRoom.players.some(
       (p) => p.team === selector.team && p.spymaster,
@@ -185,15 +236,17 @@ onNet(EVENTS.PICK_SPYMASTER, (roomId) => {
       p.id === selectorId ? { ...p, spymaster: true } : p,
     );
 
-    currentRoom.players.forEach((p) =>
-      emitNet(
-        EVENTS.SPYMASTER_SELECTED,
-        p.id,
-        roomId,
-        currentRoom.players,
-        selector.team,
-      ),
-    );
+    currentRoom.players
+      .filter((p) => !p.isViewer)
+      .forEach((p) =>
+        emitNet(
+          EVENTS.SPYMASTER_SELECTED,
+          p.id,
+          roomId,
+          currentRoom.players,
+          selector.team,
+        ),
+      );
 
     const bothReady =
       currentRoom.players.some((p) => p.team === TEAM_ONE && p.spymaster) &&
@@ -265,33 +318,31 @@ function startGame(roomId) {
     const endsTime = room.endsAt ? room.endsAt - Date.now() : null;
 
     room.players.forEach((player) => {
-      if (player.spymaster) {
+      if (player.spymaster || player.isViewer) {
         emitNet(
           EVENTS.STARTED_GAME,
           player.id,
           roomId,
-          room.players,
+          room.players.filter((p) => !p.isViewer),
           words,
           startingTeam,
           endsTime,
+          player.isViewer,
+          room.clue,
+          room.clueHistory,
         );
       } else {
-        const wordsWithoutColor = room.words.map((word) => {
-          return {
-            word: word.word,
-            team: word.revealed ? word.team : "",
-            revealed: word.revealed,
-          };
-        });
-
         emitNet(
           EVENTS.STARTED_GAME,
           player.id,
           roomId,
-          room.players,
-          wordsWithoutColor,
+          room.players.filter((p) => !p.isViewer),
+          hideColors(room.words),
           startingTeam,
           endsTime,
+          false,
+          room.clue,
+          room.clueHistory,
         );
       }
     });
@@ -349,7 +400,7 @@ onNet(EVENTS.ADD_CLUE, (roomId, clue, count) => {
     currentRoom.guesses = 0;
 
     const clueData = {
-      clue: clue.toUpperCase(),
+      clue: trimmedClue.toUpperCase(),
       count,
       team: playerData.team,
     };
@@ -429,7 +480,7 @@ function nextRound(roomId) {
     const endsTime = room.endsAt ? room.endsAt - Date.now() : null;
 
     room.players.forEach((player) => {
-      if (player.spymaster) {
+      if (player.spymaster || player.isViewer) {
         emitNet(
           EVENTS.NEXT_ROUND,
           player.id,
@@ -441,21 +492,13 @@ function nextRound(roomId) {
           endsTime,
         );
       } else {
-        const wordsWithoutColor = room.words.map((word) => {
-          return {
-            word: word.word,
-            team: word.revealed ? word.team : "",
-            revealed: word.revealed,
-          };
-        });
-
         emitNet(
           EVENTS.NEXT_ROUND,
           player.id,
           roomId,
           clueData.clue,
           clueData.count,
-          wordsWithoutColor,
+          hideColors(room.words),
           room.currentTeam,
           endsTime,
         );
@@ -474,7 +517,7 @@ onNet(EVENTS.PICK_WORD, (roomId, pickedWord) => {
     const playerData = currentRoom.players.find((p) => p.id === playerId);
 
     if (!playerData) return;
-    if (playerData.spymaster) return;
+    if (playerData.spymaster || playerData.isViewer) return;
     if (
       currentRoom.state !== "started" ||
       currentRoom.currentTeam !== playerData.team ||
@@ -483,7 +526,7 @@ onNet(EVENTS.PICK_WORD, (roomId, pickedWord) => {
       return;
 
     const playerTeamPlayercount = currentRoom.players.filter(
-      (p) => p.team == playerData.team && !p.spymaster,
+      (p) => p.team == playerData.team && !p.spymaster && !p.isViewer,
     ).length;
 
     const pickedCard = currentRoom.words.findIndex(
@@ -533,7 +576,7 @@ onNet(EVENTS.PICK_WORD, (roomId, pickedWord) => {
       const amountClue = currentRoom.clue.count + 1 - currentRoom.guesses;
 
       currentRoom.players.forEach((player) => {
-        if (player.spymaster) {
+        if (player.spymaster || player.isViewer) {
           emitNet(
             EVENTS.SELECTED_WORD,
             player.id,
@@ -544,19 +587,11 @@ onNet(EVENTS.PICK_WORD, (roomId, pickedWord) => {
             currentRoom.clue.count,
           );
         } else {
-          const wordsWithoutColor = currentRoom.words.map((word) => {
-            return {
-              word: word.word,
-              team: word.revealed ? word.team : "",
-              revealed: word.revealed,
-            };
-          });
-
           emitNet(
             EVENTS.SELECTED_WORD,
             player.id,
             roomId,
-            wordsWithoutColor,
+            hideColors(currentRoom.words),
             playerId,
             amountClue,
             currentRoom.clue.count,
@@ -637,7 +672,7 @@ onNet(EVENTS.SKIP_ROUND, (roomId) => {
     const playerData = currentRoom.players.find((p) => p.id === playerId);
 
     if (!playerData) return;
-    if (playerData.spymaster) return;
+    if (playerData.spymaster || playerData.isViewer) return;
     if (
       currentRoom.state !== "started" ||
       currentRoom.currentTeam !== playerData.team ||
@@ -646,7 +681,7 @@ onNet(EVENTS.SKIP_ROUND, (roomId) => {
       return;
 
     const playerTeamPlayercount = currentRoom.players.filter(
-      (p) => p.team == playerData.team && !p.spymaster,
+      (p) => p.team == playerData.team && !p.spymaster && !p.isViewer,
     ).length;
 
     currentRoom.skippingRound.add(playerId);
