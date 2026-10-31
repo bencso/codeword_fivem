@@ -149,6 +149,8 @@ window.addEventListener("message", (event) => {
       joinBtn.disabled = true;
       spymasterBtn.disabled = true;
 
+      showRoundBanner(data.startingTeam);
+
       const teamText = document.getElementById("codename_turnText");
       teamText.classList.remove("teamTwo");
       teamText.textContent = `${TEAM_NAMES[data.startingTeam] ?? ""} köre`;
@@ -266,6 +268,7 @@ window.addEventListener("message", (event) => {
       document.querySelectorAll(`.codename_vote`).forEach((el) => el.remove());
 
       currentTeam = data.currentTeam;
+      showRoundBanner(data.currentTeam);
 
       teamText.classList.remove("teamTwo");
       teamText.textContent = `${TEAM_NAMES[data.currentTeam] ?? ""} köre`;

@@ -17,3 +17,13 @@ function closeUi() {
   hideUi();
   post("close");
 }
+
+function showRoundBanner(team) {
+  const banner = document.getElementById("codename_roundBanner");
+  banner.innerHTML = `<span>${TEAM_NAMES[team] ?? ""} köre</span>`;
+  banner.classList.toggle("teamTwo", team === TEAM_TWO);
+
+  banner.classList.remove("show");
+  void banner.offsetWidth;
+  banner.classList.add("show");
+}
