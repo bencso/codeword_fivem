@@ -69,5 +69,8 @@ function leaveRoom(roomId, leaverId) {
       spymasterLeft
     )
       resetRoom(roomId);
+
+    if (room.players.length <= 0 && room.state === "joinable")
+      rooms.delete(roomId);
   }
 }
