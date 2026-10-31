@@ -12,7 +12,6 @@ client_scripts {
     'client/helpers/cameraHelper.js',
     'client/helpers/headshotHelper.js',
     'client/helpers/interactHelper.js',
-    'client/functions/props.js',
     'client/functions/rooms.js',
     'client/functions/teams.js',
     'client/functions/game.js',
@@ -20,6 +19,7 @@ client_scripts {
 }
 
 server_scripts {
+    'server/helpers/hideColors.js',
     'server/helpers/leaveRoom.js',
     'server/helpers/resetRoom.js',
     'server/helpers/shuffle.js',

@@ -1,17 +1,14 @@
 const Delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
 const EVENTS = {
-  CREATE_ROOM: "codenames:createRoom",
-  REMOVE_ROOM: "codenames:removeRoom",
-
   JOIN_ROOM: "codenames:joinRoom",
   LEAVE_ROOM: "codenames:leaveRoom",
 
   JOINED_ROOM: "codenames:joinedRoom",
   LEAVED_ROOM: "codenames:leavedRoom",
 
-  SPAWN_PROP: "codenames:spawnProp",
-  REMOVE_PROP: "codenames:removeProp",
+  PLACE_BOARD: "codenames:spawnProp",
+  REMOVE_BOARD: "codenames:removeProp",
 
   START_GAME: "codenames:startGame",
   SPYMASTER_SELECTION: "codenames:spymasterSelection",
@@ -37,7 +34,7 @@ const EVENTS = {
   GAME_ENDED: "codenames:gameEnded",
 };
 
-const PROP = "codenames_board";
+const PROP = "prop_table_03";
 
 const MIN_PLAYERS = 1;
 const TEAM_ONE = "blue";

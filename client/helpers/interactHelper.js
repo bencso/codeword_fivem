@@ -1,4 +1,4 @@
-const interactDistance = 2.0;
+const interactDistance = 3.0;
 let uiOpen = false;
 
 function distanceMe(a, b) {
@@ -22,8 +22,8 @@ async function makeInteractible() {
     if (!uiOpen) {
       const me = GetEntityCoords(PlayerPedId());
 
-      for (const [roomId, obj] of Object.entries(codeNameProps)) {
-        if (!DoesEntityExist(obj)) continue;
+      for (const obj of GetGamePool("CObject")) {
+        if (GetEntityModel(obj) !== propModel) continue;
 
         const dist = distanceMe(me, GetEntityCoords(obj));
 
@@ -36,11 +36,16 @@ async function makeInteractible() {
           EndTextCommandDisplayHelp(0, false, true, -1);
 
           if (IsControlJustReleased(0, 38)) {
-            openUI(roomId);
+            openUI(boardRoomId(obj));
             openBoardCam(obj);
           }
-          if (IsControlJustReleased(0, 252))
-            emitNet(EVENTS.REMOVE_ROOM, roomId);
+
+          if (IsControlJustReleased(0, 252) && NetworkGetEntityIsNetworked(obj))
+            emitNet(
+              EVENTS.REMOVE_BOARD,
+              NetworkGetNetworkIdFromEntity(obj),
+              boardRoomId(obj),
+            );
 
           break;
         } else if (dist < 20.0) {

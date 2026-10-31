@@ -1,20 +1,62 @@
 const rooms = new Map();
+const placedBoards = new Map();
 
-const hideColors = (words) =>
-  words.map((w) => ({
-    word: w.word,
-    team: w.revealed ? w.team : "",
-    revealed: w.revealed,
-  }));
-
-//#region SZOBA LÉTREHOZÁSA / PROP LETEVÉSE
-onNet(EVENTS.CREATE_ROOM, (pos) => {
+//#region PROP LETEVÉSE
+onNet(EVENTS.PLACE_BOARD, async (pos) => {
   const src = source;
-  const roomId = crypto.randomUUID();
 
+  const [px, py, pz] = GetEntityCoords(GetPlayerPed(src));
+  if (Math.hypot(px - pos.x, py - pos.y, pz - pos.z) > 5) return;
+
+  const obj = CreateObjectNoOffset(
+    GetHashKey(PROP),
+    pos.x,
+    pos.y,
+    pos.z,
+    true,
+    true,
+    false,
+  );
+
+  let tries = 0;
+  while (!DoesEntityExist(obj) && tries++ < 50) await Delay(10);
+  if (!DoesEntityExist(obj)) return;
+
+  SetEntityHeading(obj, pos.heading);
+  FreezeEntityPosition(obj, true);
+  SetEntityOrphanMode(obj, 2);
+
+  placedBoards.set(NetworkGetNetworkIdFromEntity(obj), {
+    entity: obj,
+    owner: src,
+  });
+});
+//#endregion
+
+//#region PROP TÖRLÉSE
+onNet(EVENTS.REMOVE_BOARD, (netId, roomId) => {
+  const src = source;
+  const board = placedBoards.get(netId);
+  if (!board || board.owner !== src) return;
+
+  const room = rooms.get(roomId);
+  if (room && room.players.length > 0) return;
+
+  const [px, py, pz] = GetEntityCoords(GetPlayerPed(src));
+  const [bx, by, bz] = GetEntityCoords(board.entity);
+  if (Math.hypot(px - bx, py - by, pz - bz) > 3.0) return;
+
+  DeleteEntity(board.entity);
+  placedBoards.delete(netId);
+  rooms.delete(roomId);
+});
+//#endregion
+
+//#region SZOBA LÉTREHOZÁSA
+function createRoom(roomId, pos, joinedPlayerId) {
   const roomData = {
     id: roomId,
-    createdBy: src,
+    createdBy: joinedPlayerId,
     pos,
     players: [],
     words: [],
@@ -28,121 +70,110 @@ onNet(EVENTS.CREATE_ROOM, (pos) => {
   };
 
   rooms.set(roomId, roomData);
-
-  emitNet(EVENTS.SPAWN_PROP, -1, roomId, pos);
-});
-
-//#region SZOBA TÖRLÉSE / PROP TÖRLÉSE
-onNet(EVENTS.REMOVE_ROOM, (roomId) => {
-  const playerId = source;
-
-  if (!rooms.has(roomId)) return;
-
-  const room = rooms.get(roomId);
-  const canRemove = room.state === "joinable" || playerId === room.createdBy;
-  if (!canRemove) return;
-
-  rooms.delete(roomId);
-  emitNet(EVENTS.REMOVE_PROP, -1, roomId);
-});
+}
 
 //#region SZOBÁBA BELÉPÉS
 onNet(EVENTS.JOIN_ROOM, (roomId) => {
   const joinedPlayerId = source;
 
-  if (rooms.size > 0 && rooms.has(roomId)) {
-    const prevRoom = rooms.get(roomId);
+  const parts = String(roomId).split("_");
+  const [bx, by, bz] = parts.slice(-3).map(Number);
+  if (parts.length < 4 || [bx, by, bz].some(Number.isNaN)) return;
 
-    if (
-      prevRoom.players.length > 0 &&
-      prevRoom.players.find((p) => p.id === joinedPlayerId)
-    )
-      return;
+  const [px, py, pz] = GetEntityCoords(GetPlayerPed(joinedPlayerId));
+  if (Math.hypot(px - bx, py - by, pz - bz) > 3.0) return;
 
-    const joinedPlayerData = {
-      id: joinedPlayerId,
-      name: GetPlayerName(joinedPlayerId),
-      team: "",
-      isViewer: prevRoom.state !== "joinable",
-    };
+  if (!rooms.has(roomId)) createRoom(roomId, [bx, by, bz], joinedPlayerId);
 
-    const room = {
-      ...prevRoom,
-      players: [...prevRoom.players, joinedPlayerData],
-    };
+  const prevRoom = rooms.get(roomId);
 
-    rooms.set(roomId, room);
+  if (
+    prevRoom.players.length > 0 &&
+    prevRoom.players.find((p) => p.id === joinedPlayerId)
+  )
+    return;
 
-    if (room.state === "started") {
-      emitNet(
-        EVENTS.STARTED_GAME,
-        joinedPlayerId,
-        roomId,
-        room.players.filter((p) => !p.isViewer),
-        room.words,
-        room.currentTeam,
-        room.endsAt ? room.endsAt - Date.now() : null,
-        true,
-        room.clue,
-        room.clueHistory,
-      );
-      return;
-    }
+  const joinedPlayerData = {
+    id: joinedPlayerId,
+    name: GetPlayerName(joinedPlayerId),
+    team: "",
+    isViewer: prevRoom.state !== "joinable",
+  };
 
-    if (room.state !== "joinable") {
-      emitNet(
-        EVENTS.JOINED_ROOM,
-        joinedPlayerId,
-        roomId,
-        joinedPlayerId,
-        joinedPlayerData,
-        room.players,
-        false,
-        null,
-      );
-      return;
-    }
+  const room = {
+    ...prevRoom,
+    players: [...prevRoom.players, joinedPlayerData],
+  };
 
-    if (
-      room.state === "joinable" &&
-      room.players.filter((p) => !p.isViewer).length >= MIN_PLAYERS &&
-      !room.countDownTimer
-    ) {
-      room.endsAt = Date.now() + AFTERMIN_COUNTDOWN_MS;
+  rooms.set(roomId, room);
 
-      room.countDownTimer = setTimeout(() => {
-        const currentRoom = rooms.get(roomId);
-        if (!currentRoom) return;
-
-        currentRoom.countDownTimer = null;
-        currentRoom.endsAt = null;
-
-        if (
-          currentRoom.players.filter((p) => !p.isViewer).length < MIN_PLAYERS
-        ) {
-          resetRoom(roomId);
-          return;
-        }
-
-        switchSpymasterSelector(roomId);
-      }, AFTERMIN_COUNTDOWN_MS);
-    }
-
-    const endsTime = room.endsAt ? room.endsAt - Date.now() : null;
-
-    room.players.forEach((player) =>
-      emitNet(
-        EVENTS.JOINED_ROOM,
-        player.id,
-        roomId,
-        joinedPlayerId,
-        joinedPlayerData,
-        room.players,
-        room.players.filter((p) => !p.isViewer).length >= MIN_PLAYERS,
-        endsTime,
-      ),
+  if (room.state === "started") {
+    emitNet(
+      EVENTS.STARTED_GAME,
+      joinedPlayerId,
+      roomId,
+      room.players.filter((p) => !p.isViewer),
+      room.words,
+      room.currentTeam,
+      room.endsAt ? room.endsAt - Date.now() : null,
+      true,
+      room.clue,
+      room.clueHistory,
     );
+    return;
   }
+
+  if (room.state !== "joinable") {
+    emitNet(
+      EVENTS.JOINED_ROOM,
+      joinedPlayerId,
+      roomId,
+      joinedPlayerId,
+      joinedPlayerData,
+      room.players,
+      false,
+      null,
+    );
+    return;
+  }
+
+  if (
+    room.state === "joinable" &&
+    room.players.filter((p) => !p.isViewer).length >= MIN_PLAYERS &&
+    !room.countDownTimer
+  ) {
+    room.endsAt = Date.now() + AFTERMIN_COUNTDOWN_MS;
+
+    room.countDownTimer = setTimeout(() => {
+      const currentRoom = rooms.get(roomId);
+      if (!currentRoom) return;
+
+      currentRoom.countDownTimer = null;
+      currentRoom.endsAt = null;
+
+      if (currentRoom.players.filter((p) => !p.isViewer).length < MIN_PLAYERS) {
+        resetRoom(roomId);
+        return;
+      }
+
+      switchSpymasterSelector(roomId);
+    }, AFTERMIN_COUNTDOWN_MS);
+  }
+
+  const endsTime = room.endsAt ? room.endsAt - Date.now() : null;
+
+  room.players.forEach((player) =>
+    emitNet(
+      EVENTS.JOINED_ROOM,
+      player.id,
+      roomId,
+      joinedPlayerId,
+      joinedPlayerData,
+      room.players,
+      room.players.filter((p) => !p.isViewer).length >= MIN_PLAYERS,
+      endsTime,
+    ),
+  );
 });
 
 //#region SPYMASTER VÁLASZTÓ
@@ -715,5 +746,12 @@ on("playerDropped", () => {
       leaveRoom(roomId, droppedId);
     }
   }
+});
+
+on("onResourceStop", (resourceName) => {
+  if (resourceName !== GetCurrentResourceName()) return;
+
+  for (const { entity } of placedBoards.values())
+    if (DoesEntityExist(entity)) DeleteEntity(entity);
 });
 //#endregion

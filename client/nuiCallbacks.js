@@ -45,16 +45,4 @@ on("__cfx_nui:pickWord", (data, cb) => {
   cb({});
 });
 
-on("onResourceStop", (resourceName) => {
-  if (resourceName !== GetCurrentResourceName()) return;
-
-  clearHeadshots();
-  closeBoardCam();
-
-  for (const obj of Object.values(codeNameProps)) {
-    if (DoesEntityExist(obj)) DeleteEntity(obj);
-  }
-
-  SetNuiFocus(false, false);
-});
 //#endregion
