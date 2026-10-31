@@ -20,7 +20,7 @@ function closeUi() {
 
 function showRoundBanner(team) {
   const banner = document.getElementById("codename_roundBanner");
-  banner.innerHTML = `<span>${TEAM_NAMES[team] ?? ""} köre</span>`;
+  banner.innerHTML = `<span>Következik: ${TEAM_NAMES[team] ?? ""}</span>`;
   banner.classList.toggle("teamTwo", team === TEAM_TWO);
 
   banner.classList.remove("show");
