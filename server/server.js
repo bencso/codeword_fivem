@@ -313,13 +313,15 @@ onNet(EVENTS.ADD_CLUE, (roomId, clue, count) => {
       return;
 
     const playerData = currentRoom.players.find((p) => p.id === sender);
+
+    if (playerData.team !== currentRoom.currentTeam) return;
+    if (currentRoom.clue && currentRoom.clue.clue) return;
+
     const trimmedClue = typeof clue === "string" ? clue.trim() : "";
     const teamWordsLeft = currentRoom.words.filter(
       (w) => w.team === playerData.team && !w.revealed,
     ).length;
 
-    if (playerData.team !== currentRoom.currentTeam) return;
-    if (currentRoom.clue && currentRoom.clue.clue) return;
     if (!Number.isInteger(count) || count < -1 || count > teamWordsLeft) {
       emitNet(EVENTS.ERROR, sender, "notCorrectCount");
       return;
@@ -334,7 +336,7 @@ onNet(EVENTS.ADD_CLUE, (roomId, clue, count) => {
     }
 
     const isOnTable = currentRoom.words.some(
-      (w) => w.word.toLowerCase() === trimmed.toLowerCase(),
+      (w) => w.word.toLowerCase() === trimmedClue.toLowerCase(),
     );
     if (isOnTable) {
       emitNet(EVENTS.ERROR, sender, "isOnTable");
@@ -345,7 +347,7 @@ onNet(EVENTS.ADD_CLUE, (roomId, clue, count) => {
     currentRoom.guesses = 0;
 
     const clueData = {
-      clue,
+      clue: clue.toUpperCase(),
       count,
       team: playerData.team,
     };
