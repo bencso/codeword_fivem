@@ -620,7 +620,7 @@ function pickWord(playerId, roomId, pickedWord) {
       });
       currentRoom.guesses++;
 
-      const amountClue = currentRoom.clue.count + 1 - currentRoom.guesses;
+      const amountClue = currentRoom.clue.count - currentRoom.guesses;
 
       currentRoom.players.forEach((player) => {
         if (player.spymaster || player.isViewer) {
@@ -707,6 +707,12 @@ function endGame(roomId, winnerTeam) {
     currentRoom.guesses = 0;
     currentRoom.state = "finished";
 
+    currentRoom.endsAt = Date.now() + ROUND_COUNTDOWN_MS;
+
+    const newGameAt = currentRoom.endsAt
+      ? currentRoom.endsAt - Date.now()
+      : null;
+
     currentRoom.players.forEach((player) => {
       emitNet(
         EVENTS.GAME_ENDED,
@@ -714,6 +720,7 @@ function endGame(roomId, winnerTeam) {
         roomId,
         currentRoom.words,
         winnerTeam,
+        newGameAt,
       );
     });
 

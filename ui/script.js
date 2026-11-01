@@ -45,6 +45,9 @@ window.addEventListener("message", (event) => {
     case "open": {
       if (data.roomId !== undefined) roomId = data.roomId;
 
+      const banner = document.getElementById("codename_roundBanner");
+      banner.classList.remove("show");
+
       if (inRoom) {
         app.classList.add("show");
         break;
@@ -166,7 +169,7 @@ window.addEventListener("message", (event) => {
 
       const teamText = document.getElementById("codename_turnText");
       teamText.classList.remove("teamTwo");
-      teamText.textContent = `${TEAM_NAMES[data.startingTeam] ?? ""} köre`;
+      teamText.textContent = `${TEAM_NAMES[data.startingTeam] ?? ""} spymaster következik`;
       if (data.startingTeam === TEAM_TWO) teamText.classList.add("teamTwo");
 
       const timer = document.getElementById("codename_turnTimerText");
@@ -232,7 +235,7 @@ window.addEventListener("message", (event) => {
 
       currentTeam = data.currentTeam;
 
-      teamText.textContent = `${TEAM_NAMES[data.currentTeam] ?? ""} köre`;
+      teamText.textContent = `${TEAM_NAMES[data.currentTeam] ?? ""} talál ki`;
       if (data.currentTeam === TEAM_TWO) teamText.classList.add("teamTwo");
 
       const timer = document.getElementById("codename_turnTimerText");
@@ -288,7 +291,7 @@ window.addEventListener("message", (event) => {
         showRoundBanner(data.currentTeam);
 
       teamText.classList.remove("teamTwo");
-      teamText.textContent = `${TEAM_NAMES[data.currentTeam] ?? ""} köre`;
+      teamText.textContent = `${TEAM_NAMES[data.currentTeam] ?? ""} spymaster következik`;
       if (data.currentTeam === TEAM_TWO) teamText.classList.add("teamTwo");
 
       const timer = document.getElementById("codename_turnTimerText");
@@ -406,10 +409,12 @@ window.addEventListener("message", (event) => {
       timer.textContent = "";
       timer.classList.remove("urgent");
 
+      startCountdown(data.newGameAt, timer);
+
       showWinnerBanner(data.winnerTeam);
 
       const teamText = document.getElementById("codename_turnText");
-      teamText.textContent = `${TEAM_NAMES[data.winnerTeam] ?? ""} nyert!`;
+      teamText.textContent = `${TEAM_NAMES[data.winnerTeam] ?? ""} nyert! A lobbyba kerülsz:`;
       teamText.classList.toggle("teamTwo", data.winnerTeam === TEAM_TWO);
 
       document.getElementById("codename_clueText").classList.add("hidden");

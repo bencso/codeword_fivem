@@ -30,6 +30,7 @@ body {
   font-family: "Montserrat", "Inter", Arial, sans-serif;
   color: var(--text);
   user-select: none;
+  scrollbar-width: none;
   font-weight: normal;
 }
 
@@ -275,6 +276,7 @@ body {
   background-color: var(--teamOne);
   font-size: 14px;
   margin-bottom: 12px;
+  text-transform: uppercase;
   font-weight: 500;
 }
 
