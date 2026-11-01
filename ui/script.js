@@ -21,7 +21,10 @@ joinBtn.addEventListener("click", () => {
 document.getElementById("codename_exitBtn").addEventListener("click", closeUi);
 
 window.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") closeUi();
+  if (e.key === "Escape") {
+    post("leaveRoom", { roomId });
+    joinBtn.disabled = false;
+  }
 });
 
 document.getElementById("codename_leaveBtn").addEventListener("click", () => {
@@ -278,7 +281,11 @@ window.addEventListener("message", (event) => {
       document.querySelectorAll(`.codename_vote`).forEach((el) => el.remove());
 
       currentTeam = data.currentTeam;
-      showRoundBanner(data.currentTeam);
+
+      if (
+        document.getElementById("codename_view-game").classList.contains("show")
+      )
+        showRoundBanner(data.currentTeam);
 
       teamText.classList.remove("teamTwo");
       teamText.textContent = `${TEAM_NAMES[data.currentTeam] ?? ""} köre`;
@@ -321,52 +328,50 @@ window.addEventListener("message", (event) => {
 
       if (!voter) break;
 
-      document
-        .querySelectorAll(`.codename_vote[data-voter-id="${voter.votedId}"]`)
-        .forEach((el) => el.remove());
-
-      const card = [...document.querySelectorAll(".codename_card")].find(
-        (c) => c.dataset.word === data.pickedWord,
-      );
-      const votesBlock = card?.querySelector(".codename_card-votes");
-      if (!votesBlock) break;
-
-      if (!data.pickedWord) {
-        if (voter.votedId === playerId) {
-          document
-            .querySelectorAll(".codename_card-ownPlayerVote")
-            .forEach((c) => c.classList.remove("codename_card-ownPlayerVote"));
-        }
-        break;
-      }
+      const pickedWords = data.pickedWords ?? [];
 
       if (voter.votedId === playerId) {
         document
           .querySelectorAll(".codename_card-ownPlayerVote")
           .forEach((c) => c.classList.remove("codename_card-ownPlayerVote"));
-        card.classList.add("codename_card-ownPlayerVote");
       }
 
-      const photo = document.createElement("span");
-      photo.className = "codename_vote";
-      photo.dataset.voterId = voter.votedId;
+      document
+        .querySelectorAll(`.codename_vote[data-voter-id="${voter.votedId}"]`)
+        .forEach((el) => el.remove());
 
-      const initial = (voter.name ?? "?").charAt(0).toUpperCase();
+      [...document.querySelectorAll(".codename_card")]
+        .filter((c) => pickedWords.includes(c.dataset.word))
+        .forEach((card) => {
+          const votesBlock = card?.querySelector(".codename_card-votes");
 
-      if (voter.photo) {
-        const img = document.createElement("img");
-        img.src = voter.photo;
-        img.alt = "";
-        img.onerror = () => {
-          img.remove();
-          photo.textContent = initial;
-        };
-        photo.appendChild(img);
-      } else {
-        photo.textContent = initial;
-      }
+          if (!votesBlock) return;
 
-      votesBlock.appendChild(photo);
+          if (voter.votedId === playerId)
+            card.classList.add("codename_card-ownPlayerVote");
+
+          const photo = document.createElement("span");
+          photo.className = "codename_vote";
+          photo.dataset.voterId = voter.votedId;
+
+          const initial = (voter.name ?? "?").charAt(0).toUpperCase();
+
+          if (voter.photo) {
+            const img = document.createElement("img");
+            img.src = voter.photo;
+            img.alt = "";
+            img.onerror = () => {
+              img.remove();
+              photo.textContent = initial;
+            };
+            photo.appendChild(img);
+          } else {
+            photo.textContent = initial;
+          }
+
+          votesBlock.appendChild(photo);
+        });
+
       break;
     }
 

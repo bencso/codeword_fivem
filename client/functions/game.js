@@ -104,7 +104,7 @@ onNet(
 //#endregion
 
 //#region Szó szavazás
-onNet(EVENTS.VOTED_WORD, async (roomId, pickedWord, playerId, playerName) => {
+onNet(EVENTS.VOTED_WORD, async (roomId, pickedWords, playerId, playerName) => {
   const voterWhitPhoto = {
     votedId: playerId,
     name: playerName,
@@ -115,7 +115,7 @@ onNet(EVENTS.VOTED_WORD, async (roomId, pickedWord, playerId, playerName) => {
     JSON.stringify({
       action: "votedWord",
       roomId,
-      pickedWord,
+      pickedWords,
       voterWhitPhoto,
     }),
   );
@@ -176,4 +176,3 @@ onNet(EVENTS.GAME_ENDED, (roomId, words, winnerTeam) => {
   );
 });
 //#endregion
-

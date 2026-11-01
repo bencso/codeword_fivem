@@ -181,18 +181,17 @@ function botsPlay(roomId) {
 
   // 3) Szavazás – ha van ember a csapatban, a botok az ő szavazatát másolják,
   //    ha csak botok vannak, az első választ, a többi követi
+  const votesOf = (id) => room.selectedWords.get(id) ?? [];
+
   let target = null;
   if (humans.length) {
-    target =
-      humans.map((h) => room.selectedWords.get(h.id)).find(Boolean) ?? null;
+    target = humans.map((h) => votesOf(h.id)[0]).find(Boolean) ?? null;
   } else {
-    target =
-      room.selectedWords.get(botGuessers[0].id) ?? chooseBotWord(room, team);
+    target = votesOf(botGuessers[0].id)[0] ?? chooseBotWord(room, team);
   }
   if (!target) return;
 
-  // ugyanarra a szóra újra szavazni = visszavonás, ezért csak aki még nem arra szavazott
-  const bot = botGuessers.find((b) => room.selectedWords.get(b.id) !== target);
+  const bot = botGuessers.find((b) => !votesOf(b.id).includes(target));
   if (bot) pickWord(bot.id, roomId, target);
 }
 

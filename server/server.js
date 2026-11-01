@@ -573,15 +573,19 @@ function pickWord(playerId, roomId, pickedWord) {
     if (pickedCard === -1) return;
     if (currentRoom.words[pickedCard].revealed) return;
 
-    if (currentRoom.selectedWords.get(playerId) === pickedWord) {
-      currentRoom.selectedWords.delete(playerId);
+    const playerWords = currentRoom.selectedWords.get(playerId) ?? [];
+
+    if (playerWords.includes(pickedWord)) {
+      const deletedWords = playerWords.filter((e) => e !== pickedWord);
+
+      currentRoom.selectedWords.set(playerId, deletedWords);
 
       currentRoom.players.forEach((player) => {
         emitNet(
           EVENTS.VOTED_WORD,
           player.id,
           roomId,
-          null,
+          currentRoom.selectedWords.get(playerId),
           playerId,
           playerData.name,
         );
@@ -589,25 +593,31 @@ function pickWord(playerId, roomId, pickedWord) {
       return;
     }
 
-    currentRoom.selectedWords.set(playerId, pickedWord);
+    currentRoom.selectedWords.set(playerId, [...playerWords, pickedWord]);
     currentRoom.players.forEach((player) => {
       emitNet(
         EVENTS.VOTED_WORD,
         player.id,
         roomId,
-        pickedWord,
+        currentRoom.selectedWords.get(playerId),
         playerId,
         playerData.name,
       );
     });
 
-    const votes = [...currentRoom.selectedWords.values()];
-    const allSame = votes.every((v) => v === votes[0]);
+    const voteForWord = [...currentRoom.selectedWords.values()].filter(
+      (words) => words.includes(pickedWord),
+    ).length;
 
-    if (currentRoom.selectedWords.size === playerTeamPlayercount && allSame) {
+    if (voteForWord === playerTeamPlayercount) {
       currentRoom.words[pickedCard].revealed = true;
-      currentRoom.selectedWords.clear();
 
+      currentRoom.selectedWords.forEach((words, voterId) => {
+        currentRoom.selectedWords.set(
+          voterId,
+          words.filter((w) => w !== pickedWord),
+        );
+      });
       currentRoom.guesses++;
 
       const amountClue = currentRoom.clue.count + 1 - currentRoom.guesses;
@@ -648,6 +658,23 @@ function pickWord(playerId, roomId, pickedWord) {
           currentRoom.guesses >= currentRoom.clue.count + 1
         ) {
           nextRound(roomId);
+        } else {
+          currentRoom.selectedWords.forEach((words, voterId) => {
+            if (words.length === 0) return;
+            const voter = currentRoom.players.find((p) => p.id === voterId);
+            if (!voter) return;
+
+            currentRoom.players.forEach((player) =>
+              emitNet(
+                EVENTS.VOTED_WORD,
+                player.id,
+                roomId,
+                words,
+                voterId,
+                voter.name,
+              ),
+            );
+          });
         }
       } else if (cardTeam === "black") {
         endGame(roomId, playerData.team === TEAM_ONE ? TEAM_TWO : TEAM_ONE);

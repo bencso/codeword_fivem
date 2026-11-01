@@ -13,14 +13,7 @@ function leaveRoom(roomId, leaverId) {
   if (room.selectedWords && room.selectedWords.has(leaverId)) {
     room.selectedWords.delete(leaverId);
     currentRoom.players.forEach((player) => {
-      emitNet(
-        EVENTS.VOTED_WORD,
-        player.id,
-        roomId,
-        null,
-        leaverId,
-        leaver.name,
-      );
+      emitNet(EVENTS.VOTED_WORD, player.id, roomId, [], leaverId, leaver.name);
     });
   }
 
@@ -81,7 +74,7 @@ function leaveRoom(roomId, leaverId) {
       (p) => p.team === leaver.team && !p.isViewer,
     );
 
-    if (teamPlayers.length < 2) {
+    if (teamPlayers.length <= 2) {
       resetRoom(roomId);
       return;
     }

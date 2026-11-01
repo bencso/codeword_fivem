@@ -36,7 +36,7 @@ const EVENTS = {
 
 const PROP = "codenames_board";
 
-const MIN_PLAYERS = 1;
+const MIN_PLAYERS = 4;
 const TEAM_ONE = "blue";
 const TEAM_TWO = "red";
 const TEAM_ONE_COLOR = "rgba(255, 0, 0, 0.6)";

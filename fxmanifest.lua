@@ -23,8 +23,8 @@ server_scripts {
     'server/helpers/leaveRoom.js',
     'server/helpers/resetRoom.js',
     'server/helpers/shuffle.js',
+    'server/helpers/testBot.js',
     'server/server.js'
-    'server/helpers/testBot.js'
 }
 
 ui_page 'ui/index.html'
