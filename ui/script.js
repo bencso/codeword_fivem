@@ -19,6 +19,9 @@ window.addEventListener("message", (event) => {
     case "open": {
       if (data.roomId !== undefined) roomId = data.roomId;
 
+      document.getElementById("codename_exitBtn").textContent = EXIT_BTN_TEXT;
+      document.getElementById("codename_joinBtn").textContent = JOIN_BTN_TEXT;
+
       const banner = document.getElementById("codename_roundBanner");
       banner.classList.remove("show");
 
@@ -53,6 +56,14 @@ window.addEventListener("message", (event) => {
         "codename_countdown-waiting",
       );
 
+      document.querySelector(
+        "#codename_view-waiting .codename_title",
+      ).textContent = WAITING_HEADING;
+      document.querySelector(
+        "#codename_view-waiting .codename_subtitle",
+      ).textContent = WAITING_SUBHEADING;
+      document.getElementById("codename_leaveBtn").textContent = LEAVE_BTN_TEXT;
+
       if (data.activePlayers === true && data.endsTime) {
         waitingTimer.classList.remove("hidden");
         startCountdown(data.endsTime, waitingTimer);
@@ -70,6 +81,12 @@ window.addEventListener("message", (event) => {
 
       refreshPlayerList(data.players, "team");
       spymasterBtn.disabled = false;
+
+      document.querySelector(
+        "#codename_view-team .codename_title",
+      ).textContent = SPYMASTER_SELECTION_HEADING;
+      document.getElementById("codename_pickSpymasterBtn").textContent =
+        SPYMASTER_SELECTION_PICK_BTN;
 
       const teamTimer = document.getElementById("codename_countdown-team");
       teamTimer.classList.remove("hidden");
@@ -143,7 +160,7 @@ window.addEventListener("message", (event) => {
 
       const teamText = document.getElementById("codename_turnText");
       teamText.classList.remove("teamTwo");
-      teamText.textContent = `${TEAM_NAMES[data.startingTeam] ?? ""} spymaster következik`;
+      teamText.textContent = SPYMASTER_TEXT_BANNER(data.startingTeam);
       if (data.startingTeam === TEAM_TWO) teamText.classList.add("teamTwo");
 
       const timer = document.getElementById("codename_turnTimerText");
@@ -265,7 +282,7 @@ window.addEventListener("message", (event) => {
         showRoundBanner(data.currentTeam);
 
       teamText.classList.remove("teamTwo");
-      teamText.textContent = `${TEAM_NAMES[data.currentTeam] ?? ""} spymaster következik`;
+      teamText.textContent = SPYMASTER_TEXT_BANNER(data.startingTeam);
       if (data.currentTeam === TEAM_TWO) teamText.classList.add("teamTwo");
 
       const timer = document.getElementById("codename_turnTimerText");
@@ -388,7 +405,7 @@ window.addEventListener("message", (event) => {
       showWinnerBanner(data.winnerTeam);
 
       const teamText = document.getElementById("codename_turnText");
-      teamText.textContent = `${TEAM_NAMES[data.winnerTeam] ?? ""} nyert! A lobbyba kerülsz:`;
+      teamText.textContent = WINNER_TEXT(data.winnerTeam);
       teamText.classList.toggle("teamTwo", data.winnerTeam === TEAM_TWO);
 
       document.getElementById("codename_clueText").classList.add("hidden");

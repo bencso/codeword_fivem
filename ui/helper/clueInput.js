@@ -10,8 +10,7 @@ function showClueInput(show) {
   clueCount.value = 0;
   clueCount.max = ONE_TEAM_WORDS;
   clueCount.min = -1;
-  clueError.textContent =
-    "Jelöld ki a kártyákat, amelyekre a megadott szó vonatkozik";
+  clueError.textContent = CLUE_HINT_TEXT;
   clueError.classList.remove("error");
 }
 
@@ -32,10 +31,12 @@ function toggleClueCard(card, isRevealed) {
   const count = selectedClueCards().length;
   clueCount.value = count;
 
+  document.getElementById("codename_clueSubmit").textContent = SUBMIT_BTN_TEXT;
+  document.getElementById("codename_clueHint").textContent = CLUE_HINT_TEXT;
+
   if (clueError.classList.contains("error")) {
     clueError.classList.remove("error");
-    clueError.textContent =
-      "Jelöld ki a kártyákat, amelyekre a megadott szó vonatkozik";
+    clueError.textContent = CLUE_HINT_TEXT;
   }
 }
 

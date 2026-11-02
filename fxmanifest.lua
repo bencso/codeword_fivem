@@ -39,6 +39,7 @@ ui_page 'ui/index.html'
 
 
 files { 
+    'locale.js',
     'consts.js',
     'assets/kartya/*.png',
     'ui/helper/countdown.js',

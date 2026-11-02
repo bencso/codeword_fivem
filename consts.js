@@ -54,11 +54,4 @@ const TEAM_NAMES = {
   [TEAM_TWO]: "Csapat 2",
 };
 
-const ERROR_TEXTS = {
-  isOnTable: "Ez a szó rajta van a táblán!",
-  notEnoughLength: "Írj be egy tippet!",
-  notCorrectCount: "Hibás szám!",
-  moreWords: "Csak egy szó lehet!",
-};
-
 const DEBUG = true;

@@ -6,6 +6,7 @@ function showNextRoundBtn(show) {
   if (show) nextRoundBtn.onclick = submitNextRoundBtn;
   else nextRoundBtn.onclick = null;
   nextRoundBtn.disabled = !show;
+  nextRoundBtn.textContent = SKIP_BTN_TEXT;
 }
 
 function submitNextRoundBtn() {
