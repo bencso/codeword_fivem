@@ -286,7 +286,7 @@ window.addEventListener("message", (event) => {
         showRoundBanner(data.currentTeam);
 
       teamText.classList.remove("teamTwo");
-      teamText.textContent = SPYMASTER_TEXT_BANNER(data.startingTeam);
+      teamText.textContent = SPYMASTER_TEXT_BANNER(data.currentTeam);
       if (data.currentTeam === TEAM_TWO) teamText.classList.add("teamTwo");
 
       const timer = document.getElementById("codeword_turnTimerText");
