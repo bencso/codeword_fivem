@@ -8,7 +8,7 @@
 //    /cn_botsclear     – botok eltávolítása
 // =========================================================
 
-const BOT_TICK_MS = 2000; // ennyi időnként lép egyet egy bot
+const BOT_TICK_MS = 1000; // ennyi időnként lép egyet egy bot
 let nextBotId = -100; // negatív id: nem ütközik valódi játékossal (a -1 tilos, az "mindenki"!)
 let botClueNo = 0;
 
@@ -57,7 +57,7 @@ RegisterCommand(
       const id = nextBotId--;
       lastBot = {
         id,
-        name: `Bot ${-id - 99}`,
+        name: `Tester ${-id - 99}`,
         team: "",
         isViewer: false,
         isBot: true,

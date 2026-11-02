@@ -19,10 +19,11 @@ onNet(EVENTS.PLACE_BOARD, async (pos) => {
   );
 
   let tries = 0;
-  while (!DoesEntityExist(obj) && tries++ < 50) await Delay(10);
+  while (!DoesEntityExist(obj) && tries++ < 30) await Delay(10);
   if (!DoesEntityExist(obj)) return;
 
   SetEntityHeading(obj, pos.heading);
+  PlaceObjectOnGroundProperly(obj);
   FreezeEntityPosition(obj, true);
   SetEntityOrphanMode(obj, 2);
 
