@@ -23,7 +23,7 @@ function closeUi() {
 
 function showRoundBanner(team) {
   const banner = document.getElementById("codename_roundBanner");
-  banner.innerHTML = `<span>Következik: ${TEAM_NAMES[team] ?? ""}</span>`;
+  banner.innerHTML = `<span>${NEXT_TEXT_BANNER(team)}</span>`;
   banner.classList.toggle("teamTwo", team === TEAM_TWO);
 
   banner.classList.remove("show");
@@ -33,7 +33,7 @@ function showRoundBanner(team) {
 
 function showWinnerBanner(team) {
   const banner = document.getElementById("codename_roundBanner");
-  banner.innerHTML = `<span>${TEAM_NAMES[team] ?? ""} győzött</span>`;
+  banner.innerHTML = `<span>${WINNER_TEXT_BANNER(team)}</span>`;
   banner.classList.toggle("teamTwo", team === TEAM_TWO);
 
   banner.classList.remove("show");

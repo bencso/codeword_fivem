@@ -8,8 +8,13 @@ const ERROR_TEXTS = {
 const SPYMASTER_TEXT_BANNER = (startingTeam) =>
   `${TEAM_NAMES[startingTeam] ?? ""} spymaster következik`;
 
+const NEXT_TEXT_BANNER = (nexTeam) =>
+  `Következik: ${TEAM_NAMES[nexTeam] ?? ""}`;
+
 const WINNER_TEXT = (winnerTeam) =>
   `${TEAM_NAMES[winnerTeam] ?? ""} nyert! A lobbyba kerülsz:`;
+const WINNER_TEXT_BANNER = (winnerTeam) =>
+  `${TEAM_NAMES[winnerTeam] ?? ""} nyert!`;
 
 const JOIN_BTN_TEXT = "Csatlakozás";
 const EXIT_BTN_TEXT = "Kilépés";
