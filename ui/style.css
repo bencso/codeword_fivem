@@ -783,6 +783,18 @@ body {
   animation: codeword-banner 1.9s ease forwards;
 }
 
+.codeword_roundBanner.teamOne {
+  --banner: var(--teamOne);
+}
+
+.codeword_roundBanner.teamTwo {
+  --banner: var(--teamTwo);
+}
+
+.codeword_roundBanner.colored span {
+  text-shadow: 0 0.25rem 0.5rem var(--banner) !important;
+}
+
 .codeword_roundBanner.show::before {
   animation: codeword-banner-bar 1.9s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }

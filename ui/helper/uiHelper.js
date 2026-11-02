@@ -24,6 +24,17 @@ function closeUi() {
 function showRoundBanner(team) {
   const banner = document.getElementById("codeword_roundBanner");
   banner.innerHTML = `<span>${NEXT_TEXT_BANNER(team)}</span>`;
+
+  banner.classList.remove("show");
+  void banner.offsetWidth;
+  banner.classList.add("show");
+}
+
+function showWordBanner(word, team) {
+  const banner = document.getElementById("codeword_roundBanner");
+  banner.innerHTML = `<span>${word.toUpperCase()}</span>`;
+  banner.classList.add("colored");
+  banner.classList.toggle("teamOne", team === TEAM_ONE);
   banner.classList.toggle("teamTwo", team === TEAM_TWO);
 
   banner.classList.remove("show");
@@ -34,7 +45,6 @@ function showRoundBanner(team) {
 function showWinnerBanner(team) {
   const banner = document.getElementById("codeword_roundBanner");
   banner.innerHTML = `<span>${WINNER_TEXT_BANNER(team)}</span>`;
-  banner.classList.toggle("teamTwo", team === TEAM_TWO);
 
   banner.classList.remove("show");
   void banner.offsetWidth;

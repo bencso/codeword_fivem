@@ -231,6 +231,8 @@ window.addEventListener("message", (event) => {
       teamText.textContent = `${TEAM_NAMES[data.currentTeam] ?? ""} talál ki`;
       if (data.currentTeam === TEAM_TWO) teamText.classList.add("teamTwo");
 
+      showWordBanner(data.clue.clue, data.currentTeam);
+
       const timer = document.getElementById("codeword_turnTimerText");
 
       startCountdown(data.endsTime, timer);
