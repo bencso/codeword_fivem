@@ -19,11 +19,19 @@ client_scripts {
 }
 
 server_scripts {
-    'server/helpers/hideColors.js',
-    'server/helpers/leaveRoom.js',
-    'server/helpers/resetRoom.js',
-    'server/helpers/shuffle.js',
-    'server/helpers/testBot.js',
+    'server/functions/nextRound.js',
+    'server/functions/skipRound.js',
+    'server/functions/pickWord.js',
+    'server/functions/resetRoom.js',
+    'server/functions/endGame.js',
+    'server/functions/startGame.js',
+    'server/functions/pickSpymaster.js',
+    'server/functions/addClue.js',
+    'server/functions/hideColors.js',
+    'server/functions/leaveRoom.js',
+    'server/functions/shuffle.js',
+    'server/functions/testBot.js',
+    'server/functions/switchSpSelector.js',
     'server/server.js'
 }
 

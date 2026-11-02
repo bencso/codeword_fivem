@@ -1,7 +1,5 @@
 const isFiveM = typeof GetParentResourceName === "function";
 const app = document.getElementById("codename_window");
-const joinBtn = document.getElementById("codename_joinBtn");
-const spymasterBtn = document.getElementById("codename_pickSpymasterBtn");
 
 let roomId = null;
 let countdownInterval = null;
@@ -12,30 +10,6 @@ let playerTeam = "";
 let playerId = null;
 let inRoom = false;
 let currentTeam = null;
-
-joinBtn.addEventListener("click", () => {
-  joinBtn.disabled = true;
-  post("joinRoom", { roomId });
-});
-
-document.getElementById("codename_exitBtn").addEventListener("click", closeUi);
-
-window.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") {
-    post("leaveRoom", { roomId });
-    joinBtn.disabled = false;
-  }
-});
-
-document.getElementById("codename_leaveBtn").addEventListener("click", () => {
-  post("leaveRoom", { roomId });
-  joinBtn.disabled = false;
-});
-
-spymasterBtn.addEventListener("click", () => {
-  spymasterBtn.disabled = true;
-  post("pickSpymaster", { roomId });
-});
 
 window.addEventListener("message", (event) => {
   const data = event.data;
