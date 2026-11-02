@@ -740,7 +740,6 @@ body {
 }
 
 .codeword_roundBanner {
-  --banner: var(--teamOne);
   position: fixed;
   inset: 0;
   display: flex;
@@ -750,10 +749,6 @@ body {
   z-index: 50;
   opacity: 0;
   visibility: hidden;
-}
-
-.codeword_roundBanner.teamTwo {
-  --banner: var(--teamTwo);
 }
 
 .codeword_roundBanner::before {
@@ -769,8 +764,6 @@ body {
     rgba(0, 0, 0, 0.75) 80%,
     transparent
   );
-  border-top: 2px solid var(--banner);
-  border-bottom: 2px solid var(--banner);
   transform: scaleX(0);
 }
 
