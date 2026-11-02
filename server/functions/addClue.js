@@ -15,14 +15,16 @@ function addClue(sender, roomId, clue, count) {
       (w) => w.team === playerData.team && !w.revealed,
     ).length;
 
-    if (!Number.isInteger(count) || count < -1 || count > teamWordsLeft) {
-      emitNet(EVENTS.ERROR, sender, "notCorrectCount");
-      return;
-    }
-    if (count === -1) {
+    if (count == -1) {
       nextRound(roomId);
       return;
     }
+
+    if (!(count > -1 && count <= teamWordsLeft)) {
+      emitNet(EVENTS.ERROR, sender, "notCorrectCount");
+      return;
+    }
+
     if (trimmedClue.length <= 0) {
       emitNet(EVENTS.ERROR, sender, "notEnoughLength");
       return;
