@@ -219,7 +219,9 @@ window.addEventListener("message", (event) => {
       if (countdownInterval) clearInterval(countdownInterval);
 
       document.querySelectorAll(`.codeword_vote`).forEach((el) => el.remove());
-      document.getElementById("codeword_nextRoundBtn_count").textContent = "";
+
+      if (document.getElementById("codeword_nextRoundBtn_count"))
+        document.getElementById("codeword_nextRoundBtn_count").textContent = "";
 
       const teamText = document.getElementById("codeword_turnText");
       teamText.classList.remove("teamTwo");
@@ -261,8 +263,9 @@ window.addEventListener("message", (event) => {
     case "votedSkip": {
       if (!data.skipperCount || data.skipperCount <= 0) break;
 
-      document.getElementById("codeword_nextRoundBtn_count").textContent =
-        `(${data.skipperCount} / ${data.playerTeamPlayercount})`;
+      if (document.getElementById("codeword_nextRoundBtn_count"))
+        document.getElementById("codeword_nextRoundBtn_count").textContent =
+          `(${data.skipperCount} / ${data.playerTeamPlayercount})`;
 
       break;
     }
@@ -271,7 +274,8 @@ window.addEventListener("message", (event) => {
       if (countdownInterval) clearInterval(countdownInterval);
       const teamText = document.getElementById("codeword_turnText");
 
-      document.getElementById("codeword_nextRoundBtn_count").textContent = "";
+      if (document.getElementById("codeword_nextRoundBtn_count"))
+        document.getElementById("codeword_nextRoundBtn_count").textContent = "";
       document.querySelectorAll(`.codeword_vote`).forEach((el) => el.remove());
 
       currentTeam = data.currentTeam;
