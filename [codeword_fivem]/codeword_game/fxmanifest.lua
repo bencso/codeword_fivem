@@ -4,6 +4,10 @@ game 'gta5'
 author 'bencso'
 description 'codeword'
 
+version '1.0.0'
+
+dependency 'codeword_asset'
+
 shared_script 'consts.js'
 
 client_scripts {
@@ -38,20 +42,9 @@ server_scripts {
 ui_page 'ui/index.html'
 
 
-files { 
-    'locale.js',
-    'consts.js',
-    'assets/kartya/*.png',
-    'ui/helper/countdown.js',
-    'ui/helper/refreshPlayerList.js',
-    'ui/helper/post.js',
-    'ui/helper/uiHelper.js',
-    'ui/helper/nextRoundBtn.js',
-    'ui/helper/modifyWordCards.js',
-    'ui/helper/modifyClueHistory.js',
-    'ui/helper/ingamePlayerList.js',
-    'ui/helper/clueInput.js',
-    'ui/index.html',
-    'ui/style.css',
-    'ui/script.js'
+files {
+  'consts.js',
+  'locale.js',
+  'assets/kartya/*.png',
+  'ui/**/*',
 }
