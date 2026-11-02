@@ -2,7 +2,7 @@ fx_version 'cerulean'
 game 'gta5'
 
 author 'bencso'
-description 'Codenames'
+description 'codeword'
 
 shared_script 'consts.js'
 

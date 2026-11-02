@@ -1,40 +1,40 @@
 const Delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
 const EVENTS = {
-  JOIN_ROOM: "codenames:joinRoom",
-  LEAVE_ROOM: "codenames:leaveRoom",
+  JOIN_ROOM: "codeword:joinRoom",
+  LEAVE_ROOM: "codeword:leaveRoom",
 
-  JOINED_ROOM: "codenames:joinedRoom",
-  LEAVED_ROOM: "codenames:leavedRoom",
+  JOINED_ROOM: "codeword:joinedRoom",
+  LEAVED_ROOM: "codeword:leavedRoom",
 
-  PLACE_BOARD: "codenames:spawnProp",
-  REMOVE_BOARD: "codenames:removeProp",
+  PLACE_BOARD: "codeword:spawnProp",
+  REMOVE_BOARD: "codeword:removeProp",
 
-  SPYMASTER_SELECTION: "codenames:spymasterSelection",
-  SPYMASTER_SELECTED: "codenames:spymasterSelected",
-  STARTED_GAME: "codenames:startedGame",
+  SPYMASTER_SELECTION: "codeword:spymasterSelection",
+  SPYMASTER_SELECTED: "codeword:spymasterSelected",
+  STARTED_GAME: "codeword:startedGame",
 
-  PICK_SPYMASTER: "codenames:pickSpymaster",
-  DROPED_USER: "codenames:dropedUser",
+  PICK_SPYMASTER: "codeword:pickSpymaster",
+  DROPED_USER: "codeword:dropedUser",
 
-  ADD_CLUE: "codenames:addClue",
-  ADDED_CLUE: "codenames:addedClue",
+  ADD_CLUE: "codeword:addClue",
+  ADDED_CLUE: "codeword:addedClue",
 
-  NEXT_ROUND: "codenames:nextRound",
+  NEXT_ROUND: "codeword:nextRound",
 
-  PICK_WORD: "codenames:pickWord",
-  VOTED_WORD: "codenames:votedWord",
-  SELECTED_WORD: "codenames:selectedWord",
-  ERROR: "codenames:error",
+  PICK_WORD: "codeword:pickWord",
+  VOTED_WORD: "codeword:votedWord",
+  SELECTED_WORD: "codeword:selectedWord",
+  ERROR: "codeword:error",
 
-  SKIP_ROUND: "codenames:skipRound",
-  VOTED_SKIP: "codenames:votedSkip",
+  SKIP_ROUND: "codeword:skipRound",
+  VOTED_SKIP: "codeword:votedSkip",
 
-  GAME_ENDED: "codenames:gameEnded",
-  SPYMASTER_CHANGED: "codenames:spymasterChanged",
+  GAME_ENDED: "codeword:gameEnded",
+  SPYMASTER_CHANGED: "codeword:spymasterChanged",
 };
 
-const PROP = "codenames_board";
+const PROP = "codeword_board";
 
 const MIN_PLAYERS = 4;
 const TEAM_ONE = "blue";

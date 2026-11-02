@@ -2,8 +2,8 @@ function modifyClueHistory(clueHistory) {
   if (!Array.isArray(clueHistory)) return;
 
   const lists = {
-    [TEAM_ONE]: document.getElementById("codename_teamOneClues"),
-    [TEAM_TWO]: document.getElementById("codename_teamTwoClues"),
+    [TEAM_ONE]: document.getElementById("codeword_teamOneClues"),
+    [TEAM_TWO]: document.getElementById("codeword_teamTwoClues"),
   };
   lists[TEAM_ONE].textContent = "";
   lists[TEAM_TWO].textContent = "";

@@ -1,5 +1,5 @@
-const playerClueBar = document.getElementById("codename_playerBar");
-const nextRoundBtn = document.getElementById("codename_nextRoundBtn");
+const playerClueBar = document.getElementById("codeword_playerBar");
+const nextRoundBtn = document.getElementById("codeword_nextRoundBtn");
 
 function showNextRoundBtn(show) {
   playerClueBar.classList.toggle("hidden", !show);

@@ -1,7 +1,7 @@
 const revealedCards = new Set();
 
 function modifyWordCards(words, isSpymaster, myTeam, currentTeam, isViewer) {
-  const grid = document.getElementById("codename_grid");
+  const grid = document.getElementById("codeword_grid");
   grid.textContent = "";
   grid.classList.toggle("spymaster", !!isSpymaster);
 
@@ -12,14 +12,14 @@ function modifyWordCards(words, isSpymaster, myTeam, currentTeam, isViewer) {
     const wordVoterDiv = document.createElement("div");
     const textSpan = document.createElement("span");
 
-    wordVoterDiv.className = "codename_card-votes";
+    wordVoterDiv.className = "codeword_card-votes";
 
-    wordDiv.classList.add("codename_card");
+    wordDiv.classList.add("codeword_card");
     wordDiv.dataset.index = index;
     wordDiv.dataset.word = word.word;
-    wordDiv.id = `codename_card-${word.word}`;
+    wordDiv.id = `codeword_card-${word.word}`;
 
-    textSpan.classList.add("codename_card-text");
+    textSpan.classList.add("codeword_card-text");
     textSpan.textContent = word.word;
 
     if (currentTeam === myTeam) wordDiv.style.cursor = "pointer";
@@ -54,7 +54,7 @@ function modifyWordCards(words, isSpymaster, myTeam, currentTeam, isViewer) {
       wordDiv.classList.add("revealed");
 
       const cover = document.createElement("div");
-      cover.className = "codename_card-cover";
+      cover.className = "codeword_card-cover";
       cover.style.backgroundImage = `url("../../assets/kartya/kartya_${index + 1}.png")`;
 
       if (!revealedCards.has(index)) {

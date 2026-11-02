@@ -1,5 +1,5 @@
 // =========================================================
-//  CODENAMES – TESZT BOTOK (csak fejlesztéshez!)
+//  codeword – TESZT BOTOK (csak fejlesztéshez!)
 //  Élesben: consts.js → const DEBUG = false;
 //
 //  Parancsok (a szobában állva):

@@ -38,17 +38,17 @@ body {
   display: none !important;
 }
 
-#codename_window {
+#codeword_window {
   display: none;
   position: fixed;
   inset: 0;
 }
 
-#codename_window.show {
+#codeword_window.show {
   display: block;
 }
 
-.codename_view {
+.codeword_view {
   display: none;
   position: absolute;
   inset: 0;
@@ -56,11 +56,11 @@ body {
   justify-content: center;
 }
 
-.codename_view.active {
+.codeword_view.active {
   display: flex;
 }
 
-.codename_panel {
+.codeword_panel {
   width: min(400px, 90vw);
   padding: 18px;
   border-radius: 12px;
@@ -69,7 +69,7 @@ body {
   box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
 }
 
-.codename_panel-head--split {
+.codeword_panel-head--split {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -77,21 +77,21 @@ body {
   margin-bottom: 8px;
 }
 
-.codename_title {
+.codeword_title {
   margin: 0;
   font-size: 15px;
   font-weight: 600;
   letter-spacing: 0.2px;
 }
 
-.codename_subtitle {
+.codeword_subtitle {
   margin-top: 8px;
   margin-bottom: 16px;
   font-size: 12px;
   color: var(--muted);
 }
 
-.codename_countdown {
+.codeword_countdown {
   min-width: 44px;
   padding: 6px 10px;
   border-radius: 8px;
@@ -101,22 +101,22 @@ body {
   text-align: center;
 }
 
-.codename_turnTimer.urgent {
+.codeword_turnTimer.urgent {
   background-color: #8f1717 !important;
   color: #ffff;
 }
 
-.codename_btn-row {
+.codeword_btn-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
 }
 
-.codename_btn-row--single {
+.codeword_btn-row--single {
   grid-template-columns: 1fr;
 }
 
-.codename_btn {
+.codeword_btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -136,7 +136,7 @@ body {
     color 0.15s;
 }
 
-.codename_btn svg {
+.codeword_btn svg {
   width: 14px;
   height: 14px;
   fill: none;
@@ -146,41 +146,41 @@ body {
   stroke-linejoin: round;
 }
 
-.codename_btn:hover {
+.codeword_btn:hover {
   background: var(--panel-hover);
   color: #ffffffb2;
 }
 
-.codename_btn-confirm {
+.codeword_btn-confirm {
   background: var(--confirm-bg);
   color: var(--confirm-text);
 }
 
-.codename_btn-confirm:hover {
+.codeword_btn-confirm:hover {
   background: var(--confirm-bg-hover);
   color: var(--confirm-text);
 }
 
-#codename_nextRoundBtn {
+#codeword_nextRoundBtn {
   width: 100%;
 }
 
-.codename_btn-danger {
+.codeword_btn-danger {
   background: var(--danger-bg);
   color: var(--danger-text);
 }
 
-.codename_btn-danger:hover {
+.codeword_btn-danger:hover {
   background: var(--danger-bg-hover);
   color: var(--danger-text);
 }
 
-.codename_btn:disabled {
+.codeword_btn:disabled {
   opacity: 0.4;
   cursor: default;
 }
 
-.codename_lobby-players {
+.codeword_lobby-players {
   list-style: none;
   margin: 0 0 14px;
   padding: 0;
@@ -191,7 +191,7 @@ body {
   overflow-y: auto;
 }
 
-.codename_chip {
+.codeword_chip {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -203,22 +203,22 @@ body {
   font-size: 13px;
 }
 
-.codename_chip-name {
+.codeword_chip-name {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   font-weight: 500;
 }
 
-.codename_chip.teamOne .codename_avatar {
+.codeword_chip.teamOne .codeword_avatar {
   background-color: var(--teamOne);
 }
 
-.codename_chip.teamTwo .codename_avatar {
+.codeword_chip.teamTwo .codeword_avatar {
   background-color: var(--teamTwo);
 }
 
-.codename_lobby-players li.empty {
+.codeword_lobby-players li.empty {
   grid-column: 1 / -1;
   padding: 10px;
   color: var(--muted);
@@ -226,7 +226,7 @@ body {
   text-align: center;
 }
 
-.codename_avatar {
+.codeword_avatar {
   width: 28px;
   height: 28px;
   flex-shrink: 0;
@@ -235,7 +235,7 @@ body {
   background: rgb(0, 0, 0);
 }
 
-.codename_avatar-fallback {
+.codeword_avatar-fallback {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -243,7 +243,7 @@ body {
   font-size: 12px;
 }
 
-.codename_stage {
+.codeword_stage {
   width: 100vw;
   height: 100vh;
   display: grid;
@@ -254,21 +254,21 @@ body {
   perspective: 1400px;
 }
 
-.codename_board {
+.codeword_board {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 14px;
 }
 
-.codename_board-header {
+.codeword_board-header {
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 14px;
 }
 
-.codename_turn {
+.codeword_turn {
   padding: 7px 16px;
   border-radius: 8px;
   background: var(--panel);
@@ -280,8 +280,8 @@ body {
   font-weight: 500;
 }
 
-.codename_turnTimer,
-.codename_clue {
+.codeword_turnTimer,
+.codeword_clue {
   padding: 7px 16px;
   border-radius: 8px;
   background: var(--panel);
@@ -291,11 +291,11 @@ body {
   font-weight: 500;
 }
 
-.codename_turn.teamTwo {
+.codeword_turn.teamTwo {
   background-color: var(--teamTwo);
 }
 
-.codename_grid {
+.codeword_grid {
   --card-w: min(10.5vw, 15.5vh * 1.45);
   display: grid;
   grid-template-columns: repeat(5, var(--card-w));
@@ -303,7 +303,7 @@ body {
   gap: 1.2vh 0.8vw;
 }
 
-.codename_card {
+.codeword_card {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -325,50 +325,50 @@ body {
     filter 0.12s;
 }
 
-.codename_card.long {
+.codeword_card.long {
   font-size: clamp(0.6rem, 0.78vw, 0.95rem);
   letter-spacing: 0;
 }
 
-.codename_card.teamOne {
+.codeword_card.teamOne {
   background: var(--teamOne);
   border-bottom-color: var(--teamOne-dark);
   color: #fff;
 }
 
-.codename_card.teamTwo {
+.codeword_card.teamTwo {
   background: var(--teamTwo);
   border-bottom-color: var(--teamTwo-dark);
   color: #fff;
 }
 
-.codename_card.neutral {
+.codeword_card.neutral {
   background: #b9ad94;
   border-bottom-color: #8f8570;
   color: #3a3a3a;
 }
 
-.codename_card.black {
+.codeword_card.black {
   background: #151515;
   border-bottom-color: #000;
   color: #fff;
 }
 
-.codename_card {
+.codeword_card {
   position: relative;
   perspective: 700px;
 }
 
-.codename_card.revealed {
+.codeword_card.revealed {
   cursor: default;
 }
 
-.codename_card.revealed:hover {
+.codeword_card.revealed:hover {
   transform: none;
   filter: none;
 }
 
-.codename_card-cover {
+.codeword_card-cover {
   --tint: #c9bc9f;
   position: absolute;
   inset: 0;
@@ -386,28 +386,28 @@ body {
   transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.3, 1);
 }
 
-.codename_card.teamOne .codename_card-cover {
+.codeword_card.teamOne .codeword_card-cover {
   --tint: var(--teamOne);
 }
-.codename_card.teamTwo .codename_card-cover {
+.codeword_card.teamTwo .codeword_card-cover {
   --tint: var(--teamTwo);
 }
-.codename_card.neutral .codename_card-cover {
+.codeword_card.neutral .codeword_card-cover {
   --tint: #c9bc9f;
 }
-.codename_card.black .codename_card-cover {
+.codeword_card.black .codeword_card-cover {
   --tint: #4a4a4a;
 }
 
-.codename_card.revealed:hover .codename_card-cover {
+.codeword_card.revealed:hover .codeword_card-cover {
   transform: rotateX(72deg);
 }
 
-.codename_card-cover.flip-in {
-  animation: codename-flip 0.6s cubic-bezier(0.3, 0.7, 0.3, 1) backwards;
+.codeword_card-cover.flip-in {
+  animation: codeword-flip 0.6s cubic-bezier(0.3, 0.7, 0.3, 1) backwards;
 }
 
-@keyframes codename-flip {
+@keyframes codeword-flip {
   from {
     transform: rotateY(180deg);
   }
@@ -416,32 +416,32 @@ body {
   }
 }
 
-.codename_side {
+.codeword_side {
   display: flex;
   flex-direction: column;
   gap: 10px;
   transform-style: preserve-3d;
 }
 
-.codename_side-teamOne {
+.codeword_side-teamOne {
   align-items: flex-end;
   transform-origin: left center;
   transform: rotateY(14deg);
 }
 
-.codename_side-teamTwo {
+.codeword_side-teamTwo {
   align-items: flex-start;
   transform-origin: right center;
   transform: rotateY(-14deg);
 }
 
-.codename_side-title {
+.codeword_side-title {
   margin: 0 4px;
   font-weight: 500;
   color: rgba(255, 255, 255);
 }
 
-.codename_side-players {
+.codeword_side-players {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -451,7 +451,7 @@ body {
   width: min(270px, 100%);
 }
 
-.codename_player-card {
+.codeword_player-card {
   --team: var(--teamOne);
   --team-dark: var(--teamOne-dark);
   display: flex;
@@ -468,24 +468,24 @@ body {
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
 }
 
-.codename_side-teamOne .codename_player-card {
+.codeword_side-teamOne .codeword_player-card {
   flex-direction: row;
   text-align: right;
 }
 
-.codename_side-teamTwo .codename_player-card {
+.codeword_side-teamTwo .codeword_player-card {
   --team: var(--teamTwo);
   --team-dark: var(--teamTwo-dark);
   flex-direction: row-reverse;
   text-align: left;
 }
 
-.codename_player-info {
+.codeword_player-info {
   flex: 1;
   min-width: 0;
 }
 
-.codename_player-name {
+.codeword_player-name {
   font-size: 15px;
   font-weight: 600;
   letter-spacing: 0.3px;
@@ -495,7 +495,7 @@ body {
   text-overflow: ellipsis;
 }
 
-.codename_player-role {
+.codeword_player-role {
   margin-top: 2px;
   font-size: 11px;
   font-weight: 400;
@@ -504,7 +504,7 @@ body {
   color: var(--muted);
 }
 
-.codename_player-photo {
+.codeword_player-photo {
   width: 54px;
   height: 54px;
   flex-shrink: 0;
@@ -518,30 +518,30 @@ body {
   font-weight: 500;
 }
 
-.codename_player-photo img {
+.codeword_player-photo img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.codename_player-card.spymaster .codename_player-photo {
+.codeword_player-card.spymaster .codeword_player-photo {
   box-shadow: 0 0 0 2px #ffd84a;
 }
 
-.codename_grid.spymaster .codename_card {
+.codeword_grid.spymaster .codeword_card {
   cursor: default;
 }
 
-.codename_grid.spymaster .codename_card:not(.own):hover {
+.codeword_grid.spymaster .codeword_card:not(.own):hover {
   transform: none;
   filter: none;
 }
 
-.codename_grid.spymaster .codename_card.own {
+.codeword_grid.spymaster .codeword_card.own {
   cursor: pointer;
 }
 
-.codename_card.selected {
+.codeword_card.selected {
   position: relative;
   transform: translateY(-4px);
   box-shadow:
@@ -549,7 +549,7 @@ body {
     0 0.7rem 1.4rem rgba(0, 0, 0, 0.5);
 }
 
-.codename_card-ownPlayerVote {
+.codeword_card-ownPlayerVote {
   position: relative;
   transform: translateY(-4px);
   box-shadow:
@@ -557,7 +557,7 @@ body {
     0 0.7rem 1.4rem rgba(0, 0, 0, 0.5);
 }
 
-.codename_card.selected::after {
+.codeword_card.selected::after {
   content: "✓";
   position: absolute;
   top: 6px;
@@ -573,7 +573,7 @@ body {
   text-align: center;
 }
 
-.codename_clue-bar {
+.codeword_clue-bar {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -585,7 +585,7 @@ body {
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
 }
 
-.codename_clue-input {
+.codeword_clue-input {
   width: 260px;
   height: 38px;
   padding: 0 12px;
@@ -605,18 +605,18 @@ body {
     background 0.15s;
 }
 
-.codename_clue-input::placeholder {
+.codeword_clue-input::placeholder {
   color: var(--muted);
   text-transform: none;
   letter-spacing: 0;
 }
 
-.codename_clue-input:focus {
+.codeword_clue-input:focus {
   border-color: rgba(255, 255, 255, 0.22);
   background: var(--panel-hover);
 }
 
-.codename_clue-count {
+.codeword_clue-count {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -635,26 +635,26 @@ body {
   text-transform: uppercase;
 }
 
-.codename_clue-count.empty {
+.codeword_clue-count.empty {
   color: var(--muted);
 }
 
-.codename_clue-bar .codename_btn {
+.codeword_clue-bar .codeword_btn {
   min-width: 110px;
 }
 
-.codename_clue-hint {
+.codeword_clue-hint {
   margin: 6px 0 0;
   font-size: 11px;
   color: white;
   text-align: center;
 }
 
-.codename_clue-hint.error {
+.codeword_clue-hint.error {
   color: red;
 }
 
-.codename_card-votes {
+.codeword_card-votes {
   position: absolute;
   top: 6px;
   right: 6px;
@@ -665,11 +665,11 @@ body {
   pointer-events: none;
 }
 
-.codename_card-votes:empty {
+.codeword_card-votes:empty {
   display: none;
 }
 
-.codename_vote {
+.codeword_vote {
   width: 22px;
   height: 22px;
   border-radius: 50%;
@@ -683,22 +683,22 @@ body {
   font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
-  animation: codename-vote-pop 0.18s ease-out;
+  animation: codeword-vote-pop 0.18s ease-out;
   overflow: hidden;
 }
 
-.codename_vote img {
+.codeword_vote img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
-.codename_vote:last-child {
+.codeword_vote:last-child {
   margin-left: 0;
 }
 
-@keyframes codename-vote-pop {
+@keyframes codeword-vote-pop {
   from {
     transform: scale(0.4);
     opacity: 0;
@@ -709,7 +709,7 @@ body {
   }
 }
 
-.codename_clue-history {
+.codeword_clue-history {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -722,12 +722,12 @@ body {
   width: min(270px, 100%);
 }
 
-.codename_clue-history li {
+.codeword_clue-history li {
   display: flex;
   gap: 4px;
 }
 
-.codename_clue-history li span {
+.codeword_clue-history li span {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -739,7 +739,7 @@ body {
   font-size: 13px;
 }
 
-.codename_roundBanner {
+.codeword_roundBanner {
   --banner: var(--teamOne);
   position: fixed;
   inset: 0;
@@ -752,11 +752,11 @@ body {
   visibility: hidden;
 }
 
-.codename_roundBanner.teamTwo {
+.codeword_roundBanner.teamTwo {
   --banner: var(--teamTwo);
 }
 
-.codename_roundBanner::before {
+.codeword_roundBanner::before {
   content: "";
   position: absolute;
   left: 0;
@@ -774,7 +774,7 @@ body {
   transform: scaleX(0);
 }
 
-.codename_roundBanner span {
+.codeword_roundBanner span {
   position: relative;
   font-family: "Montserrat", sans-serif;
   font-weight: 800;
@@ -785,20 +785,20 @@ body {
   text-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.6);
 }
 
-.codename_roundBanner.show {
+.codeword_roundBanner.show {
   visibility: visible;
-  animation: codename-banner 1.9s ease forwards;
+  animation: codeword-banner 1.9s ease forwards;
 }
 
-.codename_roundBanner.show::before {
-  animation: codename-banner-bar 1.9s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+.codeword_roundBanner.show::before {
+  animation: codeword-banner-bar 1.9s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
-.codename_roundBanner.show span {
-  animation: codename-banner-text 1.9s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+.codeword_roundBanner.show span {
+  animation: codeword-banner-text 1.9s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
-@keyframes codename-banner {
+@keyframes codeword-banner {
   0% {
     opacity: 0;
   }
@@ -814,7 +814,7 @@ body {
   }
 }
 
-@keyframes codename-banner-bar {
+@keyframes codeword-banner-bar {
   0% {
     transform: scaleX(0);
   }
@@ -826,7 +826,7 @@ body {
   }
 }
 
-@keyframes codename-banner-text {
+@keyframes codeword-banner-text {
   0% {
     opacity: 0;
     transform: scale(1.4);

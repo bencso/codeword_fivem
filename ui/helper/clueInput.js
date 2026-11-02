@@ -1,8 +1,8 @@
-const clueBar = document.getElementById("codename_clueBar");
-const clueText = document.getElementById("codename_clueTextInput");
-const clueCount = document.getElementById("codename_clueCountInput");
-const clueSubmit = document.getElementById("codename_clueSubmit");
-const clueError = document.getElementById("codename_clueHint");
+const clueBar = document.getElementById("codeword_clueBar");
+const clueText = document.getElementById("codeword_clueTextInput");
+const clueCount = document.getElementById("codeword_clueCountInput");
+const clueSubmit = document.getElementById("codeword_clueSubmit");
+const clueError = document.getElementById("codeword_clueHint");
 
 function showClueInput(show) {
   clueBar.classList.toggle("hidden", !show);
@@ -15,7 +15,7 @@ function showClueInput(show) {
 }
 
 function selectedClueCards() {
-  return document.querySelectorAll("#codename_grid .codename_card.selected");
+  return document.querySelectorAll("#codeword_grid .codeword_card.selected");
 }
 
 function updateClueState() {
@@ -31,8 +31,8 @@ function toggleClueCard(card, isRevealed) {
   const count = selectedClueCards().length;
   clueCount.value = count;
 
-  document.getElementById("codename_clueSubmit").textContent = SUBMIT_BTN_TEXT;
-  document.getElementById("codename_clueHint").textContent = CLUE_HINT_TEXT;
+  document.getElementById("codeword_clueSubmit").textContent = SUBMIT_BTN_TEXT;
+  document.getElementById("codeword_clueHint").textContent = CLUE_HINT_TEXT;
 
   if (clueError.classList.contains("error")) {
     clueError.classList.remove("error");

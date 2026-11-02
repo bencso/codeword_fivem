@@ -16,7 +16,7 @@ kémfőnökei egyszavas tippeket adnak, a csapattársak pedig szavazással dönt
 kártyát fordítják fel. Az nyer, aki előbb megtalálja az összes ügynökét. A merénylőt
 viszont messziről kerüld el!
 
-A táblát a `/codename` paranccsal bárhova lerakhatod (vagy beteheted a propot az MLO-dba).
+A táblát a `/codeword` paranccsal bárhova lerakhatod (vagy beteheted a propot az MLO-dba).
 Menj oda, és nyomd meg az **E** gombot a csatlakozáshoz.
 
 ### Használat
@@ -43,7 +43,7 @@ Two teams compete to find their agents on a 5×5 board. Each team's spymaster gi
 one-word clues, and their teammates vote on which cards to reveal. Find all your agents
 first, but avoid the assassin!
 
-Place the board anywhere with `/codename` (or put the prop in your MLO), walk up to it,
+Place the board anywhere with `/codeword` (or put the prop in your MLO), walk up to it,
 and press **E** to join.
 
 ### Usage

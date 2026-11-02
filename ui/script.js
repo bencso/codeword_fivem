@@ -1,5 +1,5 @@
 const isFiveM = typeof GetParentResourceName === "function";
-const app = document.getElementById("codename_window");
+const app = document.getElementById("codeword_window");
 
 let roomId = null;
 let countdownInterval = null;
@@ -19,10 +19,10 @@ window.addEventListener("message", (event) => {
     case "open": {
       if (data.roomId !== undefined) roomId = data.roomId;
 
-      document.getElementById("codename_exitBtn").textContent = EXIT_BTN_TEXT;
-      document.getElementById("codename_joinBtn").textContent = JOIN_BTN_TEXT;
+      document.getElementById("codeword_exitBtn").textContent = EXIT_BTN_TEXT;
+      document.getElementById("codeword_joinBtn").textContent = JOIN_BTN_TEXT;
 
-      const banner = document.getElementById("codename_roundBanner");
+      const banner = document.getElementById("codeword_roundBanner");
       banner.classList.remove("show");
 
       if (inRoom) {
@@ -53,16 +53,16 @@ window.addEventListener("message", (event) => {
       playerId = data.playerId;
 
       const waitingTimer = document.getElementById(
-        "codename_countdown-waiting",
+        "codeword_countdown-waiting",
       );
 
       document.querySelector(
-        "#codename_view-waiting .codename_title",
+        "#codeword_view-waiting .codeword_title",
       ).textContent = WAITING_HEADING;
       document.querySelector(
-        "#codename_view-waiting .codename_subtitle",
+        "#codeword_view-waiting .codeword_subtitle",
       ).textContent = WAITING_SUBHEADING;
-      document.getElementById("codename_leaveBtn").textContent = LEAVE_BTN_TEXT;
+      document.getElementById("codeword_leaveBtn").textContent = LEAVE_BTN_TEXT;
 
       if (data.activePlayers === true && data.endsTime) {
         waitingTimer.classList.remove("hidden");
@@ -83,12 +83,12 @@ window.addEventListener("message", (event) => {
       spymasterBtn.disabled = false;
 
       document.querySelector(
-        "#codename_view-team .codename_title",
+        "#codeword_view-team .codeword_title",
       ).textContent = SPYMASTER_SELECTION_HEADING;
-      document.getElementById("codename_pickSpymasterBtn").textContent =
+      document.getElementById("codeword_pickSpymasterBtn").textContent =
         SPYMASTER_SELECTION_PICK_BTN;
 
-      const teamTimer = document.getElementById("codename_countdown-team");
+      const teamTimer = document.getElementById("codeword_countdown-team");
       teamTimer.classList.remove("hidden");
       startCountdown(data.endsTime, teamTimer);
 
@@ -103,7 +103,7 @@ window.addEventListener("message", (event) => {
 
       if (playerData) {
         playerTeam = playerData.team;
-        const selectBtn = document.getElementById("codename_pickSpymasterBtn");
+        const selectBtn = document.getElementById("codeword_pickSpymasterBtn");
 
         if (data.spymasterTeam === playerTeam && selectBtn) {
           selectBtn.disabled = true;
@@ -127,7 +127,7 @@ window.addEventListener("message", (event) => {
       showView("waiting");
 
       const waitingTimer = document.getElementById(
-        "codename_countdown-waiting",
+        "codeword_countdown-waiting",
       );
 
       if (data.endsTime) {
@@ -158,19 +158,19 @@ window.addEventListener("message", (event) => {
 
       showRoundBanner(data.startingTeam);
 
-      const teamText = document.getElementById("codename_turnText");
+      const teamText = document.getElementById("codeword_turnText");
       teamText.classList.remove("teamTwo");
       teamText.textContent = SPYMASTER_TEXT_BANNER(data.startingTeam);
       if (data.startingTeam === TEAM_TWO) teamText.classList.add("teamTwo");
 
-      const timer = document.getElementById("codename_turnTimerText");
+      const timer = document.getElementById("codeword_turnTimerText");
       startCountdown(data.endsTime, timer);
 
       const teamOneClueHistory = document.getElementById(
-        "codename_teamOneClues",
+        "codeword_teamOneClues",
       );
       const teamTwoClueHistory = document.getElementById(
-        "codename_teamTwoClues",
+        "codeword_teamTwoClues",
       );
 
       teamOneClueHistory.textContent = "";
@@ -193,8 +193,8 @@ window.addEventListener("message", (event) => {
         isPlayerViewer,
       );
 
-      const clueText = document.getElementById("codename_clueText");
-      const clueCountText = document.getElementById("codename_clueCount");
+      const clueText = document.getElementById("codeword_clueText");
+      const clueCountText = document.getElementById("codeword_clueCount");
 
       if (data.clueHistory !== undefined) modifyClueHistory(data.clueHistory);
 
@@ -218,10 +218,10 @@ window.addEventListener("message", (event) => {
     case "clueAdded": {
       if (countdownInterval) clearInterval(countdownInterval);
 
-      document.querySelectorAll(`.codename_vote`).forEach((el) => el.remove());
-      document.getElementById("codename_nextRoundBtn_count").textContent = "";
+      document.querySelectorAll(`.codeword_vote`).forEach((el) => el.remove());
+      document.getElementById("codeword_nextRoundBtn_count").textContent = "";
 
-      const teamText = document.getElementById("codename_turnText");
+      const teamText = document.getElementById("codeword_turnText");
       teamText.classList.remove("teamTwo");
 
       currentTeam = data.currentTeam;
@@ -229,7 +229,7 @@ window.addEventListener("message", (event) => {
       teamText.textContent = `${TEAM_NAMES[data.currentTeam] ?? ""} talál ki`;
       if (data.currentTeam === TEAM_TWO) teamText.classList.add("teamTwo");
 
-      const timer = document.getElementById("codename_turnTimerText");
+      const timer = document.getElementById("codeword_turnTimerText");
 
       startCountdown(data.endsTime, timer);
       showClueInput(false);
@@ -239,8 +239,8 @@ window.addEventListener("message", (event) => {
           !isPlayerViewer,
       );
 
-      const clueText = document.getElementById("codename_clueText");
-      const clueCountText = document.getElementById("codename_clueCount");
+      const clueText = document.getElementById("codeword_clueText");
+      const clueCountText = document.getElementById("codeword_clueCount");
 
       if (data.clueHistory !== undefined) modifyClueHistory(data.clueHistory);
 
@@ -261,7 +261,7 @@ window.addEventListener("message", (event) => {
     case "votedSkip": {
       if (!data.skipperCount || data.skipperCount <= 0) break;
 
-      document.getElementById("codename_nextRoundBtn_count").textContent =
+      document.getElementById("codeword_nextRoundBtn_count").textContent =
         `(${data.skipperCount} / ${data.playerTeamPlayercount})`;
 
       break;
@@ -269,15 +269,15 @@ window.addEventListener("message", (event) => {
 
     case "nextRound": {
       if (countdownInterval) clearInterval(countdownInterval);
-      const teamText = document.getElementById("codename_turnText");
+      const teamText = document.getElementById("codeword_turnText");
 
-      document.getElementById("codename_nextRoundBtn_count").textContent = "";
-      document.querySelectorAll(`.codename_vote`).forEach((el) => el.remove());
+      document.getElementById("codeword_nextRoundBtn_count").textContent = "";
+      document.querySelectorAll(`.codeword_vote`).forEach((el) => el.remove());
 
       currentTeam = data.currentTeam;
 
       if (
-        document.getElementById("codename_view-game").classList.contains("show")
+        document.getElementById("codeword_view-game").classList.contains("show")
       )
         showRoundBanner(data.currentTeam);
 
@@ -285,14 +285,14 @@ window.addEventListener("message", (event) => {
       teamText.textContent = SPYMASTER_TEXT_BANNER(data.startingTeam);
       if (data.currentTeam === TEAM_TWO) teamText.classList.add("teamTwo");
 
-      const timer = document.getElementById("codename_turnTimerText");
+      const timer = document.getElementById("codeword_turnTimerText");
 
       startCountdown(data.endsTime, timer);
       showClueInput(false);
       showNextRoundBtn(false);
 
-      const clueText = document.getElementById("codename_clueText");
-      const clueCountText = document.getElementById("codename_clueCount");
+      const clueText = document.getElementById("codeword_clueText");
+      const clueCountText = document.getElementById("codeword_clueCount");
 
       if (clueText) {
         clueText.classList.add("hidden");
@@ -326,26 +326,26 @@ window.addEventListener("message", (event) => {
 
       if (voter.votedId === playerId) {
         document
-          .querySelectorAll(".codename_card-ownPlayerVote")
-          .forEach((c) => c.classList.remove("codename_card-ownPlayerVote"));
+          .querySelectorAll(".codeword_card-ownPlayerVote")
+          .forEach((c) => c.classList.remove("codeword_card-ownPlayerVote"));
       }
 
       document
-        .querySelectorAll(`.codename_vote[data-voter-id="${voter.votedId}"]`)
+        .querySelectorAll(`.codeword_vote[data-voter-id="${voter.votedId}"]`)
         .forEach((el) => el.remove());
 
-      [...document.querySelectorAll(".codename_card")]
+      [...document.querySelectorAll(".codeword_card")]
         .filter((c) => pickedWords.includes(c.dataset.word))
         .forEach((card) => {
-          const votesBlock = card?.querySelector(".codename_card-votes");
+          const votesBlock = card?.querySelector(".codeword_card-votes");
 
           if (!votesBlock) return;
 
           if (voter.votedId === playerId)
-            card.classList.add("codename_card-ownPlayerVote");
+            card.classList.add("codeword_card-ownPlayerVote");
 
           const photo = document.createElement("span");
-          photo.className = "codename_vote";
+          photo.className = "codeword_vote";
           photo.dataset.voterId = voter.votedId;
 
           const initial = (voter.name ?? "?").charAt(0).toUpperCase();
@@ -370,16 +370,16 @@ window.addEventListener("message", (event) => {
     }
 
     case "selectedWord": {
-      const card = [...document.querySelectorAll(".codename_card")].find(
+      const card = [...document.querySelectorAll(".codeword_card")].find(
         (c) => c.dataset.word === data.pickedWord,
       );
 
       if (data.amountClue !== undefined)
-        document.getElementById("codename_clueCount").textContent =
+        document.getElementById("codeword_clueCount").textContent =
           data.overallClue === 0 ? "∞" : data.amountClue;
 
       card
-        ?.querySelectorAll(".codename_card-votes .codename_vote")
+        ?.querySelectorAll(".codeword_card-votes .codeword_vote")
         .forEach((el) => el.remove());
 
       if (currentTeam && (playerTeam || isPlayerViewer))
@@ -396,7 +396,7 @@ window.addEventListener("message", (event) => {
 
     case "gameEnded": {
       clearInterval(countdownInterval);
-      const timer = document.getElementById("codename_turnTimerText");
+      const timer = document.getElementById("codeword_turnTimerText");
       timer.textContent = "";
       timer.classList.remove("urgent");
 
@@ -404,12 +404,12 @@ window.addEventListener("message", (event) => {
 
       showWinnerBanner(data.winnerTeam);
 
-      const teamText = document.getElementById("codename_turnText");
+      const teamText = document.getElementById("codeword_turnText");
       teamText.textContent = WINNER_TEXT(data.winnerTeam);
       teamText.classList.toggle("teamTwo", data.winnerTeam === TEAM_TWO);
 
-      document.getElementById("codename_clueText").classList.add("hidden");
-      document.getElementById("codename_clueCount").classList.add("hidden");
+      document.getElementById("codeword_clueText").classList.add("hidden");
+      document.getElementById("codeword_clueCount").classList.add("hidden");
       showClueInput(false);
       showNextRoundBtn(false);
 
@@ -422,27 +422,27 @@ window.addEventListener("message", (event) => {
     case "error": {
       if (!data.issue) break;
 
-      const hint = document.getElementById("codename_clueHint");
+      const hint = document.getElementById("codeword_clueHint");
       hint.textContent = ERROR_TEXTS[data.issue] ?? "Hiba történt!";
       hint.classList.add("error");
 
       switch (data.issue) {
         case "isOnTable":
-          document.getElementById("codename_clueTextInput").value = "";
-          document.getElementById("codename_clueTextInput").focus();
-          document.getElementById("codename_clueSubmit").disabled = false;
+          document.getElementById("codeword_clueTextInput").value = "";
+          document.getElementById("codeword_clueTextInput").focus();
+          document.getElementById("codeword_clueSubmit").disabled = false;
           break;
         case "notEnoughLength":
-          document.getElementById("codename_clueSubmit").disabled = false;
-          document.getElementById("codename_clueTextInput").focus();
+          document.getElementById("codeword_clueSubmit").disabled = false;
+          document.getElementById("codeword_clueTextInput").focus();
           break;
         case "notCorrectCount":
-          document.getElementById("codename_clueSubmit").disabled = false;
-          document.getElementById("codename_clueCountInput").focus();
-          document.getElementById("codename_clueCountInput").value = 0;
+          document.getElementById("codeword_clueSubmit").disabled = false;
+          document.getElementById("codeword_clueCountInput").focus();
+          document.getElementById("codeword_clueCountInput").value = 0;
           break;
         default:
-          document.getElementById("codename_clueSubmit").disabled = false;
+          document.getElementById("codeword_clueSubmit").disabled = false;
           break;
       }
 
@@ -453,8 +453,8 @@ window.addEventListener("message", (event) => {
       const isMe = data.leaverId === playerId;
 
       const activeView = document
-        .querySelector(".codename_view.active")
-        ?.id.replace("codename_view-", "");
+        .querySelector(".codeword_view.active")
+        ?.id.replace("codeword_view-", "");
 
       if (isMe) {
         inRoom = false;
@@ -469,7 +469,7 @@ window.addEventListener("message", (event) => {
         refreshPlayerList(data.lobbyPlayers, "team");
       } else {
         const waitingTimer = document.getElementById(
-          "codename_countdown-waiting",
+          "codeword_countdown-waiting",
         );
 
         if (data.activePlayers !== true) {

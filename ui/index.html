@@ -9,15 +9,15 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div id="codename_window">
+    <div id="codeword_window">
       <!-- ========== LOBBY: még nincs belépve ========== -->
-      <section id="codename_view-lobby" class="codename_view">
-        <div class="codename_panel">
-          <div class="codename_btn-row">
-            <button id="codename_exitBtn" class="codename_btn">Kilépés</button>
+      <section id="codeword_view-lobby" class="codeword_view">
+        <div class="codeword_panel">
+          <div class="codeword_btn-row">
+            <button id="codeword_exitBtn" class="codeword_btn">Kilépés</button>
             <button
-              id="codename_joinBtn"
-              class="codename_btn codename_btn-confirm"
+              id="codeword_joinBtn"
+              class="codeword_btn codeword_btn-confirm"
             >
               Csatlakozás
             </button>
@@ -26,27 +26,27 @@
       </section>
 
       <!-- ========== VÁRAKOZÁS: belépett, indulásra vár ========== -->
-      <section id="codename_view-waiting" class="codename_view">
-        <div class="codename_panel">
-          <header class="codename_panel-head codename_panel-head--split">
+      <section id="codeword_view-waiting" class="codeword_view">
+        <div class="codeword_panel">
+          <header class="codeword_panel-head codeword_panel-head--split">
             <div>
-              <h1 class="codename_title">Várakozás</h1>
-              <p class="codename_subtitle">A játék hamarosan kezdődik</p>
+              <h1 class="codeword_title">Várakozás</h1>
+              <p class="codeword_subtitle">A játék hamarosan kezdődik</p>
             </div>
             <div
-              class="codename_countdown hidden"
-              id="codename_countdown-waiting"
+              class="codeword_countdown hidden"
+              id="codeword_countdown-waiting"
             >
               30
             </div>
           </header>
 
-          <ul class="codename_lobby-players"></ul>
+          <ul class="codeword_lobby-players"></ul>
 
-          <div class="codename_btn-row codename_btn-row--single">
+          <div class="codeword_btn-row codeword_btn-row--single">
             <button
-              id="codename_leaveBtn"
-              class="codename_btn codename_btn-danger"
+              id="codeword_leaveBtn"
+              class="codeword_btn codeword_btn-danger"
             >
               Kilépés a szobából
             </button>
@@ -55,21 +55,21 @@
       </section>
 
       <!-- ========== SPYMASTER VÁLASZTÁS ========== -->
-      <section id="codename_view-team" class="codename_view">
-        <div class="codename_panel">
-          <header class="codename_panel-head codename_panel-head--split">
-            <h1 class="codename_title">Spymaster választás</h1>
-            <div class="codename_countdown hidden" id="codename_countdown-team">
+      <section id="codeword_view-team" class="codeword_view">
+        <div class="codeword_panel">
+          <header class="codeword_panel-head codeword_panel-head--split">
+            <h1 class="codeword_title">Spymaster választás</h1>
+            <div class="codeword_countdown hidden" id="codeword_countdown-team">
               30
             </div>
           </header>
 
-          <ul class="codename_lobby-players"></ul>
+          <ul class="codeword_lobby-players"></ul>
 
-          <div class="codename_btn-row codename_btn-row--single">
+          <div class="codeword_btn-row codeword_btn-row--single">
             <button
-              id="codename_pickSpymasterBtn"
-              class="codename_btn codename_btn-confirm"
+              id="codeword_pickSpymasterBtn"
+              class="codeword_btn codeword_btn-confirm"
             >
               Leszek a spymaster
             </button>
@@ -78,33 +78,33 @@
       </section>
 
       <!-- ========== JÁTÉK ========== -->
-      <section id="codename_view-game" class="codename_view">
-        <div class="codename_stage">
-          <aside class="codename_side codename_side-teamOne">
-            <h2 class="codename_side-title">Csapat 1</h2>
-            <ul class="codename_side-players" id="codename_teamOnePlayers"></ul>
+      <section id="codeword_view-game" class="codeword_view">
+        <div class="codeword_stage">
+          <aside class="codeword_side codeword_side-teamOne">
+            <h2 class="codeword_side-title">Csapat 1</h2>
+            <ul class="codeword_side-players" id="codeword_teamOnePlayers"></ul>
 
-            <ul class="codename_clue-history" id="codename_teamOneClues"></ul>
+            <ul class="codeword_clue-history" id="codeword_teamOneClues"></ul>
           </aside>
 
-          <main class="codename_board">
-            <div class="codename_board-header">
-              <div class="codename_clue hidden" id="codename_clueText"></div>
-              <div class="codename_clue hidden" id="codename_clueCount"></div>
-              <div class="codename_turn" id="codename_turnText">
+          <main class="codeword_board">
+            <div class="codeword_board-header">
+              <div class="codeword_clue hidden" id="codeword_clueText"></div>
+              <div class="codeword_clue hidden" id="codeword_clueCount"></div>
+              <div class="codeword_turn" id="codeword_turnText">
                 Csapat 1 köre
               </div>
-              <div class="codename_turnTimer" id="codename_turnTimerText">
+              <div class="codeword_turnTimer" id="codeword_turnTimerText">
                 60
               </div>
             </div>
-            <div class="codename_grid" id="codename_grid"></div>
+            <div class="codeword_grid" id="codeword_grid"></div>
 
-            <div id="codename_clueBar" class="hidden">
-              <div class="codename_clue-bar">
+            <div id="codeword_clueBar" class="hidden">
+              <div class="codeword_clue-bar">
                 <input
-                  id="codename_clueTextInput"
-                  class="codename_clue-input"
+                  id="codeword_clueTextInput"
+                  class="codeword_clue-input"
                   type="text"
                   maxlength="24"
                   placeholder="Támpont…"
@@ -112,48 +112,48 @@
                   spellcheck="false"
                 />
                 <input
-                  id="codename_clueCountInput"
-                  class="codename_clue-count empty"
+                  id="codeword_clueCountInput"
+                  class="codeword_clue-count empty"
                   value="0"
                 />
                 <button
-                  id="codename_clueSubmit"
-                  class="codename_btn codename_btn-confirm"
+                  id="codeword_clueSubmit"
+                  class="codeword_btn codeword_btn-confirm"
                   disabled
                 >
                   Beküldés
                 </button>
               </div>
-              <p class="codename_clue-hint" id="codename_clueHint">
+              <p class="codeword_clue-hint" id="codeword_clueHint">
                 Jelöld ki a kártyákat, amelyekre a megadott szó vonatkozik
               </p>
             </div>
 
-            <div id="codename_playerBar" class="hidden">
-              <div class="codename_clue-bar">
+            <div id="codeword_playerBar" class="hidden">
+              <div class="codeword_clue-bar">
                 <button
-                  id="codename_nextRoundBtn"
-                  class="codename_btn codename_btn-confirm"
+                  id="codeword_nextRoundBtn"
+                  class="codeword_btn codeword_btn-confirm"
                   disabled
                 >
                   Skippelés / Következő kör
-                  <span id="codename_nextRoundBtn_count"></span>
+                  <span id="codeword_nextRoundBtn_count"></span>
                 </button>
               </div>
-              <p class="codename_clue-hint"></p>
+              <p class="codeword_clue-hint"></p>
             </div>
           </main>
 
-          <aside class="codename_side codename_side-teamTwo">
-            <h2 class="codename_side-title">Csapat 2</h2>
-            <ul class="codename_side-players" id="codename_teamTwoPlayers"></ul>
+          <aside class="codeword_side codeword_side-teamTwo">
+            <h2 class="codeword_side-title">Csapat 2</h2>
+            <ul class="codeword_side-players" id="codeword_teamTwoPlayers"></ul>
 
-            <ul class="codename_clue-history" id="codename_teamTwoClues"></ul>
+            <ul class="codeword_clue-history" id="codeword_teamTwoClues"></ul>
           </aside>
         </div>
       </section>
 
-      <div id="codename_roundBanner" class="codename_roundBanner"></div>
+      <div id="codeword_roundBanner" class="codeword_roundBanner"></div>
     </div>
     <script src="../locale.js"></script>
     <script src="../consts.js"></script>

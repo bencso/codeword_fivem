@@ -1,9 +1,9 @@
-const joinBtn = document.getElementById("codename_joinBtn");
-const spymasterBtn = document.getElementById("codename_pickSpymasterBtn");
+const joinBtn = document.getElementById("codeword_joinBtn");
+const spymasterBtn = document.getElementById("codeword_pickSpymasterBtn");
 
 function showView(name) {
-  document.querySelectorAll(".codename_view").forEach((view) => {
-    view.classList.toggle("active", view.id === `codename_view-${name}`);
+  document.querySelectorAll(".codeword_view").forEach((view) => {
+    view.classList.toggle("active", view.id === `codeword_view-${name}`);
   });
 }
 
@@ -22,7 +22,7 @@ function closeUi() {
 }
 
 function showRoundBanner(team) {
-  const banner = document.getElementById("codename_roundBanner");
+  const banner = document.getElementById("codeword_roundBanner");
   banner.innerHTML = `<span>${NEXT_TEXT_BANNER(team)}</span>`;
   banner.classList.toggle("teamTwo", team === TEAM_TWO);
 
@@ -32,7 +32,7 @@ function showRoundBanner(team) {
 }
 
 function showWinnerBanner(team) {
-  const banner = document.getElementById("codename_roundBanner");
+  const banner = document.getElementById("codeword_roundBanner");
   banner.innerHTML = `<span>${WINNER_TEXT_BANNER(team)}</span>`;
   banner.classList.toggle("teamTwo", team === TEAM_TWO);
 
@@ -46,7 +46,7 @@ joinBtn.addEventListener("click", () => {
   post("joinRoom", { roomId });
 });
 
-document.getElementById("codename_exitBtn").addEventListener("click", closeUi);
+document.getElementById("codeword_exitBtn").addEventListener("click", closeUi);
 
 window.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
@@ -55,7 +55,7 @@ window.addEventListener("keydown", (e) => {
   }
 });
 
-document.getElementById("codename_leaveBtn").addEventListener("click", () => {
+document.getElementById("codeword_leaveBtn").addEventListener("click", () => {
   post("leaveRoom", { roomId });
   joinBtn.disabled = false;
 });

@@ -1,5 +1,5 @@
 RegisterCommand(
-  "codename",
+  "codeword",
   () => {
     const ped = PlayerPedId();
     const [x, y, z] = GetOffsetFromEntityInWorldCoords(ped, 0.0, 1.0, 0.0);

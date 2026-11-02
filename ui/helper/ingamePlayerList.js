@@ -1,7 +1,7 @@
 function createIngamePlyerList(players) {
   const lists = {
-    [TEAM_ONE]: document.getElementById("codename_teamOnePlayers"),
-    [TEAM_TWO]: document.getElementById("codename_teamTwoPlayers"),
+    [TEAM_ONE]: document.getElementById("codeword_teamOnePlayers"),
+    [TEAM_TWO]: document.getElementById("codeword_teamTwoPlayers"),
   };
 
   Object.values(lists).forEach((ul) => (ul.textContent = ""));
@@ -15,20 +15,20 @@ function createIngamePlyerList(players) {
     if (!ul) return;
 
     const li = document.createElement("li");
-    li.className = "codename_player-card";
+    li.className = "codeword_player-card";
     if (p.spymaster) li.classList.add("spymaster");
 
     const info = document.createElement("div");
-    info.className = "codename_player-info";
+    info.className = "codeword_player-info";
 
     const name = document.createElement("div");
-    name.className = "codename_player-name";
+    name.className = "codeword_player-name";
     name.textContent = p.name;
 
     info.append(name);
 
     const photo = document.createElement("div");
-    photo.className = "codename_player-photo";
+    photo.className = "codeword_player-photo";
 
     if (p.photo) {
       const img = document.createElement("img");
