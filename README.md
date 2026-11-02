@@ -13,7 +13,7 @@ A **Codeword** egy FiveM-re készült, JavaScriptben írt társasjáték, amelye
 
 Két csapat versenyez egy 5×5-ös táblán, hogy megtalálja a saját ügynökeit. A csapatok
 kémfőnökei egyszavas tippeket adnak, a csapattársak pedig szavazással döntik el, melyik
-kártyát fordítják fel. Az nyer, aki előbb megtalálja az összes ügynökét. A merénylőt
+kártyát fordítják fel. Az nyer, aki előbb megtalálja az összes ügynökét. A fekete kártyát
 viszont messziről kerüld el!
 
 A táblát a `/codeword` paranccsal bárhova lerakhatod (vagy beteheted a propot az MLO-dba).
