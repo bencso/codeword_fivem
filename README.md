@@ -52,6 +52,12 @@ Czech Games Editionnel vagy a Codenames alkotóival, és nem is támogatják.
 A „Codenames” és a „Fedőnevek” név, valamint az eredeti játék grafikái a jogtulajdonos
 védjegyei, illetve szellemi tulajdonai. A projekt nem használ fel eredeti játékanyagot.
 
+### Screenshots
+
+<img width="100%" height="642" alt="Lobby" src="https://github.com/user-attachments/assets/a2823f94-94d3-4348-aa71-1d5fbcdbc107" />
+<img width="1776" height="979" alt="Játékos nézet" src="https://github.com/user-attachments/assets/02185c55-0dc8-49b7-88f0-5d5b7de582d3" />
+<img width="1919" height="1079" alt="Spymaster nézet" src="https://github.com/user-attachments/assets/163f7374-a91c-4a9f-9d92-e7bc8e266021" />
+
 ---
 
 ## English
@@ -98,3 +104,10 @@ Codeword is an unofficial, fan-made game based on the gameplay of Codenames. It 
 Czech Games Edition or the creator of Codenames. "Codenames" and its
 original artwork are trademarks and intellectual property of their respective owners.
 No original game assets are used in this project.
+
+### Screenshots
+
+<img width="100%" height="642" alt="Lobby" src="https://github.com/user-attachments/assets/a2823f94-94d3-4348-aa71-1d5fbcdbc107" />
+<img width="1776" height="979" alt="Játékos nézet" src="https://github.com/user-attachments/assets/02185c55-0dc8-49b7-88f0-5d5b7de582d3" />
+<img width="1919" height="1079" alt="Spymaster nézet" src="https://github.com/user-attachments/assets/163f7374-a91c-4a9f-9d92-e7bc8e266021" />
+
